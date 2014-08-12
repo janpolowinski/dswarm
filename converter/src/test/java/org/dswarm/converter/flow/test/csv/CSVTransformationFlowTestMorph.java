@@ -31,7 +31,8 @@ public class CSVTransformationFlowTestMorph extends GuicedTest {
 	@Test
 	public void testConstructionOfStructuredOutputWithMorph() throws Exception {
 
-		executeCSVMorphWithTuples(null, "dd-700/structured-output.xml", "dd-700/test_transf2.tuples.json");
+		executeCSVMorphWithTuples(null, "dd-700/structured-output.xml", "dd-700/test_book_with_author_data_flat.tuples.json");
+		//testCSVMorphWithTuples("dd-700/test_book_with_author_data.result.json", "dd-700/structured-output.xml", "dd-700/test_book_with_author_data_flat.tuples.json");
 	}
 	
 	/**
