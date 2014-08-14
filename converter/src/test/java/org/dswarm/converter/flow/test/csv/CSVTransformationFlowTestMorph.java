@@ -1,7 +1,10 @@
 package org.dswarm.converter.flow.test.csv;
 
-import org.junit.Test;
+import java.io.Writer;
 
+import org.culturegraph.mf.morph.Metamorph;
+import org.culturegraph.mf.stream.reader.CsvReader;
+import org.junit.Test;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -11,6 +14,7 @@ import org.junit.Assert;
 
 import org.dswarm.converter.GuicedTest;
 import org.dswarm.converter.flow.TransformationFlow;
+import org.dswarm.converter.mf.stream.source.CSVJSONWriter;
 import org.dswarm.persistence.service.InternalModelServiceFactory;
 import org.dswarm.persistence.util.DMPPersistenceUtil;
 
@@ -31,7 +35,7 @@ public class CSVTransformationFlowTestMorph extends GuicedTest {
 	@Test
 	public void testConstructionOfStructuredOutputWithMorph() throws Exception {
 
-		executeCSVMorphWithTuples(null, "dd-700/structured-output.xml", "dd-700/test_book_with_author_data_flat.tuples.json");
+		executeCSVMorphWithTuples("dd-700/structured-output.xml", "dd-700/test_book_with_author_data_flat.tuples.json");
 		//testCSVMorphWithTuples("dd-700/test_book_with_author_data.result.json", "dd-700/structured-output.xml", "dd-700/test_book_with_author_data_flat.tuples.json");
 	}
 	
@@ -80,7 +84,7 @@ public class CSVTransformationFlowTestMorph extends GuicedTest {
 
 	}
 	
-	private void executeCSVMorphWithTuples(final String resultJSONFileName, final String morphXMLFileName, final String tuplesJSONFileName)
+	private void executeCSVMorphWithTuples(final String morphXMLFileName, final String tuplesJSONFileName)
 			throws Exception {
 
 		final Provider<InternalModelServiceFactory> internalModelServiceFactoryProvider = GuicedTest.injector
@@ -106,5 +110,31 @@ public class CSVTransformationFlowTestMorph extends GuicedTest {
 		System.out.println(finalActual);
 	}
 
+	
+	private void executeCSVMorphWithCSVWithoutJSON(final String morphXMLFileName, final String csvFileName)
+			throws Exception {
+
+		final String finalMorphXmlString = DMPPersistenceUtil.getResourceAsString(morphXMLFileName);
+
+
+		//final TransformationFlow flow = TransformationFlow.fromString(finalMorphXmlString, internalModelServiceFactoryProvider);
+		// create normal flow that reads csv and outputs formeta for example
+		
+		final CsvReader reader = new CsvReader();
+		final Metamorph metamorph = new Metamorph(finalMorphXmlString);
+		final CSVJSONWriter writer = new CSVJSONWriter();
+		
+		
+		
+		
+		//flow.getScript();
+
+		//final String actual = flow.applyResource(csvFileName);
+		//final ArrayNode array = objectMapper2.readValue(actual, ArrayNode.class);
+		//final String finalActual = objectMapper2.writeValueAsString(array);
+	
+
+		//System.out.println(finalActual);
+	}
 
 }

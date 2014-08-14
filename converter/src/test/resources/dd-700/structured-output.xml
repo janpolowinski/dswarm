@@ -19,5 +19,16 @@
         <data name="http://foaf/lastname" source="@__TRANSFORMATION_OUTPUT_VARIABLE__3"/>
         <data name="@__TRANSFORMATION_OUTPUT_VARIABLE__3" source="@val8" />
         
+        <entity name="http://dc/creator" flushWith="record">
+				<data name="http://foaf/lastname" source="@__TRANSFORMATION_OUTPUT_VARIABLE__3" />
+		</entity>
+		
+		<!-- combine name="@dc_creator" value="${value}">
+			<data source="002@.0">
+				<regexp match="^.[^bdp].*"/>
+			</data>	
+			<data source="@shortName028A" name="value"/>
+		</combine-->
+        
     </rules>
 </metamorph>
