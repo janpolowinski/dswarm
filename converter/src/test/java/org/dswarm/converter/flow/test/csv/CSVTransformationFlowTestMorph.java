@@ -1,8 +1,17 @@
 package org.dswarm.converter.flow.test.csv;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.StringWriter;
+import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -25,6 +34,7 @@ import org.dswarm.converter.mf.stream.reader.JsonNodeReader;
 import org.dswarm.converter.pipe.StreamJsonCollapser;
 import org.dswarm.converter.pipe.StreamUnflattener;
 import org.dswarm.init.util.DMPStatics;
+import org.dswarm.persistence.model.types.Tuple;
 import org.dswarm.persistence.service.InternalModelServiceFactory;
 import org.dswarm.persistence.util.DMPPersistenceUtil;
 
@@ -36,6 +46,11 @@ import org.dswarm.persistence.util.DMPPersistenceUtil;
  * 
  */
 public class CSVTransformationFlowTestMorph extends GuicedTest {
+	
+	private static final Logger							LOG	= LoggerFactory.getLogger(CSVTransformationFlowTestMorph.class);
+	
+	public final static String MORPH_DEFINITION_STRUCTURED_OUTPUT = "dd-700/structured-output.xml";
+	public final static String MORPH_DEFINITION_SUBSTRING = "dd-700/substring-replace.xml";
 
 	/**
 	 * Test for sketching a morph script to produce nested, structured output data.
@@ -47,7 +62,6 @@ public class CSVTransformationFlowTestMorph extends GuicedTest {
 
 		//executeCSVMorphWithTuples("dd-700/structured-output.xml", "dd-700/test_book_with_author_data_flat.tuples.json");
 		//testCSVMorphWithTuples("dd-700/test_book_with_author_data.result.json", "dd-700/structured-output.xml", "dd-700/test_book_with_author_data_flat.tuples.json");
-		executeCSVMorphWithCSVWithoutJSON("dd-700/substring-replace.xml", "dd-700/test_book_with_author_data_flat.tuples.json");
 	}
 	
 	/**
@@ -55,6 +69,7 @@ public class CSVTransformationFlowTestMorph extends GuicedTest {
 	 * 
 	 * @throws Exception
 	 */
+	/*
 	//@Test
 	public void testOldSubStringReplaceWithMorph() throws Exception {
 
@@ -62,7 +77,7 @@ public class CSVTransformationFlowTestMorph extends GuicedTest {
 	}
 
 	
-	
+
 	private void testCSVMorphWithTuples(final String resultJSONFileName, final String morphXMLFileName, final String tuplesJSONFileName)
 			throws Exception {
 
@@ -122,56 +137,81 @@ public class CSVTransformationFlowTestMorph extends GuicedTest {
 	}
 
 	
-	private void executeCSVMorphWithCSVWithoutJSON(final String morphXMLFileName, final String csvFileName)
-			throws Exception {
-
-		final String finalMorphXmlString = DMPPersistenceUtil.getResourceAsString(morphXMLFileName);
-		final java.io.StringReader stringReader = new java.io.StringReader(finalMorphXmlString);
-
-		//final TransformationFlow flow = TransformationFlow.fromString(finalMorphXmlString, internalModelServiceFactoryProvider);
-		// create normal flow that reads csv and outputs formeta for example
-		
-		// TODO: get the tuples
-		
-		// read
-		
-		final JsonNodeReader opener = new JsonNodeReader();
-		//final CsvReader reader = new CsvReader();
-		
-		// transform
-		
-		final Metamorph transformer = new Metamorph(stringReader);
-		
-		
-		final StreamUnflattener unflattener = new StreamUnflattener("", DMPStatics.ATTRIBUTE_DELIMITER);
-		final StreamJsonCollapser collapser = new StreamJsonCollapser();
-		//final GDMEncoder converter = new GDMEncoder(outputDataModel);
-		
-		// write
-		
-		//final GDMModelReceiver writer = new GDMModelReceiver();
-		//final CSVJSONWriter writer = new CSVJSONWriter();
-		
-		opener.setReceiver(transformer);
-		//.setReceiver(unflattener)
-		//.setReceiver(collapser)
-		//.setReceiver(converter)
-		//.setReceiver(writer);
-
-		//opener.process(tuples);
-		opener.closeStream();
-		
-		//writer.toString();
-		
-		//flow.getScript();
-
-		//final String actual = flow.applyResource(csvFileName);
-		//final ArrayNode array = objectMapper2.readValue(actual, ArrayNode.class);
-		//final String finalActual = objectMapper2.writeValueAsString(array);
+	*/
 	
+	/**
+	 * Test sub-entities with standard metafacture means
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testComplexMorph() throws Exception {
+		
+		
+		final JsonNodeReader jsonNodeReader = new JsonNodeReader();
+		
+		final Metamorph metamorph = new Metamorph(Resources.getResource(MORPH_DEFINITION_STRUCTURED_OUTPUT).getPath());
+		//final RdfMacroPipe rdfMacroPipe = new RdfMacroPipe();
+		final SimpleXmlEncoder xmlEncoder = new SimpleXmlEncoder();	
+		final FormetaEncoder formetaEncoder = new FormetaEncoder();	
+		formetaEncoder.setStyle(FormatterStyle.MULTILINE);
+		
+		//metamorph.setErrorHandler(new MetamorphErrorHandlerImpl());
+		
+		//xmlEncoder.setRootTag(ROOT_TAG);
+		//xmlEncoder.setRecordTag(RECORD_TAG);
+		//xmlEncoder.setNamespaceFile(NAMESPACE_MAPPING);
 
-		//System.out.println(finalActual);
+
+		jsonNodeReader
+		.setReceiver(metamorph)
+		.setReceiver(formetaEncoder)
+		;	
+		
+		final StringWriter stringWriter = new StringWriter();
+		final ObjectJavaIoWriter<String> streamWriter = new ObjectJavaIoWriter<String>(stringWriter);
+		
+		xmlEncoder.setReceiver(streamWriter);
+		formetaEncoder.setReceiver(streamWriter);
+		
+		jsonNodeReader.process(getTupleList(DMPPersistenceUtil.getResourceAsString("dd-700/test_transf2.tuples.json")).iterator());
+		
+		String result = stringWriter.toString();
+		System.out.println(result);		
 	}
+	
+	
+	private List<Tuple<String, JsonNode>> getTupleList(String jsonRecordString){
+		
+		// TODO: convert JSON string to Iterator with tuples of string + JsonNode pairs
+		List<Tuple<String, JsonNode>> tuplesList = null;
 
+		try {
+
+			tuplesList = DMPPersistenceUtil.getJSONObjectMapper().readValue(jsonRecordString, new TypeReference<List<Tuple<String, JsonNode>>>() {
+
+			});
+		} catch (final JsonParseException e) {
+
+			LOG.debug("couldn't parse the transformation result tuples to a JSON string");
+		} catch (final JsonMappingException e) {
+
+			LOG.debug("couldn't map the transformation result tuples to a JSON string");
+		} catch (final IOException e) {
+
+			LOG.debug("something went wrong while processing the transformation result tuples to a JSON string");
+		}
+
+		if (tuplesList == null) {
+
+			LOG.debug("couldn't process the transformation result tuples to a JSON string");
+
+			return null;
+		}
+		
+		return tuplesList;
+		
+	}
+	
 
 }

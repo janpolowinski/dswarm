@@ -22,7 +22,7 @@
         
         <entity name="http://dc/creator" flushWith="record">
          	<data name="http://foaf/firstname" source="@__TRANSFORMATION_OUTPUT_VARIABLE__2"/>
-			<data name="http://foaf/lastname" source="@__TRANSFORMATION_OUTPUT_VARIABLE__3" />
+			<data name="http://foaf/lastName" source="@__TRANSFORMATION_OUTPUT_VARIABLE__3" />
 		</entity>
 		
 		<!-- combine name="@dc_creator" value="${value}">
