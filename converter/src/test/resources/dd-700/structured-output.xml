@@ -4,23 +4,25 @@
         <name>mapping-1400167067416</name>
     </meta>
     <rules>
+    
         <data name="@val6" source="http://data.slub-dresden.de/resources/1/schema#val6"/>
         <data name="http://rdvocab.info/Elements/otherTitleInformation" source="@__TRANSFORMATION_OUTPUT_VARIABLE__1"/>
         <data name="@__TRANSFORMATION_OUTPUT_VARIABLE__1" source="@val6" />
         
         
         <!-- http://foaf/firstname -->
-        <data name="@val7" source="http://data.slub-dresden.de/resources/1/schema#val7"/>
-        <data name="http://foaf/firstname" source="@__TRANSFORMATION_OUTPUT_VARIABLE__2"/>
-        <data name="@__TRANSFORMATION_OUTPUT_VARIABLE__2" source="@val7" />
+        <data name="@val1" source="http://data.slub-dresden.de/resources/1/schema#val1"/>
+<!--         <data name="http://foaf/firstname" source="@__TRANSFORMATION_OUTPUT_VARIABLE__2"/> -->
+        <data name="@__TRANSFORMATION_OUTPUT_VARIABLE__2" source="@val1" />
         
         <!-- http://foaf/lastname -->
-        <data name="@val8" source="http://data.slub-dresden.de/resources/1/schema#val8"/>
-        <data name="http://foaf/lastname" source="@__TRANSFORMATION_OUTPUT_VARIABLE__3"/>
-        <data name="@__TRANSFORMATION_OUTPUT_VARIABLE__3" source="@val8" />
+        <data name="@val2" source="http://data.slub-dresden.de/resources/1/schema#val2"/>
+<!--         <data name="http://foaf/lastname" source="@__TRANSFORMATION_OUTPUT_VARIABLE__3"/> -->
+        <data name="@__TRANSFORMATION_OUTPUT_VARIABLE__3" source="@val2" />
         
         <entity name="http://dc/creator" flushWith="record">
-				<data name="http://foaf/lastname" source="@__TRANSFORMATION_OUTPUT_VARIABLE__3" />
+         	<data name="http://foaf/firstname" source="@__TRANSFORMATION_OUTPUT_VARIABLE__2"/>
+			<data name="http://foaf/lastname" source="@__TRANSFORMATION_OUTPUT_VARIABLE__3" />
 		</entity>
 		
 		<!-- combine name="@dc_creator" value="${value}">

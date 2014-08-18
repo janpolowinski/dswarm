@@ -1,20 +1,30 @@
 package org.dswarm.converter.flow.test.csv;
 
-import java.io.Writer;
+import java.io.File;
+import java.io.StringWriter;
 
-import org.culturegraph.mf.morph.Metamorph;
-import org.culturegraph.mf.stream.reader.CsvReader;
-import org.junit.Test;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.google.common.io.Resources;
 import com.google.inject.Provider;
+import org.culturegraph.mf.formeta.formatter.FormatterStyle;
+import org.culturegraph.mf.morph.Metamorph;
+import org.culturegraph.mf.stream.converter.FormetaEncoder;
+import org.culturegraph.mf.stream.converter.xml.SimpleXmlEncoder;
+import org.culturegraph.mf.stream.reader.CsvReader;
+import org.culturegraph.mf.stream.sink.ObjectJavaIoWriter;
+import org.culturegraph.mf.stream.source.FileOpener;
 import org.junit.Assert;
+import org.junit.Test;
 
 import org.dswarm.converter.GuicedTest;
 import org.dswarm.converter.flow.TransformationFlow;
-import org.dswarm.converter.mf.stream.source.CSVJSONWriter;
+import org.dswarm.converter.mf.stream.reader.JsonNodeReader;
+import org.dswarm.converter.pipe.StreamJsonCollapser;
+import org.dswarm.converter.pipe.StreamUnflattener;
+import org.dswarm.init.util.DMPStatics;
 import org.dswarm.persistence.service.InternalModelServiceFactory;
 import org.dswarm.persistence.util.DMPPersistenceUtil;
 
@@ -32,11 +42,12 @@ public class CSVTransformationFlowTestMorph extends GuicedTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Test
+	//@Test
 	public void testConstructionOfStructuredOutputWithMorph() throws Exception {
 
-		executeCSVMorphWithTuples("dd-700/structured-output.xml", "dd-700/test_book_with_author_data_flat.tuples.json");
+		//executeCSVMorphWithTuples("dd-700/structured-output.xml", "dd-700/test_book_with_author_data_flat.tuples.json");
 		//testCSVMorphWithTuples("dd-700/test_book_with_author_data.result.json", "dd-700/structured-output.xml", "dd-700/test_book_with_author_data_flat.tuples.json");
+		executeCSVMorphWithCSVWithoutJSON("dd-700/substring-replace.xml", "dd-700/test_book_with_author_data_flat.tuples.json");
 	}
 	
 	/**
@@ -44,7 +55,7 @@ public class CSVTransformationFlowTestMorph extends GuicedTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Test
+	//@Test
 	public void testOldSubStringReplaceWithMorph() throws Exception {
 
 		testCSVMorphWithTuples("dd-700/test_transf2.result.json", "dd-700/substring-replace.xml", "dd-700/test_transf2.tuples.json");
@@ -115,17 +126,42 @@ public class CSVTransformationFlowTestMorph extends GuicedTest {
 			throws Exception {
 
 		final String finalMorphXmlString = DMPPersistenceUtil.getResourceAsString(morphXMLFileName);
-
+		final java.io.StringReader stringReader = new java.io.StringReader(finalMorphXmlString);
 
 		//final TransformationFlow flow = TransformationFlow.fromString(finalMorphXmlString, internalModelServiceFactoryProvider);
 		// create normal flow that reads csv and outputs formeta for example
 		
-		final CsvReader reader = new CsvReader();
-		final Metamorph metamorph = new Metamorph(finalMorphXmlString);
-		final CSVJSONWriter writer = new CSVJSONWriter();
+		// TODO: get the tuples
+		
+		// read
+		
+		final JsonNodeReader opener = new JsonNodeReader();
+		//final CsvReader reader = new CsvReader();
+		
+		// transform
+		
+		final Metamorph transformer = new Metamorph(stringReader);
 		
 		
+		final StreamUnflattener unflattener = new StreamUnflattener("", DMPStatics.ATTRIBUTE_DELIMITER);
+		final StreamJsonCollapser collapser = new StreamJsonCollapser();
+		//final GDMEncoder converter = new GDMEncoder(outputDataModel);
 		
+		// write
+		
+		//final GDMModelReceiver writer = new GDMModelReceiver();
+		//final CSVJSONWriter writer = new CSVJSONWriter();
+		
+		opener.setReceiver(transformer);
+		//.setReceiver(unflattener)
+		//.setReceiver(collapser)
+		//.setReceiver(converter)
+		//.setReceiver(writer);
+
+		//opener.process(tuples);
+		opener.closeStream();
+		
+		//writer.toString();
 		
 		//flow.getScript();
 
@@ -136,5 +172,6 @@ public class CSVTransformationFlowTestMorph extends GuicedTest {
 
 		//System.out.println(finalActual);
 	}
+
 
 }
