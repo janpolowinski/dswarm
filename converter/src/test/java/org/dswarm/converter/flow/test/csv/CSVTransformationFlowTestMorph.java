@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
 
+import com.google.common.base.Optional;
+
+import com.google.common.collect.ImmutableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -30,10 +32,14 @@ import org.junit.Test;
 
 import org.dswarm.converter.GuicedTest;
 import org.dswarm.converter.flow.TransformationFlow;
+import org.dswarm.converter.mf.stream.GDMEncoder;
+import org.dswarm.converter.mf.stream.GDMModelReceiver;
 import org.dswarm.converter.mf.stream.reader.JsonNodeReader;
 import org.dswarm.converter.pipe.StreamJsonCollapser;
 import org.dswarm.converter.pipe.StreamUnflattener;
 import org.dswarm.init.util.DMPStatics;
+import org.dswarm.persistence.model.internal.gdm.GDMModel;
+import org.dswarm.persistence.model.resource.DataModel;
 import org.dswarm.persistence.model.types.Tuple;
 import org.dswarm.persistence.service.InternalModelServiceFactory;
 import org.dswarm.persistence.util.DMPPersistenceUtil;
@@ -192,33 +198,43 @@ public class CSVTransformationFlowTestMorph extends GuicedTest {
 		final JsonNodeReader jsonNodeReader = new JsonNodeReader();
 		
 		final Metamorph metamorph = new Metamorph(Resources.getResource(MORPH_DEFINITION_STRUCTURED_OUTPUT).getPath());
-		//final RdfMacroPipe rdfMacroPipe = new RdfMacroPipe();
-		final SimpleXmlEncoder xmlEncoder = new SimpleXmlEncoder();	
-		final FormetaEncoder formetaEncoder = new FormetaEncoder();	
-		formetaEncoder.setStyle(FormatterStyle.MULTILINE);
 		
-		//metamorph.setErrorHandler(new MetamorphErrorHandlerImpl());
 		
-		//xmlEncoder.setRootTag(ROOT_TAG);
-		//xmlEncoder.setRecordTag(RECORD_TAG);
-		//xmlEncoder.setNamespaceFile(NAMESPACE_MAPPING);
-
+		final StreamUnflattener unflattener = new StreamUnflattener("", DMPStatics.ATTRIBUTE_DELIMITER);
+		final StreamJsonCollapser collapser = new StreamJsonCollapser();
+		
+		Optional<DataModel> dataModel = Optional.absent();
+		
+		final GDMEncoder converter = new GDMEncoder(dataModel);
+		final GDMModelReceiver writer = new GDMModelReceiver();
 
 		jsonNodeReader
 		.setReceiver(metamorph)
-		.setReceiver(formetaEncoder)
+		//.setReceiver(unflattener)
+		//.setReceiver(collapser)
+		.setReceiver(converter)
+		.setReceiver(writer);
 		;	
 		
-		final StringWriter stringWriter = new StringWriter();
-		final ObjectJavaIoWriter<String> streamWriter = new ObjectJavaIoWriter<String>(stringWriter);
 		
-		xmlEncoder.setReceiver(streamWriter);
-		formetaEncoder.setReceiver(streamWriter);
-		
+//		final StringWriter stringWriter = new StringWriter();
+//		final ObjectJavaIoWriter<String> streamWriter = new ObjectJavaIoWriter<String>(stringWriter);
+//
+//		formetaEncoder.setReceiver(streamWriter);
+//		
 		jsonNodeReader.process(getTupleList(DMPPersistenceUtil.getResourceAsString("dd-700/test_2_book_with_author_data_flat.tuples.json")).iterator());
+		jsonNodeReader.closeStream();
+//		
+//		String result = stringWriter.toString();
+//		System.out.println(result);		
 		
-		String result = stringWriter.toString();
-		System.out.println(result);		
+		
+		final ImmutableList<GDMModel> gdmModels = writer.getCollection();
+		
+		for (GDMModel gdmModel : gdmModels) {
+			System.out.println(gdmModel.toJSON());
+		}
+
 	}
 	
 	
