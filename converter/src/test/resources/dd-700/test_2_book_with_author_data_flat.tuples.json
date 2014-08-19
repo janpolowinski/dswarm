@@ -24,16 +24,16 @@
     }, {
         "http://data.slub-dresden.de/resources/1/schema#id" : "2"
     }, {
-        "http://data.slub-dresden.de/resources/1/schema#val1" : "schroeder"
+        "http://data.slub-dresden.de/resources/1/schema#val1" : ""
     }, {
-        "http://data.slub-dresden.de/resources/1/schema#val2" : ""
+        "http://data.slub-dresden.de/resources/1/schema#val2" : "schroeder"
     }, {
         "http://data.slub-dresden.de/resources/1/schema#val3" : "12 23"
     }, {
         "http://data.slub-dresden.de/resources/1/schema#val4" : "cA"
     }, {
-        "http://data.slub-dresden.de/resources/1/schema#val5" : "isbn13-9783183057139"
+        "http://data.slub-dresden.de/resources/1/schema#val5" : "isbn13-7983183057193"
     }, {
-        "http://data.slub-dresden.de/resources/1/schema#val6" : "isbn10-3183057131"
+        "http://data.slub-dresden.de/resources/1/schema#val6" : "isbn10-1383057113"
     } ]
 } ]

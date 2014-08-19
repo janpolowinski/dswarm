@@ -140,12 +140,12 @@ public class CSVTransformationFlowTestMorph extends GuicedTest {
 	*/
 	
 	/**
-	 * Test sub-entities with standard metafacture means
+	 * Test building sub-entities using standard metafacture formeta format as output
 	 * 
 	 * @throws Exception
 	 */
-	@Test
-	public void testComplexMorph() throws Exception {
+	//@Test
+	public void testComplexMorphJson2Formeta() throws Exception {
 		
 		
 		final JsonNodeReader jsonNodeReader = new JsonNodeReader();
@@ -174,7 +174,48 @@ public class CSVTransformationFlowTestMorph extends GuicedTest {
 		xmlEncoder.setReceiver(streamWriter);
 		formetaEncoder.setReceiver(streamWriter);
 		
-		jsonNodeReader.process(getTupleList(DMPPersistenceUtil.getResourceAsString("dd-700/test_transf2.tuples.json")).iterator());
+		jsonNodeReader.process(getTupleList(DMPPersistenceUtil.getResourceAsString("dd-700/test_book_with_author_data_flat.tuples.json")).iterator());
+		
+		String result = stringWriter.toString();
+		System.out.println(result);		
+	}
+	
+	/**
+	 * Test building sub-entities using GDM Json as output format again
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testComplexMorphJson2Json() throws Exception {
+		
+		
+		final JsonNodeReader jsonNodeReader = new JsonNodeReader();
+		
+		final Metamorph metamorph = new Metamorph(Resources.getResource(MORPH_DEFINITION_STRUCTURED_OUTPUT).getPath());
+		//final RdfMacroPipe rdfMacroPipe = new RdfMacroPipe();
+		final SimpleXmlEncoder xmlEncoder = new SimpleXmlEncoder();	
+		final FormetaEncoder formetaEncoder = new FormetaEncoder();	
+		formetaEncoder.setStyle(FormatterStyle.MULTILINE);
+		
+		//metamorph.setErrorHandler(new MetamorphErrorHandlerImpl());
+		
+		//xmlEncoder.setRootTag(ROOT_TAG);
+		//xmlEncoder.setRecordTag(RECORD_TAG);
+		//xmlEncoder.setNamespaceFile(NAMESPACE_MAPPING);
+
+
+		jsonNodeReader
+		.setReceiver(metamorph)
+		.setReceiver(formetaEncoder)
+		;	
+		
+		final StringWriter stringWriter = new StringWriter();
+		final ObjectJavaIoWriter<String> streamWriter = new ObjectJavaIoWriter<String>(stringWriter);
+		
+		xmlEncoder.setReceiver(streamWriter);
+		formetaEncoder.setReceiver(streamWriter);
+		
+		jsonNodeReader.process(getTupleList(DMPPersistenceUtil.getResourceAsString("dd-700/test_2_book_with_author_data_flat.tuples.json")).iterator());
 		
 		String result = stringWriter.toString();
 		System.out.println(result);		

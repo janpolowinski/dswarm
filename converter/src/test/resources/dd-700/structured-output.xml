@@ -10,19 +10,17 @@
         <data name="@__TRANSFORMATION_OUTPUT_VARIABLE__1" source="@val6" />
         
         
-        <!-- http://foaf/firstname -->
+        <!-- givenName -->
         <data name="@val1" source="http://data.slub-dresden.de/resources/1/schema#val1"/>
-<!--         <data name="http://foaf/firstname" source="@__TRANSFORMATION_OUTPUT_VARIABLE__2"/> -->
         <data name="@__TRANSFORMATION_OUTPUT_VARIABLE__2" source="@val1" />
         
-        <!-- http://foaf/lastname -->
+        <!-- familyName -->
         <data name="@val2" source="http://data.slub-dresden.de/resources/1/schema#val2"/>
-<!--         <data name="http://foaf/lastname" source="@__TRANSFORMATION_OUTPUT_VARIABLE__3"/> -->
         <data name="@__TRANSFORMATION_OUTPUT_VARIABLE__3" source="@val2" />
         
         <entity name="http://dc/creator" flushWith="record">
-         	<data name="http://foaf/firstname" source="@__TRANSFORMATION_OUTPUT_VARIABLE__2"/>
-			<data name="http://foaf/lastName" source="@__TRANSFORMATION_OUTPUT_VARIABLE__3" />
+         	<data name="http://xmlns.com/foaf/0.1/givenName" source="@__TRANSFORMATION_OUTPUT_VARIABLE__2"/>
+			<data name="http://xmlns.com/foaf/0.1/familyName" source="@__TRANSFORMATION_OUTPUT_VARIABLE__3" />
 		</entity>
 		
 		<!-- combine name="@dc_creator" value="${value}">
