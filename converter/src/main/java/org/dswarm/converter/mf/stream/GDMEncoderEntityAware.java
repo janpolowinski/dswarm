@@ -32,7 +32,8 @@ import org.dswarm.persistence.model.resource.utils.DataModelUtils;
 import org.dswarm.persistence.util.GDMUtil;
 
 /**
- * Converts records to GDM-JSON.
+ * TODO: copied from GDMEncoder. Reuse code from GDMEncoder if both classes should coexist in future
+ * Converts records to GDM-JSON, being aware of records existing of nested entities.
  * 
  * @author polowins
  * @author tgaengler
@@ -41,7 +42,7 @@ import org.dswarm.persistence.util.GDMUtil;
 @Description("converts records to GDM-JSON")
 @In(StreamReceiver.class)
 @Out(GDMModel.class)
-public class GDMEncoder extends DefaultStreamPipe<ObjectReceiver<GDMModel>> {
+public final class GDMEncoderEntityAware extends DefaultStreamPipe<ObjectReceiver<GDMModel>> {
 
 	private String							currentId;
 	private final Model						internalGDMModel;
@@ -61,7 +62,7 @@ public class GDMEncoder extends DefaultStreamPipe<ObjectReceiver<GDMModel>> {
 	private final Map<String, AtomicLong>	valueCounter	= Maps.newHashMap();
 	private final Map<String, String>		uris			= Maps.newHashMap();
 
-	public GDMEncoder(final Optional<DataModel> dataModel) {
+	public GDMEncoderEntityAware(final Optional<DataModel> dataModel) {
 
 		super();
 
@@ -77,7 +78,7 @@ public class GDMEncoder extends DefaultStreamPipe<ObjectReceiver<GDMModel>> {
 	@Override
 	public void startRecord(final String identifier) {
 
-		// System.out.println("in start record with: identifier = '" + identifier + "'");
+		System.out.println("in start record with: identifier = '" + identifier + "'");
 
 		assert !isClosed();
 
@@ -112,16 +113,28 @@ public class GDMEncoder extends DefaultStreamPipe<ObjectReceiver<GDMModel>> {
 	@Override
 	public void startEntity(final String name) {
 
-		// System.out.println("in start entity with name = '" + name + "'");
+		System.out.println("in start entity with name = '" + name + "'");
 
 		assert !isClosed();
+		
+		final Predicate attributeProperty = getPredicate(name);
+		
+		final ResourceNode subEntityResource = new ResourceNode("http://example.org/some/Person");
+		
+		final ResourceNode subEntityType = new ResourceNode("http://foaf.de/Person");// ResourceFactory.createResource(value);
+
+
+		// recordResource.addStatement(entityNode, attributeProperty, typeResource);
+		addStatement(recordNode, attributeProperty, subEntityResource);
+		addStatement(subEntityResource, getPredicate(GDMUtil.RDF_type), subEntityType);
+
 
 	}
 
 	@Override
 	public void endEntity() {
 
-		// System.out.println("in end entity");
+		System.out.println("in end entity");
 
 		assert !isClosed();
 
@@ -130,7 +143,7 @@ public class GDMEncoder extends DefaultStreamPipe<ObjectReceiver<GDMModel>> {
 	@Override
 	public void literal(final String name, final String value) {
 
-		// System.out.println("in literal with name = '" + name + "' :: value = '" + value + "'");
+		System.out.println("in literal with name = '" + name + "' :: value = '" + value + "'");
 
 		assert !isClosed();
 

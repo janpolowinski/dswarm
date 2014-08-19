@@ -6,7 +6,6 @@ import java.io.StringWriter;
 import java.util.List;
 
 import com.google.common.base.Optional;
-
 import com.google.common.collect.ImmutableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +32,7 @@ import org.junit.Test;
 import org.dswarm.converter.GuicedTest;
 import org.dswarm.converter.flow.TransformationFlow;
 import org.dswarm.converter.mf.stream.GDMEncoder;
+import org.dswarm.converter.mf.stream.GDMEncoderEntityAware;
 import org.dswarm.converter.mf.stream.GDMModelReceiver;
 import org.dswarm.converter.mf.stream.reader.JsonNodeReader;
 import org.dswarm.converter.pipe.StreamJsonCollapser;
@@ -205,7 +205,7 @@ public class CSVTransformationFlowTestMorph extends GuicedTest {
 		
 		Optional<DataModel> dataModel = Optional.absent();
 		
-		final GDMEncoder converter = new GDMEncoder(dataModel);
+		final GDMEncoderEntityAware converter = new GDMEncoderEntityAware(dataModel);
 		final GDMModelReceiver writer = new GDMModelReceiver();
 
 		jsonNodeReader
