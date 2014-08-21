@@ -127,6 +127,9 @@ public final class GDMEncoderEntityAware extends DefaultStreamPipe<ObjectReceive
 		// recordResource.addStatement(entityNode, attributeProperty, typeResource);
 		addStatement(recordNode, attributeProperty, subEntityResource);
 		addStatement(subEntityResource, getPredicate(GDMUtil.RDF_type), subEntityType);
+		
+		// TODO: use resource instead?
+		recordNode = subEntityResource;
 
 
 	}

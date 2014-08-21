@@ -231,9 +231,6 @@ public class CSVTransformationFlowTestMorph extends GuicedTest {
 		
 		final ImmutableList<GDMModel> gdmModels = writer.getCollection();
 		
-		// currently the output is like this. no entities make it to the GDM:
-		//[{"http://data.slub-dresden.de/datamodels/2/records/6c6d50f7-9713-4927-a6f1-7fdc4d8f5a3d":[{"http://rdvocab.info/Elements/otherTitleInformation":"isbn10-3183057131"},{"http://xmlns.com/foaf/0.1/givenName":"charlie"},{"http://xmlns.com/foaf/0.1/familyName":"brown"}]}]
-		//[{"http://data.slub-dresden.de/datamodels/2/records/1ea5b991-f061-45fc-aba9-5604cb23c3bb":[{"http://rdvocab.info/Elements/otherTitleInformation":"isbn10-1383057113"},{"http://xmlns.com/foaf/0.1/familyName":"schroeder"}]}]
 		for (GDMModel gdmModel : gdmModels) {
 			System.out.println(gdmModel.toJSON());
 		}
