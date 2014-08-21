@@ -63,7 +63,7 @@ import org.dswarm.persistence.util.GDMUtil;
 /**
  * A internal model service implementation for RDF triples.<br/>
  * Currently, the Neo4j database is utilised.
- * 
+ *
  * @author tgaengler
  */
 @Singleton
@@ -92,17 +92,12 @@ public class InternalGDMGraphService implements InternalModelService {
 
 	private final Provider<AttributeService>		attributeService;
 
-	/**
-	 * The data model graph URI pattern
-	 */
-	private static final String						DATA_MODEL_GRAPH_URI_PATTERN	= "http://data.slub-dresden.de/datamodel/{datamodelid}/data";
-
 	private final String							graphEndpoint;
 
 	/**
 	 * /** Creates a new internal triple service with the given data model persistence service, schema persistence service, class
 	 * persistence service and the endpoint to access the graph database.
-	 * 
+	 *
 	 * @param dataModelService the data model persistence service
 	 * @param schemaService the schema persistence service
 	 * @param classService the class persistence service
@@ -113,7 +108,7 @@ public class InternalGDMGraphService implements InternalModelService {
 	@Inject
 	public InternalGDMGraphService(final Provider<DataModelService> dataModelService, final Provider<SchemaService> schemaService,
 			final Provider<ClaszService> classService, final Provider<AttributePathService> attributePathService,
-			final Provider<AttributeService> attributeService, @Named("dmp_graph_endpoint") final String graphEndpointArg) {
+			final Provider<AttributeService> attributeService, @Named("dswarm.db.graph.endpoint") final String graphEndpointArg) {
 
 		this.dataModelService = dataModelService;
 		this.schemaService = schemaService;
@@ -154,7 +149,7 @@ public class InternalGDMGraphService implements InternalModelService {
 			throw new DMPPersistenceException("real model that should be added to DB shouldn't be null");
 		}
 
-		final String resourceGraphURI = InternalGDMGraphService.DATA_MODEL_GRAPH_URI_PATTERN.replace("{datamodelid}", dataModelId.toString());
+		final String resourceGraphURI = GDMUtil.getDataModelGraphURI(dataModelId);
 
 		final DataModel dataModel = addRecordClass(dataModelId, gdmModel.getRecordClassURI());
 
@@ -206,7 +201,7 @@ public class InternalGDMGraphService implements InternalModelService {
 			throw new DMPPersistenceException("data model id shouldn't be null");
 		}
 
-		final String resourceGraphURI = InternalGDMGraphService.DATA_MODEL_GRAPH_URI_PATTERN.replace("{datamodelid}", dataModelId.toString());
+		final String resourceGraphURI = GDMUtil.getDataModelGraphURI(dataModelId);
 
 		// retrieve record class uri from data model schema
 		final DataModel dataModel = dataModelService.get().getObject(dataModelId);
@@ -301,7 +296,7 @@ public class InternalGDMGraphService implements InternalModelService {
 			throw new DMPPersistenceException("data model id shouldn't be null");
 		}
 
-		final String resourceGraphURI = InternalGDMGraphService.DATA_MODEL_GRAPH_URI_PATTERN.replace("{datamodelid}", dataModelId.toString());
+		final String resourceGraphURI = GDMUtil.getDataModelGraphURI(dataModelId);
 
 		// TODO: delete DataModel object from DB here as well?
 
@@ -313,6 +308,7 @@ public class InternalGDMGraphService implements InternalModelService {
 		// TODO
 
 	}
+
 
 	/**
 	 * {@inheritDoc}
@@ -348,7 +344,7 @@ public class InternalGDMGraphService implements InternalModelService {
 
 	/**
 	 * Adds the record class to the schema of the data model.
-	 * 
+	 *
 	 * @param dataModelId the identifier of the data model
 	 * @param recordClassUri the identifier of the record class
 	 * @throws DMPPersistenceException
