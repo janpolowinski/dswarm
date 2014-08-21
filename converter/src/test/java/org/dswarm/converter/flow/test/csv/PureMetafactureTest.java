@@ -93,6 +93,42 @@ public class PureMetafactureTest {
 		System.out.println(result);		
 	}
 	
+	/**
+	 * Test sub-entities with standard metafacture means
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testComplexMorphFormeta() throws Exception {
+		
+		final File file = new File(Resources.getResource(CSV).getPath());
+		final FileOpener opener = new FileOpener();
+
+		final CsvReader csvReader = new CsvReader(",");
+		csvReader.setHasHeader(true);
+		
+		final Metamorph metamorph = new Metamorph(Resources.getResource(MORPH_DEFINITION_STRUCTURED_OUTPUT).getPath());
+		final FormetaEncoder formetaEncoder = new FormetaEncoder();	
+		formetaEncoder.setStyle(FormatterStyle.MULTILINE);
+		
+
+		opener
+		.setReceiver(csvReader)
+		.setReceiver(metamorph)
+		.setReceiver(formetaEncoder)
+		;	
+		
+		final StringWriter stringWriter = new StringWriter();
+		final ObjectJavaIoWriter<String> streamWriter = new ObjectJavaIoWriter<String>(stringWriter);
+
+		formetaEncoder.setReceiver(streamWriter);
+		
+		opener.process(file.getAbsolutePath());
+
+		String result = stringWriter.toString();
+		System.out.println(result);		
+	}
+	
 	
 
 }

@@ -150,7 +150,7 @@ public class CSVTransformationFlowTestMorph extends GuicedTest {
 	 * 
 	 * @throws Exception
 	 */
-	//@Test
+	@Test
 	public void testComplexMorphJson2Formeta() throws Exception {
 		
 		
@@ -180,9 +180,10 @@ public class CSVTransformationFlowTestMorph extends GuicedTest {
 		xmlEncoder.setReceiver(streamWriter);
 		formetaEncoder.setReceiver(streamWriter);
 		
-		jsonNodeReader.process(getTupleList(DMPPersistenceUtil.getResourceAsString("dd-700/test_book_with_author_data_flat.tuples.json")).iterator());
+		jsonNodeReader.process(getTupleList(DMPPersistenceUtil.getResourceAsString("dd-700/test_2_book_with_author_data_flat.tuples.json")).iterator());
 		
 		String result = stringWriter.toString();
+		System.out.println("Formeta:");	
 		System.out.println(result);		
 	}
 	
@@ -232,7 +233,14 @@ public class CSVTransformationFlowTestMorph extends GuicedTest {
 		final ImmutableList<GDMModel> gdmModels = writer.getCollection();
 		
 		for (GDMModel gdmModel : gdmModels) {
-			System.out.println(gdmModel.toJSON());
+			
+			final ObjectMapper objectMapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL).configure(
+					SerializationFeature.INDENT_OUTPUT, true);
+			
+			final String prettyPrintedJson = objectMapper.writeValueAsString(gdmModel.toJSON());
+
+			System.out.println("GDM JSON:");
+			System.out.println(prettyPrintedJson);
 		}
 
 	}

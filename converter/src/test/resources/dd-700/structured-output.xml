@@ -14,14 +14,35 @@
         <data name="@val1" source="http://data.slub-dresden.de/resources/1/schema#val1"/>
         <data name="@__TRANSFORMATION_OUTPUT_VARIABLE__2" source="@val1" />
         
+        <data name="@val3" source="http://data.slub-dresden.de/resources/1/schema#val3"/>
+        <data name="http://rdvocab.info/Elements/otherTitleInformation" source="@__TRANSFORMATION_OUTPUT_VARIABLE__5"/>
+        <data name="@__TRANSFORMATION_OUTPUT_VARIABLE__5" source="@val3" />
+        
         <!-- familyName -->
         <data name="@val2" source="http://data.slub-dresden.de/resources/1/schema#val2"/>
         <data name="@__TRANSFORMATION_OUTPUT_VARIABLE__3" source="@val2" />
         
+        <!-- place of birth title -->
+        <data name="@val10" source="http://data.slub-dresden.de/resources/1/schema#val10"/>
+        <data name="@__TRANSFORMATION_OUTPUT_VARIABLE__10" source="@val10" />
+        
         <entity name="http://dc/creator" flushWith="record">
          	<data name="http://xmlns.com/foaf/0.1/givenName" source="@__TRANSFORMATION_OUTPUT_VARIABLE__2"/>
 			<data name="http://xmlns.com/foaf/0.1/familyName" source="@__TRANSFORMATION_OUTPUT_VARIABLE__3" />
+			
+				<!-- causes infinite loop for GDM JSON Encoder -->
+				<!-- bornIn -->
+<!-- 				<entity name="http://dc/bornIn" flushWith="record"> -->
+<!-- 		         	<data name="http://dc/title" source="@__TRANSFORMATION_OUTPUT_VARIABLE__10"/> -->
+<!-- 				</entity> -->
+		
 		</entity>
+		
+
+		
+		<data name="@val5" source="http://data.slub-dresden.de/resources/1/schema#val5"/>
+        <data name="http://example.org/isbn13" source="@__TRANSFORMATION_OUTPUT_VARIABLE__4"/>
+        <data name="@__TRANSFORMATION_OUTPUT_VARIABLE__4" source="@val5" />
 		
 		<!-- combine name="@dc_creator" value="${value}">
 			<data source="002@.0">
@@ -29,6 +50,12 @@
 			</data>	
 			<data source="@shortName028A" name="value"/>
 		</combine-->
+		
+		<!-- causes infinite loop for GDM JSON Encoder -->
+		<entity name="http://dc/contributor" flushWith="record">
+         	<data name="http://xmlns.com/foaf/0.1/givenName" source="@__TRANSFORMATION_OUTPUT_VARIABLE__4"/>
+			<data name="http://xmlns.com/foaf/0.1/familyName" source="@__TRANSFORMATION_OUTPUT_VARIABLE__5" />
+		</entity>
         
     </rules>
 </metamorph>

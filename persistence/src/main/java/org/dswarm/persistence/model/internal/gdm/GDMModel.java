@@ -384,6 +384,7 @@ public class GDMModel implements Model {
 
 				final ArrayNode objectNode = DMPPersistenceUtil.getJSONObjectMapper().createArrayNode();
 
+				// causes infinite loop at the moment when > 1 enties are built
 				final JsonNode jsonNode = convertRDFToJSON(recordResource, object, rootJson, objectNode);
 
 				final ObjectNode objectJSONObject = DMPPersistenceUtil.getJSONObjectMapper().createObjectNode();

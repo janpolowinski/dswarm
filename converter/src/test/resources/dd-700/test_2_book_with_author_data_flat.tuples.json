@@ -16,6 +16,8 @@
         "http://data.slub-dresden.de/resources/1/schema#val5" : "isbn13-9783183057139"
     }, {
         "http://data.slub-dresden.de/resources/1/schema#val6" : "isbn10-3183057131"
+    }, {
+        "http://data.slub-dresden.de/resources/1/schema#val10" : "Berlin"
     } ]
 }, {
     "v1" : "http://data.slub-dresden.de/datamodels/2/records/1ea5b991-f061-45fc-aba9-5604cb23c3bb",
@@ -35,5 +37,7 @@
         "http://data.slub-dresden.de/resources/1/schema#val5" : "isbn13-7983183057193"
     }, {
         "http://data.slub-dresden.de/resources/1/schema#val6" : "isbn10-1383057113"
+    }, {
+        "http://data.slub-dresden.de/resources/1/schema#val10" : "Dresden"
     } ]
 } ]
