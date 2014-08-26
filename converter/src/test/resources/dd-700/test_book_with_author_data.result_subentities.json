@@ -4,6 +4,15 @@
     "http://dc/creator" : {
       "v1" : "http://example.org/some/Person",
       "v2" : [ {
+        "http://data.slub-dresden.de/datamodels/71107771-0a54-4df0-ae49-450b82c7fcfb/schema#bornIn" : {
+          "v1" : "http://foaf.de/some/Place",
+          "v2" : [ {
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : "http://foaf.de/Place"
+          }, {
+            "http://dc/title" : "Berlin"
+          } ]
+        }
+      }, {
         "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : "http://foaf.de/Person"
       }, {
         "http://xmlns.com/foaf/0.1/givenName" : "charlie"

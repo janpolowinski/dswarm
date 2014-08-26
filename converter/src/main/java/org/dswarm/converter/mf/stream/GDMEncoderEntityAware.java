@@ -2,10 +2,14 @@ package org.dswarm.converter.mf.stream;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.annotation.Nullable;
+
+import org.hibernate.internal.jaxb.mapping.hbm.SubEntityElement;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
@@ -26,6 +30,7 @@ import org.dswarm.graph.json.Node;
 import org.dswarm.graph.json.Predicate;
 import org.dswarm.graph.json.Resource;
 import org.dswarm.graph.json.ResourceNode;
+import org.dswarm.graph.json.Statement;
 import org.dswarm.persistence.model.internal.gdm.GDMModel;
 import org.dswarm.persistence.model.resource.DataModel;
 import org.dswarm.persistence.model.resource.utils.DataModelUtils;
@@ -33,22 +38,28 @@ import org.dswarm.persistence.util.GDMUtil;
 
 /**
  * TODO: copied from GDMEncoder. Reuse code from GDMEncoder if both classes should coexist in future
- * Converts records to GDM-JSON, being aware of records existing of nested entities.
+ * Converts records to a GDM Model, being aware of nested entities.
  * 
  * @author polowins
  * @author tgaengler
  * @author phorn
  */
-@Description("converts records to GDM-JSON")
+@Description("converts records to a GDM Model")
 @In(StreamReceiver.class)
 @Out(GDMModel.class)
 public final class GDMEncoderEntityAware extends DefaultStreamPipe<ObjectReceiver<GDMModel>> {
 
-	private String							currentId;
 	private final Model						internalGDMModel;
+	private String							recordId;
 	private Resource						recordResource;
 	private ResourceNode					recordNode;
+	
+	private String							currentId;
+	private Resource						currentEntityResource;
+	private ResourceNode					currentEntityNode;
+	
 	// private Stack<Tuple<Node, Predicate>> entityStack;
+	private Stack<Resource> 				entityStack;
 	// private final Stack<String> elementURIStack; // TODO use stack when statements for deeper hierarchy levels are possible
 
 	// not used: private ResourceNode recordType;
@@ -70,6 +81,7 @@ public final class GDMEncoderEntityAware extends DefaultStreamPipe<ObjectReceive
 		dataModelUri = init(dataModel);
 
 		// init
+		entityStack = new Stack<Resource>();
 		// elementURIStack = new Stack<>(); // TODO use stack when statements for deeper hierarchy levels are possible
 		internalGDMModel = new Model();
 
@@ -82,15 +94,20 @@ public final class GDMEncoderEntityAware extends DefaultStreamPipe<ObjectReceive
 
 		assert !isClosed();
 
-		currentId = isValidUri(identifier) ? identifier : mintRecordUri(identifier);
+		recordId = isValidUri(identifier) ? identifier : mintRecordUri(identifier);
 
-		recordResource = new Resource(currentId);
-		recordNode = new ResourceNode(currentId);
+		recordResource = new Resource(recordId);
+		recordNode = new ResourceNode(recordId);
+		
+		currentEntityResource = recordResource;
+		currentEntityNode = recordNode;
 
 	}
 
 	@Override
 	public void endRecord() {
+		
+		System.out.println("in end record");
 
 		assert !isClosed();
 
@@ -101,45 +118,79 @@ public final class GDMEncoderEntityAware extends DefaultStreamPipe<ObjectReceive
 
 		if (recordTypeUri == null) {
 
-			gdmModel = new GDMModel(internalGDMModel, currentId);
+			gdmModel = new GDMModel(internalGDMModel, recordId);
+			
 		} else {
 
-			gdmModel = new GDMModel(internalGDMModel, currentId, recordTypeUri);
+			gdmModel = new GDMModel(internalGDMModel, recordId, recordTypeUri);
+			
 		}
 
 		getReceiver().process(gdmModel);
 	}
 
+	// TODO multiple times nested entities not yet supported (only record entity with one subentity)
 	@Override
 	public void startEntity(final String name) {
 
 		System.out.println("in start entity with name = '" + name + "'");
+		
+		System.out.println("current resource " + currentEntityResource.getUri() + " current resource node " + currentEntityNode.getUri());
 
 		assert !isClosed();
 		
 		final Predicate attributeProperty = getPredicate(name);
 		
-		final ResourceNode subEntityResource = new ResourceNode("http://example.org/some/Person");
+		currentId = "http://example.org/some/Person";
 		
-		final ResourceNode subEntityType = new ResourceNode("http://foaf.de/Person");// ResourceFactory.createResource(value);
+		final Resource subEntityResource = new Resource(currentId);
+		final ResourceNode subEntityNode = new ResourceNode(subEntityResource);
 
-
-		// recordResource.addStatement(entityNode, attributeProperty, typeResource);
-		addStatement(recordNode, attributeProperty, subEntityResource);
-		addStatement(subEntityResource, getPredicate(GDMUtil.RDF_type), subEntityType);
+		// add the new entity to the parent entity
+		addStatement(currentEntityNode, attributeProperty, subEntityNode);
 		
-		// TODO: use resource instead?
-		recordNode = subEntityResource;
-
+		currentEntityResource = subEntityResource;
+		currentEntityNode = subEntityNode;
+		
+		final ResourceNode typeResource = new ResourceNode("http://foaf.de/Person");
+		addStatement(currentEntityNode, getPredicate(GDMUtil.RDF_type), typeResource);
+		
+		
+		/*
+		// test creating a subentity manually
+		final Resource subSubEntityResource = new Resource("http://foaf.de/some/Place");
+		final ResourceNode subSubEntityNode = new ResourceNode(subSubEntityResource);
+		final ResourceNode typeResourcePlace = new ResourceNode("http://foaf.de/Place");
+		subSubEntityResource.addStatement(subSubEntityNode, getPredicate(GDMUtil.RDF_type), typeResourcePlace);
+		subEntityResource.addStatement(subEntityNode, getPredicate("bornIn"), subSubEntityNode);
+		
+		printStatements(subSubEntityResource);
+		*/
+		
+		
+		//currentEntityResource.addStatement(currentEntityNode, getPredicate(GDMUtil.RDF_type), new LiteralNode("test"));
+		
+		System.out.println("current resource " + currentEntityResource.getUri() + " current resource node " + currentEntityNode.getUri());
 
 	}
 
+	// TODO multiple times nested entities not yet supported (only record entity with one subentity)
 	@Override
 	public void endEntity() {
 
 		System.out.println("in end entity");
+		
+		System.out.println("current resource " + currentEntityResource.getUri() + " current resource node " + currentEntityNode.getUri());
 
 		assert !isClosed();
+		
+		internalGDMModel.addResource(currentEntityResource);
+		
+		currentEntityResource = recordResource;
+		currentEntityNode = recordNode;
+		currentId = recordId;
+		
+		System.out.println("current resource " + currentEntityResource.getUri() + " current resource node " + currentEntityNode.getUri());
 
 	}
 
@@ -148,13 +199,14 @@ public final class GDMEncoderEntityAware extends DefaultStreamPipe<ObjectReceive
 
 		System.out.println("in literal with name = '" + name + "' :: value = '" + value + "'");
 
+		System.out.println("current resource " + currentEntityResource.getUri() + " current resource node " + currentEntityNode.getUri());
+		
 		assert !isClosed();
 
 		// create triple
 		// name = predicate
-		// value = literal or object
-		// TODO: only literals atm, i.e., how to determine other resources?
-		// => still valid: how to determine other resources!
+		// value = literal or object -> no. now handled by entities
+		// TODO: only literals atm, i.e., how to determine other resources? -> entities
 		// ==> @phorn proposed to utilise "<" ">" to identify resource ids (uris)
 		if (name == null) {
 
@@ -166,6 +218,7 @@ public final class GDMEncoderEntityAware extends DefaultStreamPipe<ObjectReceive
 		if (isValidUri(name)) {
 
 			propertyUri = name;
+			
 		} else {
 
 			propertyUri = mintUri(dataModelUri.get(), name);
@@ -176,14 +229,15 @@ public final class GDMEncoderEntityAware extends DefaultStreamPipe<ObjectReceive
 			final Predicate attributeProperty = getPredicate(propertyUri);
 			final LiteralNode literalObject = new LiteralNode(value);
 
-			if (null != recordResource) {
+			if (null != currentEntityResource) {
 
 				// TODO: this is only a HOTFIX for creating resources from resource type uris
 
 				if (!GDMUtil.RDF_type.equals(propertyUri)) {
 
 					// recordResource.addProperty(attributeProperty, value);
-					recordResource.addStatement(recordNode, attributeProperty, literalObject);
+					//currentEntityResource.addStatement(currentEntityNode, attributeProperty, literalObject);
+					addStatement(currentEntityNode, attributeProperty, literalObject);
 				} else {
 
 					// check, whether value is really a URI
@@ -192,13 +246,13 @@ public final class GDMEncoderEntityAware extends DefaultStreamPipe<ObjectReceive
 						final ResourceNode typeResource = new ResourceNode(value);// ResourceFactory.createResource(value);
 
 						// recordResource.addStatement(entityNode, attributeProperty, typeResource);
-						addStatement(recordNode, attributeProperty, typeResource);
+						addStatement(currentEntityNode, attributeProperty, typeResource);
 
-						recordTypeUri = value;
+						//recordTypeUri = value; // TODO not only set record type here, generalize!
 					} else {
 
 						// recordResource.addStatement(entityNode, attributeProperty, literalObject);
-						addStatement(recordNode, attributeProperty, literalObject);
+						addStatement(currentEntityNode, attributeProperty, literalObject);
 					}
 				}
 			} else {
@@ -206,7 +260,19 @@ public final class GDMEncoderEntityAware extends DefaultStreamPipe<ObjectReceive
 				throw new MetafactureException("couldn't get a resource for adding this property");
 			}
 		}
+		
+				System.out.println("current resource " + currentEntityResource.getUri() + " current resource node " + currentEntityNode.getUri());
+				
+				printStatements(currentEntityResource);
 
+	}
+
+	private void printStatements(Resource resource) {
+		Set<Statement> statements = resource.getStatements();
+		
+		for (Statement statement : statements) {
+			System.out.println(statement);
+		}
 	}
 
 	private Optional<String> init(final Optional<DataModel> dataModel) {
@@ -274,7 +340,7 @@ public final class GDMEncoderEntityAware extends DefaultStreamPipe<ObjectReceive
 
 	private String mintRecordUri(@Nullable final String identifier) {
 
-		if (currentId == null) {
+		if (recordId == null) {
 
 			// mint completely new uri
 
@@ -314,17 +380,29 @@ public final class GDMEncoderEntityAware extends DefaultStreamPipe<ObjectReceive
 		return sb.toString();
 	}
 
-	private String mintUri(final String uri, final String localName) {
+	/**
+	 * Combine an URI from a base URI and a local name.
+	 * 
+	 * @param baseUri - may end with a hash or slash
+	 * @param localName
+	 * @return the minted URI as a string
+	 */
+	private String mintUri(final String baseUri, final String localName) {
 
-		// allow has and slash uris
-		if (uri != null && uri.endsWith("/")) {
+		if (baseUri != null && baseUri.endsWith("/")) {
 
-			return uri + localName;
+			return baseUri + localName;
 		}
 
-		return uri + "#" + localName;
+		return baseUri + "#" + localName;
 	}
 
+	/**
+	 * Builds a predicate URI from the predicateId and returns the according Predicate. 
+	 * 
+	 * @param predicateId
+	 * @return the found or newly created predicate
+	 */
 	private Predicate getPredicate(final String predicateId) {
 
 		final String predicateURI = getURI(predicateId);
@@ -339,13 +417,21 @@ public final class GDMEncoderEntityAware extends DefaultStreamPipe<ObjectReceive
 		return predicates.get(predicateURI);
 	}
 
+	/**
+	 * Adds an ordered statement to the current entity resource
+	 * 
+	 * @param subject
+	 * @param predicate
+	 * @param object
+	 */
 	private void addStatement(final Node subject, final Predicate predicate, final Node object) {
 
 		String key;
 
 		if (subject instanceof ResourceNode) {
-
+			
 			key = ((ResourceNode) subject).getUri();
+			
 		} else {
 
 			key = subject.getId().toString();
@@ -361,9 +447,16 @@ public final class GDMEncoderEntityAware extends DefaultStreamPipe<ObjectReceive
 
 		final Long order = valueCounter.get(key).incrementAndGet();
 
-		recordResource.addStatement(subject, predicate, object, order);
+		currentEntityResource.addStatement(subject, predicate, object, order);
 	}
 
+	/**
+	 * Builds a URI from the string id and returns the URI.
+	 * If is is a not a valid URI a datamodel term URI is minted.
+	 * 
+	 * @param id
+	 * @return the found or newly created ID
+	 */
 	private String getURI(final String id) {
 
 		if (!uris.containsKey(id)) {

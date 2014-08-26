@@ -1,14 +1,9 @@
-package org.dswarm.converter.flow.test.csv;
+package org.dswarm.converter.flow.experimental;
 
 import java.io.File;
 import java.io.StringWriter;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.common.io.Resources;
-import com.google.inject.Provider;
 import org.culturegraph.mf.formeta.formatter.FormatterStyle;
 import org.culturegraph.mf.morph.Metamorph;
 import org.culturegraph.mf.stream.converter.FormetaEncoder;
@@ -16,40 +11,30 @@ import org.culturegraph.mf.stream.converter.xml.SimpleXmlEncoder;
 import org.culturegraph.mf.stream.reader.CsvReader;
 import org.culturegraph.mf.stream.sink.ObjectJavaIoWriter;
 import org.culturegraph.mf.stream.source.FileOpener;
-import org.junit.Assert;
 import org.junit.Test;
-
-import org.dswarm.converter.GuicedTest;
-import org.dswarm.converter.flow.TransformationFlow;
-import org.dswarm.converter.mf.stream.reader.JsonNodeReader;
-import org.dswarm.converter.pipe.StreamJsonCollapser;
-import org.dswarm.converter.pipe.StreamUnflattener;
-import org.dswarm.init.util.DMPStatics;
-import org.dswarm.persistence.service.InternalModelServiceFactory;
-import org.dswarm.persistence.util.DMPPersistenceUtil;
 
 
 /**
  * @author polowins
  * 
- * Test for sketching a morph script to produce nested, structured output data.
+ * Experimental Zone for sketching a morph script to produce nested, structured output data.
  * 
  */
 public class PureMetafactureTest {
 	
 	public final static String MORPH_DEFINITION_STRUCTURED_OUTPUT = "dd-700/structured-output.xml";
 	public final static String MORPH_DEFINITION_SUBSTRING = "dd-700/substring-replace.xml";
-	public final static String CSV = "dd-700/test_book_with_author_data_flat.csv";
+	public final static String EXAMPLE_DATA_CSV = "dd-700/test_book_with_author_data_flat.csv";
 
 	/**
-	 * Test sub-entities with standard metafacture means
+	 * Test sub-entities with standard metafacture means and encode as XML
 	 * 
 	 * @throws Exception
 	 */
-	@Test
-	public void testComplexMorph() throws Exception {
+	@Test 
+	public void testComplexMorphXML() throws Exception {
 		
-		final File file = new File(Resources.getResource(CSV).getPath());
+		final File file = new File(Resources.getResource(EXAMPLE_DATA_CSV).getPath());
 		final FileOpener opener = new FileOpener();
 
 		final CsvReader csvReader = new CsvReader(",");
@@ -77,7 +62,6 @@ public class PureMetafactureTest {
 		.setReceiver(metamorph)
 		//.setReceiver(rdfMacroPipe)
 		.setReceiver(xmlEncoder)
-		//.setReceiver(formetaEncoder)
 		;	
 		
 		final StringWriter stringWriter = new StringWriter();
@@ -94,14 +78,14 @@ public class PureMetafactureTest {
 	}
 	
 	/**
-	 * Test sub-entities with standard metafacture means
+	 * Test sub-entities with standard metafacture means and encode as formeta
 	 * 
 	 * @throws Exception
 	 */
 	@Test
 	public void testComplexMorphFormeta() throws Exception {
 		
-		final File file = new File(Resources.getResource(CSV).getPath());
+		final File file = new File(Resources.getResource(EXAMPLE_DATA_CSV).getPath());
 		final FileOpener opener = new FileOpener();
 
 		final CsvReader csvReader = new CsvReader(",");

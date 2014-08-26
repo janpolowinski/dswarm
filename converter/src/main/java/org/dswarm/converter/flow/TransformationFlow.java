@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.dswarm.converter.DMPConverterException;
 import org.dswarm.converter.DMPMorphDefException;
 import org.dswarm.converter.mf.stream.GDMEncoder;
+import org.dswarm.converter.mf.stream.GDMEncoderEntityAware;
 import org.dswarm.converter.mf.stream.GDMModelReceiver;
 import org.dswarm.converter.mf.stream.reader.JsonNodeReader;
 import org.dswarm.converter.morph.MorphScriptBuilder;
@@ -169,12 +170,17 @@ public class TransformationFlow {
 
 		// final String recordDummy = "record";
 
-		final StreamUnflattener unflattener = new StreamUnflattener("", DMPStatics.ATTRIBUTE_DELIMITER);
-		final StreamJsonCollapser collapser = new StreamJsonCollapser();
-		final GDMEncoder converter = new GDMEncoder(outputDataModel);
+		//final StreamUnflattener unflattener = new StreamUnflattener("", DMPStatics.ATTRIBUTE_DELIMITER);
+		//final StreamJsonCollapser collapser = new StreamJsonCollapser();
+		final GDMEncoderEntityAware converter = new GDMEncoderEntityAware(outputDataModel);
 		final GDMModelReceiver writer = new GDMModelReceiver();
 
-		opener.setReceiver(transformer).setReceiver(unflattener).setReceiver(collapser).setReceiver(converter).setReceiver(writer);
+		opener
+		.setReceiver(transformer)
+		//.setReceiver(unflattener) // TODO: check if still necessary. outcommented to make new entity-aware GDM encoder work
+		//.setReceiver(collapser) // TODO: check if still necessary. outcommented to make new entity-aware GDM encoder work
+		.setReceiver(converter)
+		.setReceiver(writer);
 
 		opener.process(tuples);
 		opener.closeStream();
