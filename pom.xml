@@ -31,7 +31,7 @@
 		<maven-clean-plugin.version>2.5</maven-clean-plugin.version>
 		<maven-install-plugin.version>2.5.1</maven-install-plugin.version>
 		<maven-surefire-plugin.version>2.17</maven-surefire-plugin.version>
-		<maven-checkstyle-plugin.version>2.11</maven-checkstyle-plugin.version>
+		<maven-checkstyle-plugin.version>2.12.1</maven-checkstyle-plugin.version>
 		<maven-version-plugin.version>2.1</maven-version-plugin.version>
 		<maven-pmd-plugin.version>3.1</maven-pmd-plugin.version>
 		<maven-resources-plugin.version>2.6</maven-resources-plugin.version>
@@ -50,9 +50,9 @@
 		<java.source.version>1.7</java.source.version>
 		<java.target.version>1.7</java.target.version>
 		<maxallowedviolations>7000</maxallowedviolations>
-		<google.guava.version>17.0</google.guava.version>
+		<google.guava.version>18.0</google.guava.version>
 		<google.collections.version>1.0</google.collections.version>
-		<jackson.version>2.3.3</jackson.version>
+		<jackson.version>2.4.1</jackson.version>
 		<slf4j.api.version>1.7.7</slf4j.api.version>
 		<apache.commons.version>3.3.2</apache.commons.version>
 		<commons-io.version>2.4</commons-io.version>
@@ -63,6 +63,7 @@
 		<javaee.version>7.0</javaee.version>
 		<jersey.version>2.8</jersey.version>
 		<logback.version>1.1.2</logback.version>
+		<findebugs.jsr305.version>2.0.3</findebugs.jsr305.version>
 	</properties>
 
 	<repositories>
@@ -96,7 +97,7 @@
 
 	<profiles>
 		<profile>
-			<id>dswarm-conf</id>
+					<id>dswarm-conf</id>
 			<activation>
 				<file>
 					<exists>../dswarm.conf</exists>
@@ -271,14 +272,29 @@
 					</configuration>
 					<dependencies>
 						<dependency>
-							<groupId>com.google.collections</groupId>
-							<artifactId>google-collections</artifactId>
-							<version>${google.collections.version}</version>
+							<groupId>com.google.guava</groupId>
+							<artifactId>guava-jdk5</artifactId>
+							<version>14.0.1</version>
 						</dependency>
 						<dependency>
 							<groupId>org.dswarm</groupId>
 							<artifactId>dswarm-init</artifactId>
 							<version>0.1-SNAPSHOT</version>
+						</dependency>
+						<dependency>
+							<groupId>org.apache.maven</groupId>
+							<artifactId>maven-core</artifactId>
+							<version>2.2.1</version>
+							<exclusions>
+								<exclusion>
+									<artifactId>jcl-over-slf4j</artifactId>
+									<groupId>org.slf4j</groupId>
+								</exclusion>
+								<exclusion>
+									<artifactId>slf4j-jdk14</artifactId>
+									<groupId>org.slf4j</groupId>
+								</exclusion>
+							</exclusions>
 						</dependency>
 					</dependencies>
 				</plugin>

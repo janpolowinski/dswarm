@@ -144,6 +144,8 @@ public class TransformationFlowTest extends GuicedTest {
 		//
 		// System.out.println(objectMapper.configure(SerializationFeature.INDENT_OUTPUT,
 		// true).writeValueAsString(gdmModel.toJSON()));
+		// System.out.println(Util.getJSONObjectMapper().configure(SerializationFeature.INDENT_OUTPUT,
+		// true).writeValueAsString(gdmModel.getModel()));
 
 		gdmService.createObject(inputDataModel.getId(), gdmModel);
 		// finished writing CSV statements to graph
@@ -156,7 +158,7 @@ public class TransformationFlowTest extends GuicedTest {
 
 		final Schema schema = freshInputDataModel.getSchema();
 
-		final Optional<Map<String, Model>> optionalModelMap = gdmService.getObjects(updatedInputDataModel.getId(), Optional.<Integer> absent());
+		final Optional<Map<String, Model>> optionalModelMap = gdmService.getObjects(updatedInputDataModel.getId(), Optional.<Integer>absent());
 
 		Assert.assertNotNull("CSV record model map optional shouldn't be null", optionalModelMap);
 		Assert.assertTrue("CSV record model map should be present", optionalModelMap.isPresent());
@@ -287,24 +289,21 @@ public class TransformationFlowTest extends GuicedTest {
 
 		final Clasz recordClass = schema.getRecordClass();
 
-		if (schema != null) {
+		final Set<AttributePath> attributePathsToDelete = schema.getUniqueAttributePaths();
 
-			final Set<AttributePath> attributePathsToDelete = schema.getAttributePaths();
+		if (attributePathsToDelete != null) {
 
-			if (attributePathsToDelete != null) {
+			for (final AttributePath attributePath : attributePathsToDelete) {
 
-				for (final AttributePath attributePath : attributePathsToDelete) {
+				attributePaths.put(attributePath.getId(), attributePath);
 
-					attributePaths.put(attributePath.getId(), attributePath);
+				final Set<Attribute> attributesToDelete = attributePath.getAttributes();
 
-					final Set<Attribute> attributesToDelete = attributePath.getAttributes();
+				if (attributesToDelete != null) {
 
-					if (attributesToDelete != null) {
+					for (final Attribute attribute : attributesToDelete) {
 
-						for (final Attribute attribute : attributesToDelete) {
-
-							attributes.put(attribute.getId(), attribute);
-						}
+						attributes.put(attribute.getId(), attribute);
 					}
 				}
 			}
