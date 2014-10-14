@@ -35,7 +35,8 @@ public class CSVTransformationFlowTestMorph extends GuicedTest {
 	 * 
 	 * @throws Exception
 	 */
-	@Test 
+	@Test
+	@Ignore
 	public void testConstructionOfStructuredOutputWithMorph() throws Exception {
 
 		testCSVMorphWithTuples(
