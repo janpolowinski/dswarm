@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2013, 2014 SLUB Dresden & Avantgarde Labs GmbH (<code@dswarm.org>)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.dswarm.converter.flow;
 
 import java.io.File;
@@ -20,6 +35,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Provider;
 import org.culturegraph.mf.exceptions.MorphDefException;
@@ -199,11 +215,15 @@ public class TransformationFlow {
 		// final ArrayNode result = objectMapper.createArrayNode();
 		final Set<String> recordURIs = Sets.newLinkedHashSet();
 
+		final List<GDMModel> finalGDMModels = Lists.newArrayList();
+
 		for (final GDMModel gdmModel : gdmModels) {
 
 			// result.add(rdfModel.toRawJSON());
 
 			if (gdmModel.getModel() == null) {
+
+				finalGDMModels.add(gdmModel);
 
 				continue;
 			}
@@ -218,21 +238,37 @@ public class TransformationFlow {
 				recordClassUri = gdmModel.getRecordClassURI();
 			}
 
-			// TODO: this a WORKAROUND to insert a default type (bibo:Document) for records in the output data model
+			final GDMModel finalGDMModel;
 
+			// TODO: this a WORKAROUND to insert a default type (bibo:Document) for records in the output data model
 			if (gdmModel.getRecordClassURI() == null) {
 
-				final Resource recordResource = model.getResource(gdmModel.getRecordURIs().iterator().next());
+				final String recordURI = gdmModel.getRecordURIs().iterator().next();
+				final String defaultRecordClassURI = "http://purl.org/ontology/bibo/Document";
+
+				final Resource recordResource = model.getResource(recordURI);
 
 				if (recordResource != null) {
 
 					// TODO check this: subject OK?
-					recordResource.addStatement(new ResourceNode(recordResource.getUri()), new Predicate(GDMUtil.RDF_type), new ResourceNode(
-							"http://purl.org/ontology/bibo/Document"));
+					recordResource.addStatement(new ResourceNode(recordResource.getUri()), new Predicate(GDMUtil.RDF_type), new ResourceNode(defaultRecordClassURI));
 				}
+
+				// re-write GDM model
+				finalGDMModel = new GDMModel(gdmModel.getModel(), recordURI, defaultRecordClassURI);
+			} else {
+
+				finalGDMModel = gdmModel;
 			}
 
-			recordURIs.add(gdmModel.getRecordURIs().iterator().next());
+			if(recordClassUri == null) {
+
+				recordClassUri = finalGDMModel.getRecordClassURI();
+			}
+
+			finalGDMModels.add(finalGDMModel);
+
+			recordURIs.add(finalGDMModel.getRecordURIs().iterator().next());
 		}
 
 		if (recordClassUri == null) {

@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2013, 2014 SLUB Dresden & Avantgarde Labs GmbH (<code@dswarm.org>)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.dswarm.controller.resources.job.test;
 
 import java.io.File;
@@ -76,11 +91,11 @@ public class TasksResourceTest extends ResourceTest {
 
 	private Resource								resource;
 
-	private DataModel								dataModel;
+	private DataModel inputDataModel;
 
-	private Schema									schema;
+	private Schema schema;
 
-	private Clasz									recordClass;
+	private Clasz recordClass;
 
 	public TasksResourceTest() {
 
@@ -106,7 +121,7 @@ public class TasksResourceTest extends ResourceTest {
 
 		TasksResourceTest.LOG.debug("start task execution test");
 
-		final String resourceFileName = "test-mabxml.xml";
+		final String resourceFileName = "controller_test-mabxml.xml";
 
 		final Resource res1 = new Resource();
 		res1.setName(resourceFileName);
@@ -163,26 +178,30 @@ public class TasksResourceTest extends ResourceTest {
 
 		// TODO: add schema to data1
 
-		final String dataModelJSONString = objectMapper.writeValueAsString(data1);
+		final String inputDataModelJSONString = objectMapper.writeValueAsString(data1);
 
-		dataModel = dataModelsResourceTestUtils.createObjectWithoutComparison(dataModelJSONString);
+		inputDataModel = dataModelsResourceTestUtils.createObjectWithoutComparison(inputDataModelJSONString);
 
-		Assert.assertNotNull("the data model shouldn't be null", dataModel);
+		Assert.assertNotNull("the data model shouldn't be null", inputDataModel);
 
 		// check processed data
-		final String data = dataModelsResourceTestUtils.getData(dataModel.getId(), 1);
+		final String data = dataModelsResourceTestUtils.getData(inputDataModel.getId(), 1);
 
 		Assert.assertNotNull("the data shouldn't be null", data);
 
 		// manipulate input data model
-		final String finalDataModelJSONString = objectMapper.writeValueAsString(dataModel);
-		final ObjectNode finalDataModelJSON = objectMapper.readValue(finalDataModelJSONString, ObjectNode.class);
+		final String finalInputDataModelJSONString = objectMapper.writeValueAsString(inputDataModel);
+		final ObjectNode finalInputDataModelJSON = objectMapper.readValue(finalInputDataModelJSONString, ObjectNode.class);
 
 		final ObjectNode taskJSON = objectMapper.readValue(taskJSONString, ObjectNode.class);
-		taskJSON.put("input_data_model", finalDataModelJSON);
+		taskJSON.put("input_data_model", finalInputDataModelJSON);
 
-		// manipulate output data model (output data model = input data model (for now))
-		taskJSON.put("output_data_model", finalDataModelJSON);
+		// utilise internal model as output data model
+		final DataModel outputDataModel = dataModelsResourceTestUtils.getObject((long) 1);
+		final String outputDataModelJSONString = objectMapper.writeValueAsString(outputDataModel);
+		final ObjectNode outputDataModelJSON = objectMapper.readValue(outputDataModelJSONString, ObjectNode.class);
+
+		taskJSON.put("output_data_model", outputDataModelJSON);
 
 		final String finalTaskJSONString = objectMapper.writeValueAsString(taskJSON);
 
@@ -240,16 +259,20 @@ public class TasksResourceTest extends ResourceTest {
 
 		Assert.assertEquals(finalExpectedJSONString.length(), finalActualJSONString.length());
 
-		dataModel = dataModelsResourceTestUtils.getObject(dataModel.getId());
+		inputDataModel = dataModelsResourceTestUtils.getObject(inputDataModel.getId());
 
-		Assert.assertNotNull("the data model shouldn't be null", dataModel);
-		Assert.assertNotNull("the data model schema shouldn't be null", dataModel.getSchema());
+		Assert.assertNotNull("the data model shouldn't be null", inputDataModel);
+		Assert.assertNotNull("the data model schema shouldn't be null", inputDataModel.getSchema());
 
-		this.schema = dataModel.getSchema();
+		this.schema = inputDataModel.getSchema();
 
 		Assert.assertNotNull("the data model schema record class shouldn't be null", this.schema.getRecordClass());
 
 		recordClass = this.schema.getRecordClass();
+
+		final DataModel finalOutputDataModel = dataModelsResourceTestUtils.getObject(outputDataModel.getId());
+		finalOutputDataModel.setSchema(null);
+		dataModelsResourceTestUtils.updateObjectWithoutComparison(finalOutputDataModel);
 
 		TasksResourceTest.LOG.debug("end task execution test");
 	}
@@ -284,7 +307,7 @@ public class TasksResourceTest extends ResourceTest {
 			}
 		}
 
-		dataModelsResourceTestUtils.deleteObject(dataModel);
+		dataModelsResourceTestUtils.deleteObject(inputDataModel);
 		schemasResourceTestUtils.deleteObject(schema);
 
 		for (final AttributePath attributePath : attributePaths.values()) {

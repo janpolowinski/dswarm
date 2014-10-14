@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2013, 2014 SLUB Dresden & Avantgarde Labs GmbH (<code@dswarm.org>)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.dswarm.converter.flow.test;
 
 import java.io.File;
@@ -187,7 +202,6 @@ public class TransformationFlowTest extends GuicedTest {
 		final ObjectNode taskJSON = objectMapper.readValue(taskJSONString, ObjectNode.class);
 		taskJSON.put("input_data_model", inputDataModelJSON);
 
-		// manipulate output data model (output data model = internal model (for now))
 		final long internalModelId = 1;
 		final DataModel outputDataModel = dataModelService.getObject(internalModelId);
 		final String outputDataModelJSONString = objectMapper.writeValueAsString(outputDataModel);
@@ -195,12 +209,12 @@ public class TransformationFlowTest extends GuicedTest {
 		taskJSON.put("output_data_model", outputDataModelJSON);
 
 		// manipulate attributes
-		final ObjectNode mappingJSON = (ObjectNode) ((ArrayNode) ((ObjectNode) taskJSON.get("job")).get("mappings")).get(0);
+		final ObjectNode mappingJSON = (ObjectNode) taskJSON.get("job").get("mappings").get(0);
 
 		final String dataResourceSchemaBaseURI = DataModelUtils.determineDataModelSchemaBaseURI(updatedInputDataModel);
 
-		final ObjectNode outputAttributePathAttributeJSON = (ObjectNode) ((ArrayNode) ((ObjectNode) ((ObjectNode) mappingJSON
-				.get("output_attribute_path")).get("attribute_path")).get("attributes")).get(0);
+		final ObjectNode outputAttributePathAttributeJSON = (ObjectNode) mappingJSON
+				.get("output_attribute_path").get("attribute_path").get("attributes").get(0);
 		final String outputAttributeName = outputAttributePathAttributeJSON.get("name").asText();
 		outputAttributePathAttributeJSON.put("uri", dataResourceSchemaBaseURI + outputAttributeName);
 
@@ -208,17 +222,17 @@ public class TransformationFlowTest extends GuicedTest {
 
 		for (final JsonNode inputAttributePathsJSONNode : inputAttributePathsJSON) {
 
-			final ObjectNode inputAttributeJSON = (ObjectNode) ((ArrayNode) ((ObjectNode) ((ObjectNode) inputAttributePathsJSONNode)
-					.get("attribute_path")).get("attributes")).get(0);
+			final ObjectNode inputAttributeJSON = (ObjectNode) inputAttributePathsJSONNode
+					.get("attribute_path").get("attributes").get(0);
 			final String inputAttributeName = inputAttributeJSON.get("name").asText();
 			inputAttributeJSON.put("uri", dataResourceSchemaBaseURI + inputAttributeName);
 		}
 
 		// manipulate parameter mappings in transformation component
-		final ObjectNode transformationComponentParameterMappingsJSON = (ObjectNode) ((ObjectNode) mappingJSON.get("transformation"))
+		final ObjectNode transformationComponentParameterMappingsJSON = (ObjectNode) mappingJSON.get("transformation")
 				.get("parameter_mappings");
-		transformationComponentParameterMappingsJSON.put("description", dataResourceSchemaBaseURI + outputAttributeName);
-		transformationComponentParameterMappingsJSON.put("__TRANSFORMATION_OUTPUT_VARIABLE__1", dataResourceSchemaBaseURI + outputAttributeName);
+		transformationComponentParameterMappingsJSON.put("description", "description");
+		transformationComponentParameterMappingsJSON.put("__TRANSFORMATION_OUTPUT_VARIABLE__1", "output mapping attribute path instance");
 
 		final String finalTaskJSONString = objectMapper.writeValueAsString(taskJSON);
 
@@ -250,7 +264,7 @@ public class TransformationFlowTest extends GuicedTest {
 
 			final ObjectNode expectedElementInArray = (ObjectNode) expectedNode;
 			final String expectedKeyInArray = expectedElementInArray.fieldNames().next();
-			final String recordData = ((ObjectNode) expectedElementInArray.get(expectedKeyInArray).get(0)).get(
+			final String recordData = expectedElementInArray.get(expectedKeyInArray).get(0).get(
 					expectedDataResourceSchemaBaseURI + "description").asText();
 			final JsonNode actualNode = getRecordData(recordData, actualNodes, actualDataResourceSchemaBaseURI + "description");
 
