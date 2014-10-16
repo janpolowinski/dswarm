@@ -227,7 +227,7 @@ public class Schema extends BasicDMPJPAObject {
 	 *
 	 * @param attributePath an existing attribute path instance that should be removed
 	 */
-	public void removeAttributePath(final AttributePath attributePath) {
+	public void removeAttributePath(final AttributePathInstance attributePath) {
 		if (attributePath != null && attributePaths != null) {
 			final boolean isRemoved = attributePaths.remove(attributePath);
 			if (isRemoved && orderedAttributePaths != null) {

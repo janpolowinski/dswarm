@@ -33,6 +33,7 @@ import org.dswarm.persistence.model.schema.AttributePath;
 import org.dswarm.persistence.model.schema.Clasz;
 import org.dswarm.persistence.model.schema.ContentSchema;
 import org.dswarm.persistence.model.schema.Schema;
+import org.dswarm.persistence.model.schema.SchemaAttributePathInstance;
 import org.dswarm.persistence.model.schema.proxy.ProxySchema;
 import org.dswarm.persistence.service.schema.SchemaService;
 import org.dswarm.persistence.service.schema.test.utils.AttributePathServiceTestUtils;
@@ -167,9 +168,9 @@ public class SchemaServiceTest extends IDBasicJPAServiceTest<ProxySchema, Schema
 		final Schema schema = createObject().getObject();
 
 		schema.setName("my schema");
-		schema.addAttributePath(attributePath1);
-		schema.addAttributePath(attributePath2);
-		schema.addAttributePath(attributePath3);
+		schema.addAttributePath(createAttributePathInstance(attributePath1));
+		schema.addAttributePath(createAttributePathInstance(attributePath2));
+		schema.addAttributePath(createAttributePathInstance(attributePath3));
 		schema.setRecordClass(biboDocument);
 		schema.setContentSchema(contentSchema);
 
@@ -182,15 +183,15 @@ public class SchemaServiceTest extends IDBasicJPAServiceTest<ProxySchema, Schema
 		Assert.assertEquals("the attribute path '" + attributePath1.getId() + "' of the schema are not equal",
 				schema.getAttributePath(attributePath1.getId()), updatedSchema.getAttributePath(attributePath1.getId()));
 		Assert.assertNotNull("the attribute path's attributes of the attribute path '" + attributePath1.getId()
-				+ "' of the updated schema shouldn't be null", updatedSchema.getAttributePath(attributePath1.getId()).getAttributes());
+				+ "' of the updated schema shouldn't be null", updatedSchema.getAttributePath(attributePath1.getId()).getAttributePath().getAttributes());
 		Assert.assertEquals("the attribute path's attributes size of attribute path '" + attributePath1.getId() + "' are not equal",
-				attributePath1.getAttributes(), updatedSchema.getAttributePath(attributePath1.getId()).getAttributes());
+				attributePath1.getAttributes(), updatedSchema.getAttributePath(attributePath1.getId()).getAttributePath().getAttributes());
 		Assert.assertEquals("the first attributes of attribute path '" + attributePath1.getId() + "' are not equal", attributePath1
-				.getAttributePath().get(0), updatedSchema.getAttributePath(attributePath1.getId()).getAttributePath().get(0));
+				.getAttributePath().get(0), updatedSchema.getAttributePath(attributePath1.getId()).getAttributePath().getAttributePath().get(0));
 		Assert.assertNotNull("the attribute path string of attribute path '" + attributePath1.getId() + "' of the update schema shouldn't be null",
-				updatedSchema.getAttributePath(attributePath1.getId()).toAttributePath());
+				updatedSchema.getAttributePath(attributePath1.getId()).getAttributePath().toAttributePath());
 		Assert.assertEquals("the attribute path's strings attribute path '" + attributePath1.getId() + "' are not equal",
-				attributePath1.toAttributePath(), updatedSchema.getAttributePath(attributePath1.getId()).toAttributePath());
+				attributePath1.toAttributePath(), updatedSchema.getAttributePath(attributePath1.getId()).getAttributePath().toAttributePath());
 		Assert.assertNotNull("the record class of the updated schema shouldn't be null", updatedSchema.getRecordClass());
 		Assert.assertEquals("the recod classes are not equal", schema.getRecordClass(), updatedSchema.getRecordClass());
 		Assert.assertNotNull("the content schema of the updated schema shouldn't be null", updatedSchema.getContentSchema());
@@ -223,5 +224,14 @@ public class SchemaServiceTest extends IDBasicJPAServiceTest<ProxySchema, Schema
 
 			attributeServiceTestUtils.deleteObject(attribute);
 		}
+	}
+	
+	private static SchemaAttributePathInstance createAttributePathInstance(final AttributePath attributePath) {
+		final SchemaAttributePathInstance attributePathInstance = new SchemaAttributePathInstance();
+		attributePathInstance.setAttributePath(attributePath);
+
+		Assert.assertNotNull("the attribute path should not be null", attributePathInstance.getAttributePath());
+
+		return attributePathInstance;
 	}
 }

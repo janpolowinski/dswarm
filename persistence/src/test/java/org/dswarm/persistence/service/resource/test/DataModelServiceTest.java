@@ -40,12 +40,14 @@ import org.dswarm.persistence.model.schema.Attribute;
 import org.dswarm.persistence.model.schema.AttributePath;
 import org.dswarm.persistence.model.schema.Clasz;
 import org.dswarm.persistence.model.schema.Schema;
+import org.dswarm.persistence.model.schema.SchemaAttributePathInstance;
 import org.dswarm.persistence.service.resource.DataModelService;
 import org.dswarm.persistence.service.resource.test.utils.ConfigurationServiceTestUtils;
 import org.dswarm.persistence.service.resource.test.utils.ResourceServiceTestUtils;
 import org.dswarm.persistence.service.schema.test.utils.AttributePathServiceTestUtils;
 import org.dswarm.persistence.service.schema.test.utils.AttributeServiceTestUtils;
 import org.dswarm.persistence.service.schema.test.utils.ClaszServiceTestUtils;
+import org.dswarm.persistence.service.schema.test.utils.SchemaAttributePathInstanceServiceTestUtils;
 import org.dswarm.persistence.service.schema.test.utils.SchemaServiceTestUtils;
 import org.dswarm.persistence.service.test.IDBasicJPAServiceTest;
 import org.dswarm.persistence.util.DMPPersistenceUtil;
@@ -58,11 +60,12 @@ public class DataModelServiceTest extends IDBasicJPAServiceTest<ProxyDataModel, 
 
 	private final Map<Long, Attribute>			attributes		= Maps.newLinkedHashMap();
 
-	private final Map<Long, AttributePath>		attributePaths	= Maps.newLinkedHashMap();
+	private final Map<Long, SchemaAttributePathInstance>		attributePaths	= Maps.newLinkedHashMap();
 
 	private final AttributeServiceTestUtils		attributeServiceTestUtils;
 	private final ClaszServiceTestUtils			claszServiceTestUtils;
 	private final AttributePathServiceTestUtils	attributePathServiceTestUtils;
+	private final SchemaAttributePathInstanceServiceTestUtils	schemaAttributePathInstanceServiceTestUtils;
 	private final SchemaServiceTestUtils		schemaServiceTestUtils;
 	private final ConfigurationServiceTestUtils	configurationServiceTestUtils;
 	private final ResourceServiceTestUtils		resourceServiceTestUtils;
@@ -73,6 +76,7 @@ public class DataModelServiceTest extends IDBasicJPAServiceTest<ProxyDataModel, 
 
 		attributeServiceTestUtils = new AttributeServiceTestUtils();
 		attributePathServiceTestUtils = new AttributePathServiceTestUtils();
+		schemaAttributePathInstanceServiceTestUtils = new SchemaAttributePathInstanceServiceTestUtils();
 		claszServiceTestUtils = new ClaszServiceTestUtils();
 		schemaServiceTestUtils = new SchemaServiceTestUtils();
 		configurationServiceTestUtils = new ConfigurationServiceTestUtils();
@@ -100,7 +104,9 @@ public class DataModelServiceTest extends IDBasicJPAServiceTest<ProxyDataModel, 
 		System.out.println("attribute hasPart = '" + dctermsHasPart.toString());
 
 		final AttributePath attributePath1 = attributePathServiceTestUtils.createAttributePath(attributePath1Arg);
-		attributePaths.put(attributePath1.getId(), attributePath1);
+		final SchemaAttributePathInstance attributePathInstance1 = 
+				schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance("SAPI-1", attributePath1, null);
+		attributePaths.put(attributePathInstance1.getId(), attributePathInstance1);
 
 		// second attribute path
 
@@ -125,7 +131,9 @@ public class DataModelServiceTest extends IDBasicJPAServiceTest<ProxyDataModel, 
 		System.out.println("attribute name = '" + foafName.toString());
 
 		final AttributePath attributePath2 = attributePathServiceTestUtils.createAttributePath(attributePath2Arg);
-		attributePaths.put(attributePath2.getId(), attributePath2);
+		final SchemaAttributePathInstance attributePathInstance2 = 
+				schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance("SAPI-2", attributePath2, null);
+		attributePaths.put(attributePathInstance1.getId(), attributePathInstance2);
 
 		// third attribute path
 
@@ -142,7 +150,9 @@ public class DataModelServiceTest extends IDBasicJPAServiceTest<ProxyDataModel, 
 		System.out.println("attribute created = '" + dctermsCreated.toString());
 
 		final AttributePath attributePath3 = attributePathServiceTestUtils.createAttributePath(attributePath3Arg);
-		attributePaths.put(attributePath3.getId(), attributePath3);
+		final SchemaAttributePathInstance attributePathInstance3 = 
+				schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance("SAPI-3", attributePath3, null);
+		attributePaths.put(attributePathInstance3.getId(), attributePathInstance3);
 
 		// record class
 
@@ -153,11 +163,11 @@ public class DataModelServiceTest extends IDBasicJPAServiceTest<ProxyDataModel, 
 
 		// schema
 
-		final Set<AttributePath> attributePaths = Sets.newLinkedHashSet();
+		final Set<SchemaAttributePathInstance> attributePaths = Sets.newLinkedHashSet();
 
-		attributePaths.add(attributePath1);
-		attributePaths.add(attributePath2);
-		attributePaths.add(attributePath3);
+		attributePaths.add(attributePathInstance1);
+		attributePaths.add(attributePathInstance2);
+		attributePaths.add(attributePathInstance3);
 
 		final Schema schema = schemaServiceTestUtils.createSchema("my schema", attributePaths, biboDocument);
 
@@ -208,15 +218,15 @@ public class DataModelServiceTest extends IDBasicJPAServiceTest<ProxyDataModel, 
 		Assert.assertEquals("the attribute path '" + attributePath1.getId() + "' of the schema are not equal",
 				schema.getAttributePath(attributePath1.getId()), updatedDataModel.getSchema().getAttributePath(attributePath1.getId()));
 		Assert.assertNotNull("the attribute path's attributes of the attribute path '" + attributePath1.getId()
-				+ "' of the updated schema shouldn't be null", updatedDataModel.getSchema().getAttributePath(attributePath1.getId()).getAttributes());
+				+ "' of the updated schema shouldn't be null", updatedDataModel.getSchema().getAttributePath(attributePath1.getId()).getAttributePath().getAttributes());
 		Assert.assertEquals("the attribute path's attributes size of attribute path '" + attributePath1.getId() + "' are not equal",
-				attributePath1.getAttributes(), updatedDataModel.getSchema().getAttributePath(attributePath1.getId()).getAttributes());
+				attributePath1.getAttributes(), updatedDataModel.getSchema().getAttributePath(attributePath1.getId()).getAttributePath().getAttributes());
 		Assert.assertEquals("the first attributes of attribute path '" + attributePath1.getId() + "' are not equal", attributePath1
-				.getAttributePath().get(0), updatedDataModel.getSchema().getAttributePath(attributePath1.getId()).getAttributePath().get(0));
+				.getAttributePath().get(0), updatedDataModel.getSchema().getAttributePath(attributePath1.getId()).getAttributePath().getAttributePath().get(0));
 		Assert.assertNotNull("the attribute path string of attribute path '" + attributePath1.getId() + "' of the update schema shouldn't be null",
-				updatedDataModel.getSchema().getAttributePath(attributePath1.getId()).toAttributePath());
+				updatedDataModel.getSchema().getAttributePath(attributePath1.getId()).getAttributePath().toAttributePath());
 		Assert.assertEquals("the attribute path's strings attribute path '" + attributePath1.getId() + "' are not equal",
-				attributePath1.toAttributePath(), updatedDataModel.getSchema().getAttributePath(attributePath1.getId()).toAttributePath());
+				attributePath1.toAttributePath(), updatedDataModel.getSchema().getAttributePath(attributePath1.getId()).getAttributePath().toAttributePath());
 		Assert.assertNotNull("the record class of the updated schema shouldn't be null", updatedDataModel.getSchema().getRecordClass());
 		Assert.assertEquals("the recod classes are not equal", schema.getRecordClass(), updatedDataModel.getSchema().getRecordClass());
 		Assert.assertNotNull("the resource of the updated data model shouddn't be null", updatedDataModel.getDataResource());
@@ -260,9 +270,15 @@ public class DataModelServiceTest extends IDBasicJPAServiceTest<ProxyDataModel, 
 		resourceServiceTestUtils.deleteObject(resource);
 		claszServiceTestUtils.deleteObject(biboDocument);
 
-		for (final AttributePath attributePath : this.attributePaths.values()) {
+		for (final SchemaAttributePathInstance attributePathInstance : this.attributePaths.values()) {
 
-			attributePathServiceTestUtils.deleteObject(attributePath);
+			schemaAttributePathInstanceServiceTestUtils.deleteObject(attributePathInstance);
+			
+			AttributePath attributePathToDelete =  attributePathInstance.getAttributePath();
+			
+			if (null != attributePathToDelete) {
+				attributePathServiceTestUtils.deleteObject(attributePathToDelete);
+			}
 		}
 
 		for (final Attribute attribute : this.attributes.values()) {
