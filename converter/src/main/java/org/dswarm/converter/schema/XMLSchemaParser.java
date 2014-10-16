@@ -51,6 +51,7 @@ import org.dswarm.persistence.model.schema.utils.SchemaUtils;
 import org.dswarm.persistence.service.schema.AttributePathService;
 import org.dswarm.persistence.service.schema.AttributeService;
 import org.dswarm.persistence.service.schema.ClaszService;
+import org.dswarm.persistence.service.schema.SchemaAttributePathInstanceService;
 import org.dswarm.persistence.service.schema.SchemaService;
 import org.dswarm.persistence.util.DMPPersistenceUtil;
 import org.dswarm.persistence.util.GDMUtil;
@@ -67,8 +68,10 @@ public class XMLSchemaParser {
 	private final Provider<SchemaService> schemaServiceProvider;
 
 	private final Provider<ClaszService> classServiceProvider;
-
+	
 	private final Provider<AttributePathService> attributePathServiceProvider;
+
+	private final Provider<SchemaAttributePathInstanceService> schemaAttributePathInstanceServiceProvider;
 
 	private final Provider<AttributeService> attributeServiceProvider;
 
@@ -84,12 +87,17 @@ public class XMLSchemaParser {
 	private static final String JSON_SCHEMA_MIXED_IDENTIFIER      = "mixed";
 
 	@Inject
-	public XMLSchemaParser(final Provider<SchemaService> schemaServiceProviderArg,
-			final Provider<ClaszService> classServiceProviderArg, final Provider<AttributePathService> attributePathServiceProviderArg,
-			final Provider<AttributeService> attributeServiceProviderArg, final Provider<ObjectMapper> objectMapperProviderArg) {
+	public XMLSchemaParser(
+			final Provider<SchemaService> schemaServiceProviderArg,
+			final Provider<ClaszService> classServiceProviderArg,
+			final Provider<AttributePathService> attributePathServiceProviderArg,
+			final Provider<SchemaAttributePathInstanceService> schemaAttributePathInstanceServiceProviderArg,
+			final Provider<AttributeService> attributeServiceProviderArg,
+			final Provider<ObjectMapper> objectMapperProviderArg) {
 
 		schemaServiceProvider = schemaServiceProviderArg;
 		classServiceProvider = classServiceProviderArg;
+		schemaAttributePathInstanceServiceProvider = schemaAttributePathInstanceServiceProviderArg;
 		attributePathServiceProvider = attributePathServiceProviderArg;
 		attributeServiceProvider = attributeServiceProviderArg;
 		objectMapperProvider = objectMapperProviderArg;
@@ -135,7 +143,8 @@ public class XMLSchemaParser {
 
 		final Set<AttributePathHelper> attributePaths = parseAttributePaths(recordTagNodes);
 
-		SchemaUtils.addAttributePaths(schema, attributePaths, attributePathServiceProvider, attributeServiceProvider);
+		SchemaUtils.addAttributePaths(schema, attributePaths, attributePathServiceProvider,
+				schemaAttributePathInstanceServiceProvider, attributeServiceProvider);
 
 		final Schema updatedSchema = SchemaUtils.updateSchema(schema, schemaServiceProvider);
 

@@ -48,6 +48,7 @@ import org.dswarm.persistence.model.schema.Attribute;
 import org.dswarm.persistence.model.schema.AttributePath;
 import org.dswarm.persistence.model.schema.Clasz;
 import org.dswarm.persistence.model.schema.Schema;
+import org.dswarm.persistence.model.schema.SchemaAttributePathInstance;
 import org.dswarm.persistence.model.types.Tuple;
 import org.dswarm.persistence.service.InternalModelServiceFactory;
 import org.dswarm.persistence.service.internal.graph.InternalGDMGraphService;
@@ -259,12 +260,18 @@ public abstract class AbstractXMLTransformationFlowTest extends GuicedTest {
 		final Map<Long, Attribute> attributes = Maps.newHashMap();
 
 		final Map<Long, AttributePath> attributePaths = Maps.newLinkedHashMap();
+		
+		final Map<Long, SchemaAttributePathInstance> attributePathInstances = Maps.newLinkedHashMap();
 
-		final Set<AttributePath> attributePathsToDelete = schema.getUniqueAttributePaths();
+		final Set<SchemaAttributePathInstance> attributePathsToDelete = schema.getUniqueAttributePaths();
 
 		if (attributePathsToDelete != null) {
 
-			for (final AttributePath attributePath : attributePathsToDelete) {
+			for (final SchemaAttributePathInstance attributePathInstance : attributePathsToDelete) {
+				
+				attributePathInstances.put(attributePathInstance.getId(), attributePathInstance);
+				
+				final AttributePath attributePath = attributePathInstance.getAttributePath();
 
 				attributePaths.put(attributePath.getId(), attributePath);
 
@@ -282,7 +289,7 @@ public abstract class AbstractXMLTransformationFlowTest extends GuicedTest {
 
 		final SchemaService schemaService = GuicedTest.injector.getInstance(SchemaService.class);
 
-		schemaServiceTestUtils.removeAddedAttributePathsFromOutputModelSchema(outputDataModelSchema, attributes, attributePaths);
+		schemaServiceTestUtils.removeAddedAttributePathsFromOutputModelSchema(outputDataModelSchema, attributes, attributePathInstances);
 
 		dataModelService.deleteObject(updatedInputDataModel.getId());
 

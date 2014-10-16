@@ -64,6 +64,7 @@ import org.dswarm.persistence.model.schema.Attribute;
 import org.dswarm.persistence.model.schema.AttributePath;
 import org.dswarm.persistence.model.schema.Clasz;
 import org.dswarm.persistence.model.schema.Schema;
+import org.dswarm.persistence.model.schema.SchemaAttributePathInstance;
 import org.dswarm.persistence.model.types.Tuple;
 import org.dswarm.persistence.service.InternalModelServiceFactory;
 import org.dswarm.persistence.service.internal.graph.InternalGDMGraphService;
@@ -290,7 +291,9 @@ public class TransformationFlowTest extends GuicedTest {
 					Matchers.equalTo(expectedRecordData.get(expectedDataResourceSchemaBaseURI + "description").asText()));
 		}
 
-		// clean-up
+		final Clasz recordClass = schema.getRecordClass();
+		
+		// clean-up // largely overlaps with code in abstract super-class
 		// TODO: move clean-up to @After
 
 		final DataModel freshOutputDataModel = dataModelService.getObject(internalModelId);
@@ -300,14 +303,18 @@ public class TransformationFlowTest extends GuicedTest {
 		final Map<Long, Attribute> attributes = Maps.newHashMap();
 
 		final Map<Long, AttributePath> attributePaths = Maps.newLinkedHashMap();
+		
+		final Map<Long, SchemaAttributePathInstance> attributePathInstances = Maps.newLinkedHashMap();
 
-		final Clasz recordClass = schema.getRecordClass();
-
-		final Set<AttributePath> attributePathsToDelete = schema.getUniqueAttributePaths();
+		final Set<SchemaAttributePathInstance> attributePathsToDelete = schema.getUniqueAttributePaths();
 
 		if (attributePathsToDelete != null) {
 
-			for (final AttributePath attributePath : attributePathsToDelete) {
+			for (final SchemaAttributePathInstance attributePathInstance : attributePathsToDelete) {
+				
+				attributePathInstances.put(attributePathInstance.getId(), attributePathInstance);
+				
+				final AttributePath attributePath = attributePathInstance.getAttributePath();
 
 				attributePaths.put(attributePath.getId(), attributePath);
 
@@ -324,10 +331,11 @@ public class TransformationFlowTest extends GuicedTest {
 		}
 
 		dataModelService.deleteObject(updatedInputDataModel.getId());
+		
 		final SchemaService schemaService = GuicedTest.injector.getInstance(SchemaService.class);
 		final SchemaServiceTestUtils schemaServiceTestUtils = new SchemaServiceTestUtils();
 
-		schemaServiceTestUtils.removeAddedAttributePathsFromOutputModelSchema(outputDataModelSchema, attributes, attributePaths);
+		schemaServiceTestUtils.removeAddedAttributePathsFromOutputModelSchema(outputDataModelSchema, attributes, attributePathInstances);
 		schemaService.deleteObject(schema.getId());
 
 		final AttributePathServiceTestUtils attributePathServiceTestUtils = new AttributePathServiceTestUtils();
