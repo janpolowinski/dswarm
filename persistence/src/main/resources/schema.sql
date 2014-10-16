@@ -184,6 +184,12 @@ SET foreign_key_checks = 0;
         primary key (ID)
     ) ENGINE=InnoDB;
 
+    create table SCHEMA_ATTRIBUTE_PATH_INSTANCE (
+        ID bigint not null,
+        SUB_SCHEMA bigint DEFAULT NULL,
+        primary key (ID)
+    ) ENGINE=InnoDB;
+
     create table PROJECT (
         ID bigint not null auto_increment,
         NAME varchar(255),
