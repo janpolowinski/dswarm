@@ -46,6 +46,8 @@ SET foreign_key_checks = 0;
 
     drop table if exists SCHEMAS_ATTRIBUTE_PATHS;
 
+    drop table if exists SCHEMA_ATTRIBUTE_PATH_INSTANCE;
+
     drop table if exists TRANSFORMATION;
 
     create table ATTRIBUTE (
@@ -184,12 +186,6 @@ SET foreign_key_checks = 0;
         primary key (ID)
     ) ENGINE=InnoDB;
 
-    create table SCHEMA_ATTRIBUTE_PATH_INSTANCE (
-        ID bigint not null,
-        SUB_SCHEMA bigint DEFAULT NULL,
-        primary key (ID)
-    ) ENGINE=InnoDB;
-
     create table PROJECT (
         ID bigint not null auto_increment,
         NAME varchar(255),
@@ -224,6 +220,12 @@ SET foreign_key_checks = 0;
         SCHEMA_ID bigint not null,
         ATTRIBUTE_PATH_ID bigint not null,
         primary key (SCHEMA_ID, ATTRIBUTE_PATH_ID)
+    ) ENGINE=InnoDB;
+
+    create table SCHEMA_ATTRIBUTE_PATH_INSTANCE (
+        ID bigint not null,
+        SUB_SCHEMA bigint,
+        primary key (ID)
     ) ENGINE=InnoDB;
 
     create table TRANSFORMATION (
@@ -415,13 +417,25 @@ SET foreign_key_checks = 0;
         add index FK_bn6agrogclcpeuvsua2ndpreu (ATTRIBUTE_PATH_ID), 
         add constraint FK_bn6agrogclcpeuvsua2ndpreu 
         foreign key (ATTRIBUTE_PATH_ID) 
-        references ATTRIBUTE_PATH (ID);
+        references SCHEMA_ATTRIBUTE_PATH_INSTANCE (ID);
 
     alter table SCHEMAS_ATTRIBUTE_PATHS 
         add index FK_fs9dl6u7bs5fsd6wc08depa1a (SCHEMA_ID), 
         add constraint FK_fs9dl6u7bs5fsd6wc08depa1a 
         foreign key (SCHEMA_ID) 
         references DATA_SCHEMA (ID);
+
+    alter table SCHEMA_ATTRIBUTE_PATH_INSTANCE 
+        add index FK_egcon8hcag84y1tpt0klt8m0a (SUB_SCHEMA), 
+        add constraint FK_egcon8hcag84y1tpt0klt8m0a 
+        foreign key (SUB_SCHEMA) 
+        references DATA_SCHEMA (ID);
+
+    alter table SCHEMA_ATTRIBUTE_PATH_INSTANCE 
+        add index FK_kdbuybigve4o0epqxkscgkfu7 (ID), 
+        add constraint FK_kdbuybigve4o0epqxkscgkfu7 
+        foreign key (ID) 
+        references ATTRIBUTE_PATH_INSTANCE (ID);
 
     alter table TRANSFORMATION 
         add index FK_qk4t8c3cucrxqguipv9emdxpm (ID), 
