@@ -186,10 +186,13 @@ public class Schema extends BasicDMPJPAObject {
 	 * @param attributePath a new attribute path
 	 */
 	public void addAttributePath(final SchemaAttributePathInstance attributePath) {
+		
 		Preconditions.checkNotNull(attributePath);
 
 		ensureAttributePaths();
 		ensureInitializedOrderedAttributePaths();
+		
+		// TODO check if equals method works for SAPIs, otherwise the usage of contains may fail here
 
 		if (!attributePaths.contains(attributePath)) {
 
