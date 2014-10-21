@@ -79,14 +79,13 @@ public class SchemaAttributePathInstanceService extends
 		//updateObject.setOrdinal(ordinal);
 	}
 
-	public ProxySchemaAttributePathInstance createOrGetObjectTransactional(AttributePath attributePath) throws DMPPersistenceException {
+	public ProxySchemaAttributePathInstance createObjectTransactional(AttributePath attributePath) throws DMPPersistenceException {
 		
-		final SchemaAttributePathInstance tempAttributePathInstance = new SchemaAttributePathInstance();
+		ProxySchemaAttributePathInstance proxySchemaAttributePathInstance = createObjectTransactional();
 		
-		tempAttributePathInstance.setAttributePath(attributePath);
+		proxySchemaAttributePathInstance.getObject().setAttributePath(attributePath);
+		updateObject(proxySchemaAttributePathInstance.getObject());
 
-		return createObject(tempAttributePathInstance);
-		
-		// TODO reviewer, please check this twice ... not sure if this method and its usage is correct
+		return proxySchemaAttributePathInstance;
 	}
 }

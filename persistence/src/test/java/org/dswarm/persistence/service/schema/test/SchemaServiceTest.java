@@ -40,29 +40,57 @@ import org.dswarm.persistence.service.schema.test.utils.AttributePathServiceTest
 import org.dswarm.persistence.service.schema.test.utils.AttributeServiceTestUtils;
 import org.dswarm.persistence.service.schema.test.utils.ClaszServiceTestUtils;
 import org.dswarm.persistence.service.schema.test.utils.ContentSchemaServiceTestUtils;
+import org.dswarm.persistence.service.schema.test.utils.SchemaAttributePathInstanceServiceTestUtils;
 import org.dswarm.persistence.service.test.IDBasicJPAServiceTest;
 
 public class SchemaServiceTest extends IDBasicJPAServiceTest<ProxySchema, Schema, SchemaService> {
 
 	private static final Logger					LOG				= LoggerFactory.getLogger(SchemaServiceTest.class);
 
-	private final ObjectMapper					objectMapper	= GuicedTest.injector.getInstance(ObjectMapper.class);
+	private ObjectMapper					objectMapper;
 
 	private final Map<Long, Attribute>			attributes		= Maps.newLinkedHashMap();
 
-	private final AttributeServiceTestUtils		attributeServiceTestUtils;
-	private final ClaszServiceTestUtils			claszServiceTestUtils;
-	private final ContentSchemaServiceTestUtils	contentSchemaServiceTestUtils;
-	private final AttributePathServiceTestUtils	attributePathServiceTestUtils;
+	private AttributeServiceTestUtils		attributeServiceTestUtils;
+	private ClaszServiceTestUtils			claszServiceTestUtils;
+	private ContentSchemaServiceTestUtils	contentSchemaServiceTestUtils;
+	private AttributePathServiceTestUtils	attributePathServiceTestUtils;
+	private SchemaAttributePathInstanceServiceTestUtils	schemaAttributePathInstanceServiceTestUtils;
 
 	public SchemaServiceTest() {
 
 		super("schema", SchemaService.class);
+	
+		initObjects();
+	}
 
+	@Override
+	protected void initObjects() {
+	
+		super.initObjects();
+	
+		objectMapper = GuicedTest.injector.getInstance(ObjectMapper.class);
+		
 		attributeServiceTestUtils = new AttributeServiceTestUtils();
 		attributePathServiceTestUtils = new AttributePathServiceTestUtils();
 		claszServiceTestUtils = new ClaszServiceTestUtils();
 		contentSchemaServiceTestUtils = new ContentSchemaServiceTestUtils();
+		schemaAttributePathInstanceServiceTestUtils = new SchemaAttributePathInstanceServiceTestUtils();
+	
+	}
+
+	private void resetObjectVars() {
+		attributes.clear();
+	}
+
+	@Override
+	public void prepare() throws Exception {
+	
+		GuicedTest.tearDown();
+		GuicedTest.startUp();
+		initObjects();
+		resetObjectVars();
+		super.prepare();
 	}
 
 	@Test
@@ -168,20 +196,25 @@ public class SchemaServiceTest extends IDBasicJPAServiceTest<ProxySchema, Schema
 		final Schema schema = createObject().getObject();
 
 		schema.setName("my schema");
-		schema.addAttributePath(createAttributePathInstance(attributePath1));
-		schema.addAttributePath(createAttributePathInstance(attributePath2));
-		schema.addAttributePath(createAttributePathInstance(attributePath3));
+		
+		SchemaAttributePathInstance attributePathInstance1 = schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance("api1", attributePath1, null);
+		SchemaAttributePathInstance attributePathInstance2 = schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance("api2", attributePath2, null);
+		SchemaAttributePathInstance attributePathInstance3 = schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance("api3", attributePath3, null);
+		
+		schema.addAttributePath(attributePathInstance1);
+		schema.addAttributePath(attributePathInstance2);
+		schema.addAttributePath(attributePathInstance3);
 		schema.setRecordClass(biboDocument);
 		schema.setContentSchema(contentSchema);
 
-		// update schema
+		// update schema // TODO check if getID() correctly used
 
 		final Schema updatedSchema = updateObjectTransactional(schema).getObject();
 
 		Assert.assertNotNull("the schema's attribute paths of the updated schema shouldn't be null", updatedSchema.getUniqueAttributePaths());
-		Assert.assertEquals("the schema's attribute paths size are not equal", schema.getUniqueAttributePaths(), updatedSchema.getUniqueAttributePaths());
-		Assert.assertEquals("the attribute path '" + attributePath1.getId() + "' of the schema are not equal",
-				schema.getAttributePath(attributePath1.getId()), updatedSchema.getAttributePath(attributePath1.getId()));
+		Assert.assertEquals("the schema's attribute paths are not equal", schema.getUniqueAttributePaths(), updatedSchema.getUniqueAttributePaths());
+		Assert.assertEquals("the attribute path instance '" + attributePathInstance1.getId() + "' of the schema are not equal",
+				schema.getAttributePath(attributePathInstance1.getId()), updatedSchema.getAttributePath(attributePathInstance1.getId()));
 		Assert.assertNotNull("the attribute path's attributes of the attribute path '" + attributePath1.getId()
 				+ "' of the updated schema shouldn't be null", updatedSchema.getAttributePath(attributePath1.getId()).getAttributePath().getAttributes());
 		Assert.assertEquals("the attribute path's attributes size of attribute path '" + attributePath1.getId() + "' are not equal",
@@ -209,29 +242,20 @@ public class SchemaServiceTest extends IDBasicJPAServiceTest<ProxySchema, Schema
 
 		SchemaServiceTest.LOG.debug("schema json: " + json);
 
-		// clean up DB
-		deleteObject(schema.getId());
-
-		claszServiceTestUtils.deleteObject(biboDocument);
-		contentSchemaServiceTestUtils.deleteObject(contentSchema);
-
-		attributePathServiceTestUtils.deleteObject(attributePath1);
-		attributePathServiceTestUtils.deleteObject(attributePath2);
-		attributePathServiceTestUtils.deleteObject(attributePath3);
-		attributePathServiceTestUtils.deleteObject(rdfValueAP);
-
-		for (final Attribute attribute : attributes.values()) {
-
-			attributeServiceTestUtils.deleteObject(attribute);
-		}
-	}
-	
-	private static SchemaAttributePathInstance createAttributePathInstance(final AttributePath attributePath) {
-		final SchemaAttributePathInstance attributePathInstance = new SchemaAttributePathInstance();
-		attributePathInstance.setAttributePath(attributePath);
-
-		Assert.assertNotNull("the attribute path should not be null", attributePathInstance.getAttributePath());
-
-		return attributePathInstance;
+//		// clean up DB
+//		deleteObject(schema.getId());
+//
+//		claszServiceTestUtils.deleteObject(biboDocument);
+//		contentSchemaServiceTestUtils.deleteObject(contentSchema);
+//
+//		attributePathServiceTestUtils.deleteObject(attributePath1);
+//		attributePathServiceTestUtils.deleteObject(attributePath2);
+//		attributePathServiceTestUtils.deleteObject(attributePath3);
+//		attributePathServiceTestUtils.deleteObject(rdfValueAP);
+//
+//		for (final Attribute attribute : attributes.values()) {
+//
+//			attributeServiceTestUtils.deleteObject(attribute);
+//		}
 	}
 }

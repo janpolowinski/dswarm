@@ -46,7 +46,6 @@ import org.dswarm.persistence.model.resource.Resource;
 import org.dswarm.persistence.model.resource.ResourceType;
 import org.dswarm.persistence.model.schema.Attribute;
 import org.dswarm.persistence.model.schema.AttributePath;
-import org.dswarm.persistence.model.schema.AttributePathInstance;
 import org.dswarm.persistence.model.schema.Clasz;
 import org.dswarm.persistence.model.schema.MappingAttributePathInstance;
 import org.dswarm.persistence.model.schema.Schema;
@@ -74,7 +73,7 @@ public class ProjectServiceTest extends IDBasicJPAServiceTest<ProxyProject, Proj
 
 	private static final Logger									LOG								= LoggerFactory.getLogger(ProjectServiceTest.class);
 
-	private final ObjectMapper									objectMapper					= GuicedTest.injector.getInstance(ObjectMapper.class);
+	private ObjectMapper										objectMapper;
 
 	private final Map<Long, Function>							functions						= Maps.newLinkedHashMap();
 
@@ -100,24 +99,34 @@ public class ProjectServiceTest extends IDBasicJPAServiceTest<ProxyProject, Proj
 
 	private final Map<Long, MappingAttributePathInstance>		mappingAttributePathInstances	= Maps.newLinkedHashMap();
 
-	private final AttributeServiceTestUtils						attributeServiceTestUtils;
-	private final AttributePathServiceTestUtils	attributePathServiceTestUtils;
-	private final SchemaAttributePathInstanceServiceTestUtils	schemaAttributePathInstanceServiceTestUtils;
-	private final FunctionServiceTestUtils						functionServiceTestUtils;
-	private final MappingAttributePathInstanceServiceTestUtils	mappingAttributePathInstanceServiceTestUtils;
-	private final ComponentServiceTestUtils						componentServiceTestUtils;
-	private final TransformationServiceTestUtils				transformationServiceTestUtils;
-	private final SchemaServiceTestUtils						schemaServiceTestUtils;
-	private final ConfigurationServiceTestUtils					configurationServiceTestUtils;
-	private final ResourceServiceTestUtils						resourceServiceTestUtils;
-	private final ClaszServiceTestUtils							claszServiceTestUtils;
-	private final MappingServiceTestUtils						mappingServiceTestUtils;
-	private final DataModelServiceTestUtils						dataModelServiceTestUtils;
+	private AttributeServiceTestUtils						attributeServiceTestUtils;
+	private AttributePathServiceTestUtils					attributePathServiceTestUtils;
+	private SchemaAttributePathInstanceServiceTestUtils		schemaAttributePathInstanceServiceTestUtils;
+	private FunctionServiceTestUtils						functionServiceTestUtils;
+	private MappingAttributePathInstanceServiceTestUtils	mappingAttributePathInstanceServiceTestUtils;
+	private ComponentServiceTestUtils						componentServiceTestUtils;
+	private TransformationServiceTestUtils					transformationServiceTestUtils;
+	private SchemaServiceTestUtils							schemaServiceTestUtils;
+	private ConfigurationServiceTestUtils					configurationServiceTestUtils;
+	private ResourceServiceTestUtils						resourceServiceTestUtils;
+	private ClaszServiceTestUtils							claszServiceTestUtils;
+	private MappingServiceTestUtils							mappingServiceTestUtils;
+	private DataModelServiceTestUtils						dataModelServiceTestUtils;
 
 	public ProjectServiceTest() {
 
 		super("project", ProjectService.class);
 
+		initObjects();
+	}
+
+	@Override
+	protected void initObjects() {
+
+		super.initObjects();
+
+		objectMapper = GuicedTest.injector.getInstance(ObjectMapper.class);
+		
 		attributeServiceTestUtils = new AttributeServiceTestUtils();
 		attributePathServiceTestUtils = new AttributePathServiceTestUtils();
 		functionServiceTestUtils = new FunctionServiceTestUtils();
@@ -131,8 +140,35 @@ public class ProjectServiceTest extends IDBasicJPAServiceTest<ProxyProject, Proj
 		resourceServiceTestUtils = new ResourceServiceTestUtils();
 		mappingServiceTestUtils = new MappingServiceTestUtils();
 		dataModelServiceTestUtils = new DataModelServiceTestUtils();
-	}
 
+	}
+	
+	private void resetObjectVars() {
+		
+		functions.clear();
+		attributes.clear();
+		classes.clear();
+		attributePaths.clear();
+		schemaAttributePathInstances.clear();
+		components.clear();
+		transformations.clear();
+		mappings.clear();
+		schemas.clear();
+		resources.clear();
+		configurations.clear();
+		mappingAttributePathInstances.clear();
+	}
+	
+	@Override
+	public void prepare() throws Exception {
+
+		GuicedTest.tearDown();
+		GuicedTest.startUp();
+		initObjects();
+		resetObjectVars();
+		super.prepare();
+	}
+	
 	@Test
 	public void simpleProjectTest() throws Exception {
 
@@ -333,74 +369,74 @@ public class ProjectServiceTest extends IDBasicJPAServiceTest<ProxyProject, Proj
 
 		ProjectServiceTest.LOG.debug("project json: " + json);
 
-		deleteObject(updatedProject.getId());
-
-		final Transformation transformationFromComplexMapping = (Transformation) complexMapping.getTransformation().getFunction();
-
-		for (final Mapping mapping : this.mappings.values()) {
-
-			mappingServiceTestUtils.deleteObject(mapping);
-		}
-
-		dataModelServiceTestUtils.deleteObject(inputDataModel);
-		dataModelServiceTestUtils.deleteObject(outputDataModel);
-
-		transformationServiceTestUtils.deleteObject(transformationFromComplexMapping);
-
-		for (final Transformation transformation : transformations.values()) {
-
-			transformationServiceTestUtils.deleteObject(transformation);
-		}
-
-		for (final Component component : components.values()) {
-
-			componentServiceTestUtils.checkDeletedComponent(component);
-		}
-
-		for (final Function function : this.functions.values()) {
-
-			functionServiceTestUtils.deleteObject(function);
-		}
-
-		for (final Schema schema : schemas.values()) {
-
-			schemaServiceTestUtils.deleteObject(schema);
-		}
-
-		for (final MappingAttributePathInstance mappingAttributePathInstance : mappingAttributePathInstances.values()) {
-
-			mappingAttributePathInstanceServiceTestUtils.deleteObject(mappingAttributePathInstance);
-		}
-
-		for (final SchemaAttributePathInstance schemaAttributePathInstance : schemaAttributePathInstances.values()) {
-
-			schemaAttributePathInstanceServiceTestUtils.deleteObject(schemaAttributePathInstance);
-		}
-		
-		for (final AttributePath attributePath : attributePaths.values()) {
-
-			attributePathServiceTestUtils.deleteObject(attributePath);
-		}
-
-		for (final Attribute attribute : attributes.values()) {
-
-			attributeServiceTestUtils.deleteObject(attribute);
-		}
-
-		for (final Clasz clasz : classes.values()) {
-
-			claszServiceTestUtils.deleteObject(clasz);
-		}
-
-		for (final Resource resource : resources.values()) {
-
-			resourceServiceTestUtils.deleteObject(resource);
-		}
-
-		for (final Configuration configuration : configurations.values()) {
-
-			configurationServiceTestUtils.deleteObject(configuration);
-		}
+//		deleteObject(updatedProject.getId());
+//
+//		final Transformation transformationFromComplexMapping = (Transformation) complexMapping.getTransformation().getFunction();
+//
+//		for (final Mapping mapping : this.mappings.values()) {
+//
+//			mappingServiceTestUtils.deleteObject(mapping);
+//		}
+//
+//		dataModelServiceTestUtils.deleteObject(inputDataModel);
+//		dataModelServiceTestUtils.deleteObject(outputDataModel);
+//
+//		transformationServiceTestUtils.deleteObject(transformationFromComplexMapping);
+//
+//		for (final Transformation transformation : transformations.values()) {
+//
+//			transformationServiceTestUtils.deleteObject(transformation);
+//		}
+//
+//		for (final Component component : components.values()) {
+//
+//			componentServiceTestUtils.checkDeletedComponent(component);
+//		}
+//
+//		for (final Function function : this.functions.values()) {
+//
+//			functionServiceTestUtils.deleteObject(function);
+//		}
+//
+//		for (final Schema schema : schemas.values()) {
+//
+//			schemaServiceTestUtils.deleteObject(schema);
+//		}
+//
+//		for (final MappingAttributePathInstance mappingAttributePathInstance : mappingAttributePathInstances.values()) {
+//
+//			mappingAttributePathInstanceServiceTestUtils.deleteObject(mappingAttributePathInstance);
+//		}
+//
+//		for (final SchemaAttributePathInstance schemaAttributePathInstance : schemaAttributePathInstances.values()) {
+//
+//			schemaAttributePathInstanceServiceTestUtils.deleteObject(schemaAttributePathInstance);
+//		}
+//		
+//		for (final AttributePath attributePath : attributePaths.values()) {
+//
+//			attributePathServiceTestUtils.deleteObject(attributePath);
+//		}
+//
+//		for (final Attribute attribute : attributes.values()) {
+//
+//			attributeServiceTestUtils.deleteObject(attribute);
+//		}
+//
+//		for (final Clasz clasz : classes.values()) {
+//
+//			claszServiceTestUtils.deleteObject(clasz);
+//		}
+//
+//		for (final Resource resource : resources.values()) {
+//
+//			resourceServiceTestUtils.deleteObject(resource);
+//		}
+//
+//		for (final Configuration configuration : configurations.values()) {
+//
+//			configurationServiceTestUtils.deleteObject(configuration);
+//		}
 
 		ProjectServiceTest.LOG.debug("end simple project test");
 	}
@@ -1573,16 +1609,16 @@ public class ProjectServiceTest extends IDBasicJPAServiceTest<ProxyProject, Proj
 				.getUniqueAttributePaths());
 		Assert.assertEquals("the attribute path '" + attributePath1.getId() + "' of the schema are not equal",
 				schema.getAttributePath(attributePath1.getId()), updatedDataModel.getSchema().getAttributePath(attributePath1.getId()));
-		Assert.assertNotNull("the attribute path's attributes of the attribute path '" + attributePath1.getId()
-				+ "' of the updated schema shouldn't be null", updatedDataModel.getSchema().getAttributePath(attributePath1.getId()).getAttributePath().getAttributes());
-		Assert.assertEquals("the attribute path's attributes size of attribute path '" + attributePath1.getId() + "' are not equal",
-				attributePath1.getAttributes(), updatedDataModel.getSchema().getAttributePath(attributePath1.getId()).getAttributePath().getAttributes());
-		Assert.assertEquals("the first attributes of attribute path '" + attributePath1.getId() + "' are not equal", attributePath1
-				.getAttributePath().get(0), updatedDataModel.getSchema().getAttributePath(attributePath1.getId()).getAttributePath().getAttributePath().get(0));
+		Assert.assertNotNull("the attribute path's attributes of the attribute path '" + attributePathInstance1.getId()
+				+ "' of the updated schema shouldn't be null", updatedDataModel.getSchema().getAttributePath(attributePathInstance1.getId()).getAttributePath().getAttributes());
+		Assert.assertEquals("the attribute path's attributes size of attribute path '" + attributePathInstance1.getId() + "' are not equal",
+				attributePath1.getAttributes(), updatedDataModel.getSchema().getAttributePath(attributePathInstance1.getId()).getAttributePath().getAttributes());
+		Assert.assertEquals("the first attributes of attribute path '" + attributePath1.getId() + "' are not equal", attributePathInstance1.getAttributePath()
+				.getAttributePath().get(0), updatedDataModel.getSchema().getAttributePath(attributePathInstance1.getId()).getAttributePath().getAttributePath().get(0));
 		Assert.assertNotNull("the attribute path string of attribute path '" + attributePath1.getId() + "' of the update schema shouldn't be null",
-				updatedDataModel.getSchema().getAttributePath(attributePath1.getId()).getAttributePath().toAttributePath());
+				updatedDataModel.getSchema().getAttributePath(attributePathInstance1.getId()).getAttributePath().toAttributePath());
 		Assert.assertEquals("the attribute path's strings attribute path '" + attributePath1.getId() + "' are not equal",
-				attributePath1.toAttributePath(), updatedDataModel.getSchema().getAttributePath(attributePath1.getId()).getAttributePath().toAttributePath());
+				attributePath1.toAttributePath(), updatedDataModel.getSchema().getAttributePath(attributePathInstance1.getId()).getAttributePath().toAttributePath());
 		Assert.assertNotNull("the record class of the updated schema shouldn't be null", updatedDataModel.getSchema().getRecordClass());
 		Assert.assertEquals("the recod classes are not equal", schema.getRecordClass(), updatedDataModel.getSchema().getRecordClass());
 

@@ -28,6 +28,7 @@ import org.dswarm.persistence.GuicedTest;
 import org.dswarm.persistence.model.schema.AttributePath;
 import org.dswarm.persistence.model.schema.Clasz;
 import org.dswarm.persistence.model.schema.Schema;
+import org.dswarm.persistence.model.schema.SchemaAttributePathInstance;
 import org.dswarm.persistence.service.schema.SchemaService;
 
 public abstract class SchemaBuilder extends GuicedTest {
@@ -42,7 +43,7 @@ public abstract class SchemaBuilder extends GuicedTest {
 
 	public abstract Schema buildSchema();
 
-	protected Schema createSchema(final String name, final Set<AttributePath> attributePaths, final Clasz recordClass) {
+	protected Schema createSchema(final String name, final Set<SchemaAttributePathInstance> attributePaths, final Clasz recordClass) {
 
 		final SchemaService schemaService = GuicedTest.injector.getInstance(SchemaService.class);
 
@@ -77,26 +78,29 @@ public abstract class SchemaBuilder extends GuicedTest {
 
 			Assert.assertTrue("something went wrong while updating the schema of id = '" + schema.getId() + "'", false);
 		}
-
+		
+		// TODO move this to test? check if still correct after switching to schema attribute path instances
+		
 		Assert.assertNotNull("updated schema shouldn't be null", updatedSchema);
 		Assert.assertNotNull("updated schema id shouldn't be null", updatedSchema.getId());
 
-		final AttributePath attributePath1 = attributePaths.iterator().next();
+		final SchemaAttributePathInstance attributePathInstance = attributePaths.iterator().next();
+		final AttributePath attributePath1 = attributePathInstance.getAttributePath();
 
 		Assert.assertNotNull("the schema's attribute paths of the updated schema shouldn't be null", updatedSchema.getUniqueAttributePaths());
 		Assert.assertEquals("the schema's attribute paths size are not equal", schema.getUniqueAttributePaths(), updatedSchema.getUniqueAttributePaths());
-		Assert.assertEquals("the attribute path '" + attributePath1.getId() + "' of the schema are not equal",
-				schema.getAttributePath(attributePath1.getId()), updatedSchema.getAttributePath(attributePath1.getId()));
+		Assert.assertEquals("the attribute path '" + attributePathInstance.getId() + "' of the schema are not equal",
+				schema.getAttributePath(attributePathInstance.getId()), updatedSchema.getAttributePath(attributePathInstance.getId()));
 		Assert.assertNotNull("the attribute path's attributes of the attribute path '" + attributePath1.getId()
-				+ "' of the updated schema shouldn't be null", updatedSchema.getAttributePath(attributePath1.getId()).getAttributes());
-		Assert.assertEquals("the attribute path's attributes size of attribute path '" + attributePath1.getId() + "' are not equal",
-				attributePath1.getAttributes(), updatedSchema.getAttributePath(attributePath1.getId()).getAttributes());
+				+ "' of the updated schema shouldn't be null", updatedSchema.getAttributePath(attributePathInstance.getId()).getAttributePath().getAttributes());
+		Assert.assertEquals("the attribute path's attributes size of attribute path '" + attributePathInstance.getId() + "' are not equal",
+				attributePath1.getAttributes(), updatedSchema.getAttributePath(attributePathInstance.getId()).getAttributePath().getAttributes());
 		Assert.assertEquals("the first attributes of attribute path '" + attributePath1.getId() + "' are not equal", attributePath1
-				.getAttributePath().get(0), updatedSchema.getAttributePath(attributePath1.getId()).getAttributePath().get(0));
-		Assert.assertNotNull("the attribute path string of attribute path '" + attributePath1.getId() + "' of the update schema shouldn't be null",
-				updatedSchema.getAttributePath(attributePath1.getId()).toAttributePath());
-		Assert.assertEquals("the attribute path's strings attribute path '" + attributePath1.getId() + "' are not equal",
-				attributePath1.toAttributePath(), updatedSchema.getAttributePath(attributePath1.getId()).toAttributePath());
+				.getAttributePath().get(0), updatedSchema.getAttributePath(attributePathInstance.getId()).getAttributePath().getAttributePath().get(0));
+		Assert.assertNotNull("the attribute path string of attribute path '" + attributePathInstance.getId() + "' of the update schema shouldn't be null",
+				updatedSchema.getAttributePath(attributePathInstance.getId()).getAttributePath().toAttributePath());
+		Assert.assertEquals("the attribute path's strings attribute path '" + attributePathInstance.getId() + "' are not equal",
+				attributePath1.toAttributePath(), updatedSchema.getAttributePath(attributePathInstance.getId()).getAttributePath().toAttributePath());
 		Assert.assertNotNull("the record class of the updated schema shouldn't be null", updatedSchema.getRecordClass());
 		Assert.assertEquals("the recod classes are not equal", schema.getRecordClass(), updatedSchema.getRecordClass());
 

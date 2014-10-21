@@ -33,17 +33,42 @@ public class ClaszServiceTest extends AdvancedJPAServiceTest<ProxyClasz, Clasz, 
 
 	private static final Logger			LOG				= LoggerFactory.getLogger(ClaszServiceTest.class);
 
-	private final ObjectMapper			objectMapper	= GuicedTest.injector.getInstance(ObjectMapper.class);
+	private ObjectMapper			objectMapper;
 
-	private final ClaszServiceTestUtils	claszServiceTestUtils;
+	private ClaszServiceTestUtils	claszServiceTestUtils;
 
 	public ClaszServiceTest() {
 
 		super("class", ClaszService.class);
 
-		claszServiceTestUtils = new ClaszServiceTestUtils();
+		initObjects();
 	}
 
+	@Override
+	protected void initObjects() {
+
+		super.initObjects();
+
+		objectMapper = GuicedTest.injector.getInstance(ObjectMapper.class);
+		
+		claszServiceTestUtils = new ClaszServiceTestUtils();
+
+	}
+	
+	private void resetObjectVars() {
+		
+	}
+	
+	@Override
+	public void prepare() throws Exception {
+
+		GuicedTest.tearDown();
+		GuicedTest.startUp();
+		initObjects();
+		resetObjectVars();
+		super.prepare();
+	}
+	
 	@Test
 	public void testSimpleAttribute() {
 

@@ -225,10 +225,10 @@ public final class SchemaUtils extends BasicDMPJPAObjectUtils<Schema> {
 				throw new DMPPersistenceException("couldn't create or retrieve attribute path");
 			}
 			
-			// TODO: usage of proxy necessary here?
+			// TODO check this: we could also skip the usage of a proxy here, can't we?
 			
 			final ProxySchemaAttributePathInstance proxySchemaAttributePathInstance =
-					schemaAttributePathInstanceService.createOrGetObjectTransactional(attributePath);
+					schemaAttributePathInstanceService.createObjectTransactional(attributePath);
 			
 			if (proxySchemaAttributePathInstance == null) {
 				

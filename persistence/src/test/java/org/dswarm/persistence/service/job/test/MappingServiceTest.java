@@ -46,6 +46,7 @@ import org.dswarm.persistence.service.job.test.utils.FunctionServiceTestUtils;
 import org.dswarm.persistence.service.job.test.utils.TransformationServiceTestUtils;
 import org.dswarm.persistence.service.schema.test.utils.AttributePathServiceTestUtils;
 import org.dswarm.persistence.service.schema.test.utils.AttributeServiceTestUtils;
+import org.dswarm.persistence.service.schema.test.utils.ClaszServiceTestUtils;
 import org.dswarm.persistence.service.schema.test.utils.MappingAttributePathInstanceServiceTestUtils;
 import org.dswarm.persistence.service.test.IDBasicJPAServiceTest;
 
@@ -53,7 +54,7 @@ public class MappingServiceTest extends IDBasicJPAServiceTest<ProxyMapping, Mapp
 
 	private static final Logger									LOG								= LoggerFactory.getLogger(MappingServiceTest.class);
 
-	private final ObjectMapper									objectMapper					= GuicedTest.injector.getInstance(ObjectMapper.class);
+	private ObjectMapper									objectMapper;
 
 	private final Map<Long, Function>							functions						= Maps.newLinkedHashMap();
 
@@ -67,16 +68,26 @@ public class MappingServiceTest extends IDBasicJPAServiceTest<ProxyMapping, Mapp
 
 	private final Map<Long, MappingAttributePathInstance>		mappingAttributePathInstances	= Maps.newLinkedHashMap();
 
-	private final AttributeServiceTestUtils						attributeServiceTestUtils;
-	private final AttributePathServiceTestUtils					attributePathServiceTestUtils;
-	private final FunctionServiceTestUtils						functionServiceTestUtils;
-	private final MappingAttributePathInstanceServiceTestUtils	mappingAttributePathInstanceServiceTestUtils;
-	private final ComponentServiceTestUtils						componentServiceTestUtils;
-	private final TransformationServiceTestUtils				transformationServiceTestUtils;
+	private AttributeServiceTestUtils						attributeServiceTestUtils;
+	private AttributePathServiceTestUtils					attributePathServiceTestUtils;
+	private FunctionServiceTestUtils						functionServiceTestUtils;
+	private MappingAttributePathInstanceServiceTestUtils	mappingAttributePathInstanceServiceTestUtils;
+	private ComponentServiceTestUtils						componentServiceTestUtils;
+	private TransformationServiceTestUtils					transformationServiceTestUtils;
 
 	public MappingServiceTest() {
 
 		super("mapping", MappingService.class);
+
+		initObjects();
+	}
+	
+	@Override
+	protected void initObjects() {
+
+		super.initObjects();
+
+		objectMapper = GuicedTest.injector.getInstance(ObjectMapper.class);
 
 		attributeServiceTestUtils = new AttributeServiceTestUtils();
 		attributePathServiceTestUtils = new AttributePathServiceTestUtils();
@@ -84,6 +95,26 @@ public class MappingServiceTest extends IDBasicJPAServiceTest<ProxyMapping, Mapp
 		mappingAttributePathInstanceServiceTestUtils = new MappingAttributePathInstanceServiceTestUtils();
 		componentServiceTestUtils = new ComponentServiceTestUtils();
 		transformationServiceTestUtils = new TransformationServiceTestUtils();
+	}
+	
+	private void resetObjectVars() {
+		
+		functions.clear();
+		attributes.clear();
+		attributePaths.clear();
+		components.clear();
+		transformations.clear();
+		mappingAttributePathInstances.clear();
+	}
+	
+	@Override
+	public void prepare() throws Exception {
+
+		GuicedTest.tearDown();
+		GuicedTest.startUp();
+		initObjects();
+		resetObjectVars();
+		super.prepare();
 	}
 
 	@Test

@@ -41,12 +41,18 @@ import org.dswarm.persistence.model.schema.AttributePath;
 import org.dswarm.persistence.model.schema.Clasz;
 import org.dswarm.persistence.model.schema.Schema;
 import org.dswarm.persistence.model.schema.SchemaAttributePathInstance;
+import org.dswarm.persistence.service.job.test.utils.ComponentServiceTestUtils;
+import org.dswarm.persistence.service.job.test.utils.FunctionServiceTestUtils;
+import org.dswarm.persistence.service.job.test.utils.MappingServiceTestUtils;
+import org.dswarm.persistence.service.job.test.utils.TransformationServiceTestUtils;
 import org.dswarm.persistence.service.resource.DataModelService;
 import org.dswarm.persistence.service.resource.test.utils.ConfigurationServiceTestUtils;
+import org.dswarm.persistence.service.resource.test.utils.DataModelServiceTestUtils;
 import org.dswarm.persistence.service.resource.test.utils.ResourceServiceTestUtils;
 import org.dswarm.persistence.service.schema.test.utils.AttributePathServiceTestUtils;
 import org.dswarm.persistence.service.schema.test.utils.AttributeServiceTestUtils;
 import org.dswarm.persistence.service.schema.test.utils.ClaszServiceTestUtils;
+import org.dswarm.persistence.service.schema.test.utils.MappingAttributePathInstanceServiceTestUtils;
 import org.dswarm.persistence.service.schema.test.utils.SchemaAttributePathInstanceServiceTestUtils;
 import org.dswarm.persistence.service.schema.test.utils.SchemaServiceTestUtils;
 import org.dswarm.persistence.service.test.IDBasicJPAServiceTest;
@@ -56,24 +62,34 @@ public class DataModelServiceTest extends IDBasicJPAServiceTest<ProxyDataModel, 
 
 	private static final Logger					LOG				= LoggerFactory.getLogger(DataModelServiceTest.class);
 
-	private final ObjectMapper					objectMapper	= GuicedTest.injector.getInstance(ObjectMapper.class);
+	private ObjectMapper						objectMapper;
 
 	private final Map<Long, Attribute>			attributes		= Maps.newLinkedHashMap();
 
 	private final Map<Long, SchemaAttributePathInstance>		attributePaths	= Maps.newLinkedHashMap();
 
-	private final AttributeServiceTestUtils		attributeServiceTestUtils;
-	private final ClaszServiceTestUtils			claszServiceTestUtils;
-	private final AttributePathServiceTestUtils	attributePathServiceTestUtils;
-	private final SchemaAttributePathInstanceServiceTestUtils	schemaAttributePathInstanceServiceTestUtils;
-	private final SchemaServiceTestUtils		schemaServiceTestUtils;
-	private final ConfigurationServiceTestUtils	configurationServiceTestUtils;
-	private final ResourceServiceTestUtils		resourceServiceTestUtils;
+	private AttributeServiceTestUtils					attributeServiceTestUtils;
+	private ClaszServiceTestUtils						claszServiceTestUtils;
+	private AttributePathServiceTestUtils				attributePathServiceTestUtils;
+	private SchemaAttributePathInstanceServiceTestUtils	schemaAttributePathInstanceServiceTestUtils;
+	private SchemaServiceTestUtils						schemaServiceTestUtils;
+	private ConfigurationServiceTestUtils				configurationServiceTestUtils;
+	private ResourceServiceTestUtils					resourceServiceTestUtils;
 
 	public DataModelServiceTest() {
 
 		super("data model", DataModelService.class);
+		
+		initObjects();
+	}
+	
+	@Override
+	protected void initObjects() {
 
+		super.initObjects();
+
+		objectMapper = GuicedTest.injector.getInstance(ObjectMapper.class);
+		
 		attributeServiceTestUtils = new AttributeServiceTestUtils();
 		attributePathServiceTestUtils = new AttributePathServiceTestUtils();
 		schemaAttributePathInstanceServiceTestUtils = new SchemaAttributePathInstanceServiceTestUtils();
@@ -81,6 +97,23 @@ public class DataModelServiceTest extends IDBasicJPAServiceTest<ProxyDataModel, 
 		schemaServiceTestUtils = new SchemaServiceTestUtils();
 		configurationServiceTestUtils = new ConfigurationServiceTestUtils();
 		resourceServiceTestUtils = new ResourceServiceTestUtils();
+
+	}
+	
+	private void resetObjectVars() {
+		
+		attributes.clear();
+		attributePaths.clear();
+	}
+	
+	@Override
+	public void prepare() throws Exception {
+
+		GuicedTest.tearDown();
+		GuicedTest.startUp();
+		initObjects();
+		resetObjectVars();
+		super.prepare();
 	}
 
 	@Test
@@ -262,29 +295,29 @@ public class DataModelServiceTest extends IDBasicJPAServiceTest<ProxyDataModel, 
 
 		DataModelServiceTest.LOG.debug("data model json: " + json);
 
-		// clean up DB
-		deleteObject(dataModel.getId());
-
-		schemaServiceTestUtils.deleteObject(schema);
-		configurationServiceTestUtils.deleteObject(configuration);
-		resourceServiceTestUtils.deleteObject(resource);
-		claszServiceTestUtils.deleteObject(biboDocument);
-
-		for (final SchemaAttributePathInstance attributePathInstance : this.attributePaths.values()) {
-
-			schemaAttributePathInstanceServiceTestUtils.deleteObject(attributePathInstance);
-			
-			AttributePath attributePathToDelete =  attributePathInstance.getAttributePath();
-			
-			if (null != attributePathToDelete) {
-				attributePathServiceTestUtils.deleteObject(attributePathToDelete);
-			}
-		}
-
-		for (final Attribute attribute : this.attributes.values()) {
-
-			attributeServiceTestUtils.deleteObject(attribute);
-		}
+//		// clean up DB
+//		deleteObject(dataModel.getId());
+//
+//		schemaServiceTestUtils.deleteObject(schema);
+//		configurationServiceTestUtils.deleteObject(configuration);
+//		resourceServiceTestUtils.deleteObject(resource);
+//		claszServiceTestUtils.deleteObject(biboDocument);
+//
+//		for (final SchemaAttributePathInstance attributePathInstance : this.attributePaths.values()) {
+//
+//			schemaAttributePathInstanceServiceTestUtils.deleteObject(attributePathInstance);
+//			
+//			AttributePath attributePathToDelete =  attributePathInstance.getAttributePath();
+//			
+//			if (null != attributePathToDelete) {
+//				attributePathServiceTestUtils.deleteObject(attributePathToDelete);
+//			}
+//		}
+//
+//		for (final Attribute attribute : this.attributes.values()) {
+//
+//			attributeServiceTestUtils.deleteObject(attribute);
+//		}
 	}
 
 	private void checkSimpleResource(final Resource resource, final Resource updatedResource, final String attributeKey, final String attributeValue) {

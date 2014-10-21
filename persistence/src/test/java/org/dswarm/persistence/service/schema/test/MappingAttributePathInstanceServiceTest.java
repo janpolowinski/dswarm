@@ -44,21 +44,47 @@ public class MappingAttributePathInstanceServiceTest extends
 
 	private static final Logger					LOG				= LoggerFactory.getLogger(SchemaServiceTest.class);
 
-	private final ObjectMapper					objectMapper	= GuicedTest.injector.getInstance(ObjectMapper.class);
+	private ObjectMapper objectMapper;
 
 	private final Map<Long, Attribute>			attributes		= Maps.newLinkedHashMap();
 
-	private final AttributeServiceTestUtils		attributeServiceTestUtils;
-	private final AttributePathServiceTestUtils	attributePathServiceTestUtils;
-	private final FilterServiceTestUtils		filterServiceTestUtils;
+	private AttributeServiceTestUtils			attributeServiceTestUtils;
+	private AttributePathServiceTestUtils		attributePathServiceTestUtils;
+	private FilterServiceTestUtils				filterServiceTestUtils;
 
 	public MappingAttributePathInstanceServiceTest() {
 
 		super("mapping attribute path instance", MappingAttributePathInstanceService.class);
 
+		initObjects();
+	}
+	
+	@Override
+	protected void initObjects() {
+
+		super.initObjects();
+
+		objectMapper = GuicedTest.injector.getInstance(ObjectMapper.class);
+		
 		attributeServiceTestUtils = new AttributeServiceTestUtils();
 		attributePathServiceTestUtils = new AttributePathServiceTestUtils();
 		filterServiceTestUtils = new FilterServiceTestUtils();
+
+	}
+	
+	private void resetObjectVars() {
+		
+		attributes.clear();
+	}
+	
+	@Override
+	public void prepare() throws Exception {
+
+		GuicedTest.tearDown();
+		GuicedTest.startUp();
+		initObjects();
+		resetObjectVars();
+		super.prepare();
 	}
 
 	@Test
