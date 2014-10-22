@@ -45,6 +45,8 @@ public class SchemaServiceTestUtils extends BasicDMPJPAServiceTestUtils<SchemaSe
 	public SchemaServiceTestUtils() {
 
 		super(Schema.class, SchemaService.class);
+		
+		// TODO rename the members! (resource -> service)
 
 		attributePathsResourceTestUtils = new AttributePathServiceTestUtils();
 		schemaAttributePathInstanceResourceTestUtils = new SchemaAttributePathInstanceServiceTestUtils();

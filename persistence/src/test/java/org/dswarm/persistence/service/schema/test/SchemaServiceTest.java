@@ -15,8 +15,10 @@
  */
 package org.dswarm.persistence.service.schema.test;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,6 +43,7 @@ import org.dswarm.persistence.service.schema.test.utils.AttributeServiceTestUtil
 import org.dswarm.persistence.service.schema.test.utils.ClaszServiceTestUtils;
 import org.dswarm.persistence.service.schema.test.utils.ContentSchemaServiceTestUtils;
 import org.dswarm.persistence.service.schema.test.utils.SchemaAttributePathInstanceServiceTestUtils;
+import org.dswarm.persistence.service.schema.test.utils.SchemaServiceTestUtils;
 import org.dswarm.persistence.service.test.IDBasicJPAServiceTest;
 
 public class SchemaServiceTest extends IDBasicJPAServiceTest<ProxySchema, Schema, SchemaService> {
@@ -56,6 +59,7 @@ public class SchemaServiceTest extends IDBasicJPAServiceTest<ProxySchema, Schema
 	private ContentSchemaServiceTestUtils	contentSchemaServiceTestUtils;
 	private AttributePathServiceTestUtils	attributePathServiceTestUtils;
 	private SchemaAttributePathInstanceServiceTestUtils	schemaAttributePathInstanceServiceTestUtils;
+	private SchemaServiceTestUtils			schemaServiceTestUtils;
 
 	public SchemaServiceTest() {
 
@@ -76,6 +80,7 @@ public class SchemaServiceTest extends IDBasicJPAServiceTest<ProxySchema, Schema
 		claszServiceTestUtils = new ClaszServiceTestUtils();
 		contentSchemaServiceTestUtils = new ContentSchemaServiceTestUtils();
 		schemaAttributePathInstanceServiceTestUtils = new SchemaAttributePathInstanceServiceTestUtils();
+		schemaServiceTestUtils = new SchemaServiceTestUtils();
 	
 	}
 
@@ -207,24 +212,37 @@ public class SchemaServiceTest extends IDBasicJPAServiceTest<ProxySchema, Schema
 		schema.setRecordClass(biboDocument);
 		schema.setContentSchema(contentSchema);
 
-		// update schema // TODO check if getID() correctly used
+		// update schema
 
 		final Schema updatedSchema = updateObjectTransactional(schema).getObject();
 
-		Assert.assertNotNull("the schema's attribute paths of the updated schema shouldn't be null", updatedSchema.getUniqueAttributePaths());
-		Assert.assertEquals("the schema's attribute paths are not equal", schema.getUniqueAttributePaths(), updatedSchema.getUniqueAttributePaths());
+		Assert.assertNotNull("the schema's attribute paths of the updated schema shouldn't be null",
+				updatedSchema.getUniqueAttributePaths());
+		
+		Assert.assertEquals("the schema's attribute paths are not equal",
+				schema.getUniqueAttributePaths(), updatedSchema.getUniqueAttributePaths());
+		
 		Assert.assertEquals("the attribute path instance '" + attributePathInstance1.getId() + "' of the schema are not equal",
 				schema.getAttributePath(attributePathInstance1.getId()), updatedSchema.getAttributePath(attributePathInstance1.getId()));
-		Assert.assertNotNull("the attribute path's attributes of the attribute path '" + attributePath1.getId()
-				+ "' of the updated schema shouldn't be null", updatedSchema.getAttributePath(attributePath1.getId()).getAttributePath().getAttributes());
+		
+		Assert.assertNotNull("the attributes of attribute path '" + attributePath1.getId()
+				+ "' of the updated schema shouldn't be null",
+				updatedSchema.getAttributePath(attributePathInstance1.getId()).getAttributePath().getAttributes());
+		
 		Assert.assertEquals("the attribute path's attributes size of attribute path '" + attributePath1.getId() + "' are not equal",
-				attributePath1.getAttributes(), updatedSchema.getAttributePath(attributePath1.getId()).getAttributePath().getAttributes());
+				attributePath1.getAttributes(),
+				updatedSchema.getAttributePath(attributePathInstance1.getId()).getAttributePath().getAttributes());
+		
 		Assert.assertEquals("the first attributes of attribute path '" + attributePath1.getId() + "' are not equal", attributePath1
-				.getAttributePath().get(0), updatedSchema.getAttributePath(attributePath1.getId()).getAttributePath().getAttributePath().get(0));
+				.getAttributePath().get(0),
+				updatedSchema.getAttributePath(attributePathInstance1.getId()).getAttributePath().getAttributePath().get(0));
+		
 		Assert.assertNotNull("the attribute path string of attribute path '" + attributePath1.getId() + "' of the update schema shouldn't be null",
-				updatedSchema.getAttributePath(attributePath1.getId()).getAttributePath().toAttributePath());
+				updatedSchema.getAttributePath(attributePathInstance1.getId()).getAttributePath().toAttributePath());
+		
 		Assert.assertEquals("the attribute path's strings attribute path '" + attributePath1.getId() + "' are not equal",
-				attributePath1.toAttributePath(), updatedSchema.getAttributePath(attributePath1.getId()).getAttributePath().toAttributePath());
+				attributePath1.toAttributePath(), updatedSchema.getAttributePath(attributePathInstance1.getId()).getAttributePath().toAttributePath());
+		
 		Assert.assertNotNull("the record class of the updated schema shouldn't be null", updatedSchema.getRecordClass());
 		Assert.assertEquals("the recod classes are not equal", schema.getRecordClass(), updatedSchema.getRecordClass());
 		Assert.assertNotNull("the content schema of the updated schema shouldn't be null", updatedSchema.getContentSchema());
@@ -258,4 +276,68 @@ public class SchemaServiceTest extends IDBasicJPAServiceTest<ProxySchema, Schema
 //			attributeServiceTestUtils.deleteObject(attribute);
 //		}
 	}
+	
+	@Test
+	public void testComplexSchema() throws Exception {
+		
+		Schema schema = createDocumentSchema();
+		
+		String json = null;
+
+		try {
+			json = objectMapper.writeValueAsString(schema);
+		} catch (final JsonProcessingException e) {
+			e.printStackTrace();
+		}
+
+		SchemaServiceTest.LOG.debug("schema json: " + json);
+	}
+	
+	private Schema createPersonSchema() throws Exception {
+		
+		final Attribute foafLastName = attributeServiceTestUtils.createAttribute("http://xmlns.com/foaf/0.1/firstname", "first name");
+		final Attribute foafFirstName = attributeServiceTestUtils.createAttribute("http://xmlns.com/foaf/0.1/lastname", "last name");
+		
+		final SchemaAttributePathInstance attributePathInstance1 = schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance(foafFirstName);
+		final SchemaAttributePathInstance attributePathInstance2 = schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance(foafLastName);
+		
+		final Clasz foafPerson = claszServiceTestUtils.createClass("http://xmlns.com/foaf/0.1/Person", "Person");
+		
+		Set<SchemaAttributePathInstance> attributePaths = new HashSet<SchemaAttributePathInstance>();
+		attributePaths.add(attributePathInstance1);
+		attributePaths.add(attributePathInstance2);
+		
+		Schema personSchema = schemaServiceTestUtils.createSchema("Person schema", attributePaths, foafPerson);
+		
+		return personSchema;
+	}
+	
+	private Schema createDocumentSchema() throws Exception {
+		
+		final Attribute dctermsTitle = attributeServiceTestUtils.createAttribute("http://purl.org/dc/terms/title", "title");
+		final Attribute dctermsHasPart = attributeServiceTestUtils.createAttribute("http://purl.org/dc/terms/hasPart", "hasPart");
+		final Attribute dctermsCreator = attributeServiceTestUtils.createAttribute("http://purl.org/dc/terms/creator", "creator");
+		
+		final Schema personSchema = createPersonSchema();
+		
+		final SchemaAttributePathInstance attributePathInstance1 = schemaAttributePathInstanceServiceTestUtils.
+				createSchemaAttributePathInstance(dctermsTitle);
+		final SchemaAttributePathInstance attributePathInstance2 = schemaAttributePathInstanceServiceTestUtils.
+				createSchemaAttributePathInstance(dctermsHasPart);
+		final SchemaAttributePathInstance attributePathInstance3 = schemaAttributePathInstanceServiceTestUtils.
+				createSchemaAttributePathInstance(dctermsCreator, personSchema);
+		
+		final Clasz biboDocument = claszServiceTestUtils.createClass("http://purl.org/ontology/bibo/Document", "Document");
+		
+		Set<SchemaAttributePathInstance> attributePaths = new HashSet<SchemaAttributePathInstance>();
+		attributePaths.add(attributePathInstance1);
+		attributePaths.add(attributePathInstance2);
+		attributePaths.add(attributePathInstance3);
+
+		Schema documentSchema = schemaServiceTestUtils.createSchema("Document schema", attributePaths, biboDocument);
+		
+		return documentSchema;
+	}
+
+
 }

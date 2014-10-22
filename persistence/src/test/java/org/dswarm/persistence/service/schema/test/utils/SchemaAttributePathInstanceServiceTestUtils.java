@@ -17,6 +17,7 @@ package org.dswarm.persistence.service.schema.test.utils;
 
 import org.junit.Assert;
 
+import org.dswarm.persistence.model.schema.Attribute;
 import org.dswarm.persistence.model.schema.AttributePath;
 import org.dswarm.persistence.model.schema.Schema;
 import org.dswarm.persistence.model.schema.SchemaAttributePathInstance;
@@ -28,9 +29,13 @@ public class SchemaAttributePathInstanceServiceTestUtils extends
 
 	//private final FilterServiceTestUtils	filtersResourceTestUtils;
 
+	private final AttributePathServiceTestUtils	attributePathsResourceTestUtils;
+
 	public SchemaAttributePathInstanceServiceTestUtils() {
 
 		super(SchemaAttributePathInstance.class, SchemaAttributePathInstanceService.class);
+		
+		attributePathsResourceTestUtils = new AttributePathServiceTestUtils();
 
 		//filtersResourceTestUtils = new FilterServiceTestUtils();
 	}
@@ -78,7 +83,41 @@ public class SchemaAttributePathInstanceServiceTestUtils extends
 
 		return updatedSchemaAttributePathInstance;
 	}
+	
+	public SchemaAttributePathInstance createSchemaAttributePathInstance(final String name, final AttributePath attributePath) throws Exception {
+		return createSchemaAttributePathInstance(name, attributePath, null);
+	}
+	
+	public SchemaAttributePathInstance createSchemaAttributePathInstance(final AttributePath attributePath) throws Exception {
+		return createSchemaAttributePathInstance(null, attributePath, null);
+	}
 
+	/**
+	 * Convenience method for creating simple attribute path instance with an attribute path of length 1 and no subschema 
+	 * as they are frequently needed in sub-schema contexts
+	 * 
+	 * @param attribute
+	 * @return a simple attribute path instance with no subschema
+	 * @throws Exception
+	 */
+	public SchemaAttributePathInstance createSchemaAttributePathInstance(final Attribute attribute) throws Exception {
+		AttributePath attributePath = attributePathsResourceTestUtils.createAttributePath(attribute);
+		return createSchemaAttributePathInstance(attributePath);
+	}
+	
+	/**
+	 * Convenience method for creating simple attribute path instance with an attribute path of length 1 and a subschema 
+	 * as they are frequently needed in sub-schema contexts
+	 * 
+	 * @param attribute
+	 * @return a simple attribute path instance with a subschema
+	 * @throws Exception
+	 */
+	public SchemaAttributePathInstance createSchemaAttributePathInstance(final Attribute attribute, Schema subSchema) throws Exception {
+		AttributePath attributePath = attributePathsResourceTestUtils.createAttributePath(attribute);
+		return createSchemaAttributePathInstance(null, attributePath, subSchema);
+	}
+	
 	/**
 	 * {@inheritDoc}<br/>
 	 */

@@ -16,6 +16,7 @@
 package org.dswarm.persistence.service.schema.test.utils;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -391,5 +392,19 @@ public class AttributePathServiceTestUtils extends BasicJPAServiceTestUtils<Attr
 	public void reset() {
 
 		attributeResourceTestUtils.reset();
+	}
+
+	/**
+	 * Convenience method for creating simple attribute path of lengh 1 
+	 * as they are frequently needed in sub-schema contexts
+	 * 
+	 * @param attribute
+	 * @return an attribute path of length 1
+	 * @throws Exception
+	 */
+	public AttributePath createAttributePath(Attribute attribute) throws Exception {
+		final List<Attribute> attributeList = new LinkedList<Attribute>();
+		attributeList.add(attribute);
+		return createAttributePath(attributeList);
 	}
 }

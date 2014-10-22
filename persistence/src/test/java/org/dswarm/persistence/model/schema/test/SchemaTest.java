@@ -93,8 +93,8 @@ public class SchemaTest extends GuicedTest {
 	
 	private static Schema makePersonSchema() {
 
-		final Attribute foafLastName = createAttribute("http://xmlns.com/foaf/0.1/firstname", "name");
-		final Attribute foafFirstName = createAttribute("http://xmlns.com/foaf/0.1/lastname", "name");
+		final Attribute foafLastName = createAttribute("http://xmlns.com/foaf/0.1/firstname", "first name");
+		final Attribute foafFirstName = createAttribute("http://xmlns.com/foaf/0.1/lastname", "last name");
 
 		final AttributePath attributePath1 = createAttributePath(foafLastName);
 		final AttributePath attributePath2 = createAttributePath(foafFirstName);

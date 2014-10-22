@@ -1,29 +1,19 @@
 {
-  "name": null,
-  "id": null,
+  "name": "Document schema",
+  "id": 4,
   "attribute_paths": [
     {
       "type": "SchemaAttributePathInstance",
       "name": null,
-      "id": null,
+      "id": 45,
       "type": "SchemaAttributePathInstance",
       "attribute_path": {
-        "id": null,
+        "id": 42,
         "attributes": [
           {
             "name": "title",
             "uri": "http://purl.org/dc/terms/title",
-            "id": null
-          },
-          {
-            "name": "hasPart",
-            "uri": "http://purl.org/dc/terms/hasPart",
-            "id": null
-          },
-          {
-            "name": "description",
-            "uri": "http://purl.org/dc/terms/description",
-            "id": null
+            "id": 36
           }
         ]
       }
@@ -31,34 +21,50 @@
     {
       "type": "SchemaAttributePathInstance",
       "name": null,
-      "id": null,
+      "id": 46,
       "type": "SchemaAttributePathInstance",
       "attribute_path": {
-        "id": null,
+        "id": 24,
+        "attributes": [
+          {
+            "name": "hasPart",
+            "uri": "http://purl.org/dc/terms/hasPart",
+            "id": 24
+          }
+        ]
+      }
+    },
+    {
+      "type": "SchemaAttributePathInstance",
+      "name": null,
+      "id": 47,
+      "type": "SchemaAttributePathInstance",
+      "attribute_path": {
+        "id": 8,
         "attributes": [
           {
             "name": "creator",
             "uri": "http://purl.org/dc/terms/creator",
-            "id": null
+            "id": 8
           }
         ]
       },
       "sub_schema": {
-        "name": null,
-        "id": null,
+        "name": "Person schema",
+        "id": 3,
         "attribute_paths": [
           {
             "type": "SchemaAttributePathInstance",
             "name": null,
-            "id": null,
+            "id": 43,
             "type": "SchemaAttributePathInstance",
             "attribute_path": {
-              "id": null,
+              "id": 40,
               "attributes": [
                 {
-                  "name": "name",
-                  "uri": "http://xmlns.com/foaf/0.1/firstname",
-                  "id": null
+                  "name": "last name",
+                  "uri": "http://xmlns.com/foaf/0.1/lastname",
+                  "id": 38
                 }
               ]
             }
@@ -66,15 +72,15 @@
           {
             "type": "SchemaAttributePathInstance",
             "name": null,
-            "id": null,
+            "id": 44,
             "type": "SchemaAttributePathInstance",
             "attribute_path": {
-              "id": null,
+              "id": 41,
               "attributes": [
                 {
-                  "name": "name",
-                  "uri": "http://xmlns.com/foaf/0.1/lastname",
-                  "id": null
+                  "name": "first name",
+                  "uri": "http://xmlns.com/foaf/0.1/firstname",
+                  "id": 37
                 }
               ]
             }
@@ -83,30 +89,14 @@
         "record_class": {
           "name": "Person",
           "uri": "http://xmlns.com/foaf/0.1/Person",
-          "id": null
+          "id": 3
         }
-      }
-    },
-    {
-      "type": "SchemaAttributePathInstance",
-      "name": null,
-      "id": null,
-      "type": "SchemaAttributePathInstance",
-      "attribute_path": {
-        "id": null,
-        "attributes": [
-          {
-            "name": "created",
-            "uri": "http://purl.org/dc/terms/created",
-            "id": null
-          }
-        ]
       }
     }
   ],
   "record_class": {
     "name": "Document",
     "uri": "http://purl.org/ontology/bibo/Document",
-    "id": null
+    "id": 2
   }
 }
