@@ -40,7 +40,7 @@ public class SchemaTest extends GuicedTest {
 	@Test
 	public void simpleSchemaTest() throws IOException {
 
-		final Schema schema = makeTestSchema();
+		final Schema schema = makePersonSchema();
 		final String json = objectMapper.writeValueAsString(schema);
 		final Schema schemaDup = objectMapper.readValue(json, Schema.class);
 		final String jsonDup = objectMapper.writeValueAsString(schemaDup);
@@ -58,7 +58,7 @@ public class SchemaTest extends GuicedTest {
 	@Test
 	public void complexSchemaTest() throws IOException {
 
-		final Schema schema = makeTestSchema();
+		final Schema schema = makeDocumentSchema();
 		final String json = objectMapper.writeValueAsString(schema);
 		final Schema schemaDup = objectMapper.readValue(json, Schema.class);
 		final String jsonDup = objectMapper.writeValueAsString(schemaDup);
@@ -68,21 +68,43 @@ public class SchemaTest extends GuicedTest {
 		Assert.assertTrue("the two schemas should be identical", json.equals(jsonDup));
 	}
 
-	private static Schema makeTestSchema() {
+	private static Schema makeDocumentSchema() {
+		
+		final Schema personSchema = makePersonSchema();
+		
 		final Attribute dctermsTitle = createAttribute("http://purl.org/dc/terms/title", "title");
 		final Attribute dctermsHasPart = createAttribute("http://purl.org/dc/terms/hasPart", "hasPart");
 		final Attribute dctermsDescription = createAttribute("http://purl.org/dc/terms/description", "description");
 		final Attribute dctermsCreator = createAttribute("http://purl.org/dc/terms/creator", "creator");
-		final Attribute foafName = createAttribute("http://xmlns.com/foaf/0.1/name", "name");
 		final Attribute dctermsCreated = createAttribute("http://purl.org/dc/terms/created", "created");
 
 		final AttributePath attributePath1 = createAttributePath(dctermsTitle, dctermsHasPart, dctermsDescription);
-		final AttributePath attributePath2 = createAttributePath(dctermsCreator, foafName);
+		final AttributePath attributePath2 = createAttributePath(dctermsCreator);
 		final AttributePath attributePath3 = createAttributePath(dctermsCreated);
+		
+		final SchemaAttributePathInstance attributePathInstance1 = createAttributePathInstance(attributePath1);
+		final SchemaAttributePathInstance attributePathInstance2 = createAttributePathInstance(attributePath2, personSchema);
+		final SchemaAttributePathInstance attributePathInstance3 = createAttributePathInstance(attributePath3);
 
-		final Clasz biboDocument = new Clasz("http://purl.org/ontology/bibo/Document", "document");
+		final Clasz biboDocument = new Clasz("http://purl.org/ontology/bibo/Document", "Document");
 
-		return createSchema(biboDocument, attributePath1, attributePath2, attributePath3);
+		return createSchema(biboDocument, attributePathInstance1, attributePathInstance2, attributePathInstance3);
+	}
+	
+	private static Schema makePersonSchema() {
+
+		final Attribute foafLastName = createAttribute("http://xmlns.com/foaf/0.1/firstname", "name");
+		final Attribute foafFirstName = createAttribute("http://xmlns.com/foaf/0.1/lastname", "name");
+
+		final AttributePath attributePath1 = createAttributePath(foafLastName);
+		final AttributePath attributePath2 = createAttributePath(foafFirstName);
+
+		final Clasz foafPerson = new Clasz("http://xmlns.com/foaf/0.1/Person", "Person");
+		
+		final SchemaAttributePathInstance attributePathInstance1 = createAttributePathInstance(attributePath1);
+		final SchemaAttributePathInstance attributePathInstance2 = createAttributePathInstance(attributePath2);
+
+		return createSchema(foafPerson, attributePathInstance1, attributePathInstance2);
 	}
 
 	private static AttributePath createAttributePath(final Attribute... attributes) {
@@ -105,14 +127,21 @@ public class SchemaTest extends GuicedTest {
 
 		return attributePathInstance;
 	}
+	
+	private static SchemaAttributePathInstance createAttributePathInstance(final AttributePath attributePath, Schema subSchema) {
+		
+		final SchemaAttributePathInstance attributePathInstance = createAttributePathInstance(attributePath);
+		attributePathInstance.setSubSchema(subSchema);
+		
+		return attributePathInstance;
+	}
 
-	private static Schema createSchema(final Clasz recordClass, final AttributePath... attributePaths) {
+	private static Schema createSchema(final Clasz recordClass, final SchemaAttributePathInstance... attributePaths) {
 		
 		final Schema schema = new Schema();
 		schema.setRecordClass(recordClass);
-		for (final AttributePath attributePath : attributePaths) {
-			SchemaAttributePathInstance pathInstance = createAttributePathInstance(attributePath);
-			schema.addAttributePath(pathInstance);
+		for (final SchemaAttributePathInstance attributePathInstance : attributePaths) {
+			schema.addAttributePath(attributePathInstance);
 		}
 
 		Assert.assertNotNull("the record class should not be null", schema.getRecordClass());

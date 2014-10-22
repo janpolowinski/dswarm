@@ -1,0 +1,26 @@
+{
+  "type": "SchemaAttributePathInstance",
+  "name": null,
+  "id": null,
+  "type": "SchemaAttributePathInstance",
+  "attribute_path": {
+    "id": null,
+    "attributes": [
+      {
+        "name": "title",
+        "uri": "http://purl.org/dc/terms/title",
+        "id": null
+      },
+      {
+        "name": "hasPart",
+        "uri": "http://purl.org/dc/terms/hasPart",
+        "id": null
+      },
+      {
+        "name": "description",
+        "uri": "http://purl.org/dc/terms/description",
+        "id": null
+      }
+    ]
+  }
+}
