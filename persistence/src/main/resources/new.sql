@@ -78,6 +78,8 @@ TRUNCATE TABLE `ATTRIBUTE_PATHS_ATTRIBUTES`;
 
 INSERT INTO `ATTRIBUTE_PATHS_ATTRIBUTES` (`ATTRIBUTE_PATH_ID`, `ATTRIBUTE_ID`) VALUES
 (1, 1),
+(34, 1),
+(37, 1),
 (2, 2),
 (3, 3),
 (4, 4),
@@ -85,8 +87,14 @@ INSERT INTO `ATTRIBUTE_PATHS_ATTRIBUTES` (`ATTRIBUTE_PATH_ID`, `ATTRIBUTE_ID`) V
 (6, 6),
 (7, 7),
 (8, 8),
+(34, 8),
+(35, 8),
+(36, 8),
 (9, 9),
 (10, 10),
+(37, 10),
+(38, 10),
+(39, 10),
 (11, 11),
 (12, 12),
 (13, 13),
@@ -115,7 +123,9 @@ INSERT INTO `ATTRIBUTE_PATHS_ATTRIBUTES` (`ATTRIBUTE_PATH_ID`, `ATTRIBUTE_ID`) V
 (35, 8),
 (35, 34),
 (36, 8),
+(38, 34),
 (36, 35),
+(39, 35),
 (37, 1),
 (37, 10),
 (38, 10),
@@ -334,6 +344,9 @@ INSERT INTO `SCHEMAS_ATTRIBUTE_PATHS` (`SCHEMA_ID`, `ATTRIBUTE_PATH_ID`) VALUES
 (2, 37),
 (2, 38),
 (2, 39),
+(2, 40),
+(2, 41),
+(2, 42),
 (3, 1),
 (3, 40),
 (3, 41),
@@ -366,6 +379,59 @@ INSERT INTO `SCHEMAS_ATTRIBUTE_PATHS` (`SCHEMA_ID`, `ATTRIBUTE_PATH_ID`) VALUES
 (3, 68),
 (3, 69),
 (3, 70);
+
+--
+-- Truncate table before insert `ATTRIBUTE_PATH_INSTANCE`
+--
+
+TRUNCATE TABLE `ATTRIBUTE_PATH_INSTANCE`;
+--
+-- Dumping data for table `ATTRIBUTE_PATH_INSTANCE`
+--
+
+INSERT INTO `ATTRIBUTE_PATH_INSTANCE` (`ID`, `NAME`, `ATTRIBUTE_PATH_INSTANCE_TYPE`, `ATTRIBUTE_PATH`) VALUES
+(1, NULL, 'SchemaAttributePathInstance', 1),
+(2, NULL, 'SchemaAttributePathInstance', 2),
+(3, NULL, 'SchemaAttributePathInstance', 3),
+(4, NULL, 'SchemaAttributePathInstance', 4),
+(5, NULL, 'SchemaAttributePathInstance', 3),
+(6, NULL, 'SchemaAttributePathInstance', 5),
+(7, NULL, 'SchemaAttributePathInstance', 6),
+(8, NULL, 'SchemaAttributePathInstance', 7),
+(9, NULL, 'SchemaAttributePathInstance', 8),
+(10, NULL, 'SchemaAttributePathInstance', 9),
+(11, NULL, 'SchemaAttributePathInstance', 10),
+(12, NULL, 'SchemaAttributePathInstance', 11),
+(13, NULL, 'SchemaAttributePathInstance', 12),
+(14, NULL, 'SchemaAttributePathInstance', 13),
+(15, NULL, 'SchemaAttributePathInstance', 14),
+(16, NULL, 'SchemaAttributePathInstance', 15),
+(17, NULL, 'SchemaAttributePathInstance', 16),
+(18, NULL, 'SchemaAttributePathInstance', 17),
+(19, NULL, 'SchemaAttributePathInstance', 17),
+(20, NULL, 'SchemaAttributePathInstance', 18),
+(21, NULL, 'SchemaAttributePathInstance', 19),
+(22, NULL, 'SchemaAttributePathInstance', 20),
+(23, NULL, 'SchemaAttributePathInstance', 21),
+(24, NULL, 'SchemaAttributePathInstance', 22),
+(25, NULL, 'SchemaAttributePathInstance', 1),
+(26, NULL, 'SchemaAttributePathInstance', 23),
+(27, NULL, 'SchemaAttributePathInstance', 24),
+(28, NULL, 'SchemaAttributePathInstance', 25),
+(29, NULL, 'SchemaAttributePathInstance', 26),
+(30, NULL, 'SchemaAttributePathInstance', 27),
+(31, NULL, 'SchemaAttributePathInstance', 28),
+(32, NULL, 'SchemaAttributePathInstance', 29),
+(33, NULL, 'SchemaAttributePathInstance', 30),
+(34, NULL, 'SchemaAttributePathInstance', 31),
+(35, NULL, 'SchemaAttributePathInstance', 32),
+(36, NULL, 'SchemaAttributePathInstance', 33),
+(37, NULL, 'SchemaAttributePathInstance', 34),
+(38, NULL, 'SchemaAttributePathInstance', 35),
+(39, NULL, 'SchemaAttributePathInstance', 36),
+(40, NULL, 'SchemaAttributePathInstance', 37),
+(41, NULL, 'SchemaAttributePathInstance', 38),
+(42, NULL, 'SchemaAttributePathInstance', 39);
 
 --
 -- Truncate table before insert `CLASS`
@@ -425,4 +491,56 @@ INSERT INTO `DATA_MODEL` (ID, NAME, DESCRIPTION, CONFIGURATION, DATA_RESOURCE, D
 (2,'Internal Data Model BiboDocument', 'Internal Data Model BiboDocument', null, null, 2),
 (3,'Internal Data Model mabxml', 'Internal Data Model mabxml', null, null, 3);
 
+--
+-- Truncate table before insert `SCHEMA_ATTRIBUTE_PATH_INSTANCE`
+--
+
+TRUNCATE TABLE `SCHEMA_ATTRIBUTE_PATH_INSTANCE`;
+--
+-- Dumping data for table `SCHEMA_ATTRIBUTE_PATH_INSTANCE`
+--
+
+INSERT INTO `SCHEMA_ATTRIBUTE_PATH_INSTANCE` (`ID`, `SUB_SCHEMA`) VALUES
+(1, NULL),
+(2, NULL),
+(3, NULL),
+(4, NULL),
+(5, NULL),
+(6, NULL),
+(7, NULL),
+(8, NULL),
+(9, NULL),
+(10, NULL),
+(11, NULL),
+(12, NULL),
+(13, NULL),
+(14, NULL),
+(15, NULL),
+(16, NULL),
+(17, NULL),
+(18, NULL),
+(19, NULL),
+(20, NULL),
+(21, NULL),
+(22, NULL),
+(23, NULL),
+(24, NULL),
+(25, NULL),
+(26, NULL),
+(27, NULL),
+(28, NULL),
+(29, NULL),
+(30, NULL),
+(31, NULL),
+(32, NULL),
+(33, NULL),
+(34, NULL),
+(35, NULL),
+(36, NULL),
+(37, NULL),
+(38, NULL),
+(39, NULL),
+(40, NULL),
+(41, NULL),
+(42, NULL);
 SET FOREIGN_KEY_CHECKS=1;
