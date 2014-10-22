@@ -215,6 +215,8 @@ public class SchemaServiceTest extends IDBasicJPAServiceTest<ProxySchema, Schema
 		// update schema
 
 		final Schema updatedSchema = updateObjectTransactional(schema).getObject();
+		
+		// tests
 
 		Assert.assertNotNull("the schema's attribute paths of the updated schema shouldn't be null",
 				updatedSchema.getUniqueAttributePaths());
@@ -229,7 +231,7 @@ public class SchemaServiceTest extends IDBasicJPAServiceTest<ProxySchema, Schema
 				+ "' of the updated schema shouldn't be null",
 				updatedSchema.getAttributePath(attributePathInstance1.getId()).getAttributePath().getAttributes());
 		
-		Assert.assertEquals("the attribute path's attributes size of attribute path '" + attributePath1.getId() + "' are not equal",
+		Assert.assertEquals("the attributes of attribute path '" + attributePath1.getId() + "' are not equal",
 				attributePath1.getAttributes(),
 				updatedSchema.getAttributePath(attributePathInstance1.getId()).getAttributePath().getAttributes());
 		
@@ -245,14 +247,18 @@ public class SchemaServiceTest extends IDBasicJPAServiceTest<ProxySchema, Schema
 		
 		Assert.assertNotNull("the record class of the updated schema shouldn't be null", updatedSchema.getRecordClass());
 		Assert.assertEquals("the recod classes are not equal", schema.getRecordClass(), updatedSchema.getRecordClass());
+		
 		Assert.assertNotNull("the content schema of the updated schema shouldn't be null", updatedSchema.getContentSchema());
 		Assert.assertEquals("the content schemata are not equal", schema.getContentSchema(), updatedSchema.getContentSchema());
 
+		// json mapping
+		
 		String json = null;
 
 		try {
 
 			json = objectMapper.writeValueAsString(schema);
+			
 		} catch (final JsonProcessingException e) {
 
 			e.printStackTrace();
@@ -276,6 +282,7 @@ public class SchemaServiceTest extends IDBasicJPAServiceTest<ProxySchema, Schema
 //			attributeServiceTestUtils.deleteObject(attribute);
 //		}
 	}
+
 	
 	@Test
 	public void testComplexSchema() throws Exception {
@@ -308,7 +315,7 @@ public class SchemaServiceTest extends IDBasicJPAServiceTest<ProxySchema, Schema
 		attributePaths.add(attributePathInstance2);
 		
 		Schema personSchema = schemaServiceTestUtils.createSchema("Person schema", attributePaths, foafPerson);
-		
+
 		return personSchema;
 	}
 	
@@ -336,8 +343,14 @@ public class SchemaServiceTest extends IDBasicJPAServiceTest<ProxySchema, Schema
 
 		Schema documentSchema = schemaServiceTestUtils.createSchema("Document schema", attributePaths, biboDocument);
 		
+		// minimum testing here, some more possible, but other functionality also already covered by other tests in this test class
+		Schema personSchemaAsSubSchema = documentSchema.getAttributePath(attributePathInstance3.getId()).getSubSchema();
+		Assert.assertNotNull("The subschema got lost.", personSchemaAsSubSchema);
+		Assert.assertEquals("The subschema is not the expected one.", personSchema, personSchemaAsSubSchema);
+		Assert.assertNotNull("The schema's subschema has no attribute paths (null).", personSchemaAsSubSchema.getAttributePaths());
+		Assert.assertFalse("The schema's subschema has no attribute paths (empty).", personSchemaAsSubSchema.getAttributePaths().isEmpty());
+		
 		return documentSchema;
 	}
-
 
 }
