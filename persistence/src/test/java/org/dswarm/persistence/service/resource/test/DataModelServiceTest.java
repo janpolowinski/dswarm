@@ -241,28 +241,50 @@ public class DataModelServiceTest extends IDBasicJPAServiceTest<ProxyDataModel, 
 		dataModel.setSchema(schema);
 
 		final DataModel updatedDataModel = updateObjectTransactional(dataModel).getObject();
+		
+		final SchemaAttributePathInstance attributePathInstanceFromSchema 
+			= schema.getAttributePath(attributePathInstance1.getId());
+		final SchemaAttributePathInstance attributePathInstanceFromUpdatedSchema
+			= updatedDataModel.getSchema().getAttributePath(attributePathInstance1.getId());
+
 
 		Assert.assertNotNull("the updated data model shouldn't be null", updatedDataModel);
 		Assert.assertNotNull("the update data model id shouldn't be null", updatedDataModel.getId());
 		Assert.assertNotNull("the schema of the updated data model shouldn't be null", updatedDataModel.getSchema());
 		Assert.assertNotNull("the schema's attribute paths of the updated schema shouldn't be null", updatedDataModel.getSchema().getUniqueAttributePaths());
-		Assert.assertEquals("the schema's attribute paths size are not equal", schema.getUniqueAttributePaths(), updatedDataModel.getSchema()
-				.getUniqueAttributePaths());
-		Assert.assertEquals("the attribute path '" + attributePath1.getId() + "' of the schema are not equal",
-				schema.getAttributePath(attributePath1.getId()), updatedDataModel.getSchema().getAttributePath(attributePath1.getId()));
-		Assert.assertNotNull("the attribute path's attributes of the attribute path '" + attributePath1.getId()
-				+ "' of the updated schema shouldn't be null", updatedDataModel.getSchema().getAttributePath(attributePath1.getId()).getAttributePath().getAttributes());
-		Assert.assertEquals("the attribute path's attributes size of attribute path '" + attributePath1.getId() + "' are not equal",
-				attributePath1.getAttributes(), updatedDataModel.getSchema().getAttributePath(attributePath1.getId()).getAttributePath().getAttributes());
-		Assert.assertEquals("the first attributes of attribute path '" + attributePath1.getId() + "' are not equal", attributePath1
-				.getAttributePath().get(0), updatedDataModel.getSchema().getAttributePath(attributePath1.getId()).getAttributePath().getAttributePath().get(0));
-		Assert.assertNotNull("the attribute path string of attribute path '" + attributePath1.getId() + "' of the update schema shouldn't be null",
-				updatedDataModel.getSchema().getAttributePath(attributePath1.getId()).getAttributePath().toAttributePath());
-		Assert.assertEquals("the attribute path's strings attribute path '" + attributePath1.getId() + "' are not equal",
-				attributePath1.toAttributePath(), updatedDataModel.getSchema().getAttributePath(attributePath1.getId()).getAttributePath().toAttributePath());
-		Assert.assertNotNull("the record class of the updated schema shouldn't be null", updatedDataModel.getSchema().getRecordClass());
-		Assert.assertEquals("the recod classes are not equal", schema.getRecordClass(), updatedDataModel.getSchema().getRecordClass());
-		Assert.assertNotNull("the resource of the updated data model shouddn't be null", updatedDataModel.getDataResource());
+		
+		Assert.assertEquals("the attribute path instance sets of the schema are not equal",
+				schema.getUniqueAttributePaths(), updatedDataModel.getSchema().getUniqueAttributePaths());
+
+		Assert.assertEquals("the attribute path instance '" + attributePathInstance1.getId() + "' of the schema are not equal",
+				attributePathInstanceFromSchema, attributePathInstanceFromUpdatedSchema);
+		
+		Assert.assertNotNull("the attribute path's attributes of the attribute path '" + attributePathInstance1.getId()
+				+ "' of the updated schema shouldn't be null",
+				attributePathInstanceFromUpdatedSchema.getAttributePath().getAttributes());
+		
+		Assert.assertEquals("the attribute of attribute path instance '" + attributePathInstance1.getId() + "' are not equal",
+				attributePathInstance1.getAttributePath().getAttributes(),
+				attributePathInstanceFromUpdatedSchema.getAttributePath().getAttributes());
+		
+		Assert.assertEquals("the first attributes of attribute path instance '" + attributePathInstance1.getId() + "' are not equal", attributePath1
+				.getAttributePath().get(0),
+				attributePathInstanceFromUpdatedSchema.getAttributePath().getAttributePath().get(0));
+		
+		Assert.assertNotNull("the attribute path string of attribute path instance '" + attributePathInstance1.getId() + "' of the update schema shouldn't be null",
+				attributePathInstanceFromUpdatedSchema.getAttributePath().toAttributePath());
+		
+		Assert.assertEquals("the attribute path strings of attribute path instance '" + attributePathInstance1.getId() + "' are not equal",
+				attributePathInstance1.getAttributePath().toAttributePath(), attributePathInstanceFromUpdatedSchema.getAttributePath().toAttributePath());
+		
+		Assert.assertNotNull("the record class of the updated schema shouldn't be null",
+				updatedDataModel.getSchema().getRecordClass());
+		
+		Assert.assertEquals("the record classes are not equal", schema.getRecordClass(),
+				updatedDataModel.getSchema().getRecordClass());
+		
+		Assert.assertNotNull("the resource of the updated data model shouddn't be null",
+				updatedDataModel.getDataResource());
 
 		checkSimpleResource(resource, updatedDataModel.getDataResource(), attributeKey, attributeValue);
 		checkComplexResource(resource, updatedDataModel.getDataResource());
@@ -270,16 +292,22 @@ public class DataModelServiceTest extends IDBasicJPAServiceTest<ProxyDataModel, 
 
 		Assert.assertNotNull("the configuration of the updated data model shouldn't be null", updatedDataModel.getConfiguration());
 		Assert.assertNotNull("the configuration name of the updated resource shouldn't be null", updatedDataModel.getConfiguration().getName());
-		Assert.assertEquals("the configuration' names of the resource are not equal", configuration.getName(), updatedDataModel.getConfiguration()
-				.getName());
-		Assert.assertNotNull("the configuration description of the updated resource shouldn't be null", updatedDataModel.getConfiguration()
-				.getDescription());
-		Assert.assertEquals("the configuration descriptions of the resource are not equal", configuration.getDescription(), updatedDataModel
-				.getConfiguration().getDescription());
-		Assert.assertNotNull("the configuration parameters of the updated resource shouldn't be null", updatedDataModel.getConfiguration()
-				.getParameters());
-		Assert.assertEquals("the configurations parameters of the resource are not equal", configuration.getParameters(), updatedDataModel
-				.getConfiguration().getParameters());
+		
+		Assert.assertEquals("the configuration' names of the resource are not equal",
+				configuration.getName(), updatedDataModel.getConfiguration().getName());
+		
+		Assert.assertNotNull("the configuration description of the updated resource shouldn't be null",
+				updatedDataModel.getConfiguration().getDescription());
+		
+		Assert.assertEquals("the configuration descriptions of the resource are not equal",
+				configuration.getDescription(), updatedDataModel.getConfiguration().getDescription());
+		
+		Assert.assertNotNull("the configuration parameters of the updated resource shouldn't be null",
+				updatedDataModel.getConfiguration().getParameters());
+		
+		Assert.assertEquals("the configurations parameters of the resource are not equal",
+				configuration.getParameters(), updatedDataModel.getConfiguration().getParameters());
+		
 		Assert.assertNotNull("the parameter value shouldn't be null", configuration.getParameter(parameterKey));
 		Assert.assertEquals("the parameter value should be equal", configuration.getParameter(parameterKey).asText(), parameterValue);
 

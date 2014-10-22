@@ -1425,27 +1425,49 @@ public class ProjectServiceTest extends IDBasicJPAServiceTest<ProxyProject, Proj
 			Assert.assertTrue("something went wrong while updating the data model of id = '" + dataModel.getId() + "'", false);
 		}
 
+		
+		final SchemaAttributePathInstance attributePathInstanceFromSchema 
+			= dataModel.getSchema().getAttributePath(attributePathInstance1.getId());
+		final SchemaAttributePathInstance attributePathInstanceFromUpdatedSchema
+			= updatedDataModel.getSchema().getAttributePath(attributePathInstance1.getId());
+
 		Assert.assertNotNull("the updated data model shouldn't be null", updatedDataModel);
 		Assert.assertNotNull("the update data model id shouldn't be null", updatedDataModel.getId());
 		Assert.assertNotNull("the schema of the updated data model shouldn't be null", updatedDataModel.getSchema());
 		Assert.assertNotNull("the schema's attribute paths of the updated schema shouldn't be null", updatedDataModel.getSchema().getUniqueAttributePaths());
-		Assert.assertEquals("the schema's attribute paths size are not equal", schema.getUniqueAttributePaths(), updatedDataModel.getSchema()
-				.getUniqueAttributePaths());
-		Assert.assertEquals("the attribute path '" + attributePath1.getId() + "' of the schema are not equal",
-				schema.getAttributePath(attributePath1.getId()), updatedDataModel.getSchema().getAttributePath(attributePath1.getId()));
-		Assert.assertNotNull("the attribute path's attributes of the attribute path '" + attributePath1.getId()
-				+ "' of the updated schema shouldn't be null", updatedDataModel.getSchema().getAttributePath(attributePath1.getId()).getAttributePath().getAttributes());
-		Assert.assertEquals("the attribute path's attributes size of attribute path '" + attributePath1.getId() + "' are not equal",
-				attributePath1.getAttributes(), updatedDataModel.getSchema().getAttributePath(attributePath1.getId()).getAttributePath().getAttributes());
-		Assert.assertEquals("the first attributes of attribute path '" + attributePath1.getId() + "' are not equal", attributePath1
-				.getAttributePath().get(0), updatedDataModel.getSchema().getAttributePath(attributePath1.getId()).getAttributePath().getAttributePath().get(0));
-		Assert.assertNotNull("the attribute path string of attribute path '" + attributePath1.getId() + "' of the update schema shouldn't be null",
-				updatedDataModel.getSchema().getAttributePath(attributePath1.getId()).getAttributePath().toAttributePath());
-		Assert.assertEquals("the attribute path's strings attribute path '" + attributePath1.getId() + "' are not equal",
-				attributePath1.toAttributePath(), updatedDataModel.getSchema().getAttributePath(attributePath1.getId()).getAttributePath().toAttributePath());
-		Assert.assertNotNull("the record class of the updated schema shouldn't be null", updatedDataModel.getSchema().getRecordClass());
-		Assert.assertEquals("the recod classes are not equal", schema.getRecordClass(), updatedDataModel.getSchema().getRecordClass());
-		Assert.assertNotNull("the resource of the updated data model shouddn't be null", updatedDataModel.getDataResource());
+		
+		Assert.assertEquals("the attribute path instance sets of the schema are not equal",
+				schema.getUniqueAttributePaths(), updatedDataModel.getSchema().getUniqueAttributePaths());
+	
+		Assert.assertEquals("the attribute path instance '" + attributePathInstance1.getId() + "' of the schema are not equal",
+				attributePathInstanceFromSchema, attributePathInstanceFromUpdatedSchema);
+		
+		Assert.assertNotNull("the attribute path's attributes of the attribute path '" + attributePathInstance1.getId()
+				+ "' of the updated schema shouldn't be null",
+				attributePathInstanceFromUpdatedSchema.getAttributePath().getAttributes());
+		
+		Assert.assertEquals("the attribute of attribute path instance '" + attributePathInstance1.getId() + "' are not equal",
+				attributePathInstance1.getAttributePath().getAttributes(),
+				attributePathInstanceFromUpdatedSchema.getAttributePath().getAttributes());
+		
+		Assert.assertEquals("the first attributes of attribute path instance '" + attributePathInstance1.getId() + "' are not equal", attributePath1
+				.getAttributePath().get(0),
+				attributePathInstanceFromUpdatedSchema.getAttributePath().getAttributePath().get(0));
+		
+		Assert.assertNotNull("the attribute path string of attribute path instance '" + attributePathInstance1.getId() + "' of the update schema shouldn't be null",
+				attributePathInstanceFromUpdatedSchema.getAttributePath().toAttributePath());
+		
+		Assert.assertEquals("the attribute path strings of attribute path instance '" + attributePathInstance1.getId() + "' are not equal",
+				attributePathInstance1.getAttributePath().toAttributePath(), attributePathInstanceFromUpdatedSchema.getAttributePath().toAttributePath());
+		
+		Assert.assertNotNull("the record class of the updated schema shouldn't be null",
+				updatedDataModel.getSchema().getRecordClass());
+		
+		Assert.assertEquals("the record classes are not equal", schema.getRecordClass(),
+				updatedDataModel.getSchema().getRecordClass());
+		
+		Assert.assertNotNull("the resource of the updated data model shouddn't be null",
+				updatedDataModel.getDataResource());
 
 		resourceServiceTestUtils.checkSimpleResource(resource, updatedDataModel.getDataResource(), attributeKey, attributeValue);
 		resourceServiceTestUtils.checkComplexResource(resource, updatedDataModel.getDataResource());
