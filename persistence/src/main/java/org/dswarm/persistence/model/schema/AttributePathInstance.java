@@ -45,7 +45,8 @@ import org.dswarm.persistence.util.DMPPersistenceUtil;
  */
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type", visible = true)
-@JsonSubTypes({ @Type(value = MappingAttributePathInstance.class, name = "MappingAttributePathInstance") })
+@JsonSubTypes({ @Type(value = MappingAttributePathInstance.class, name = "MappingAttributePathInstance"), 
+@Type(value = SchemaAttributePathInstance.class, name = "SchemaAttributePathInstance") })
 @XmlRootElement
 @Entity
 // @Cacheable(true)

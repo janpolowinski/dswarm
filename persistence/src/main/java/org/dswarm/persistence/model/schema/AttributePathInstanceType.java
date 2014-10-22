@@ -28,7 +28,8 @@ package org.dswarm.persistence.model.schema;
 public enum AttributePathInstanceType {
 
 	/**
-	 * The attribute path instance type to indicate mapping attribute path instances ({@link MappingAttributePathInstance}).
+	 * The attribute path instance type to indicate mapping or schema attribute path instances 
+	 * (e.g. {@link MappingAttributePathInstance}).
 	 */
 	MappingAttributePathInstance("MappingAttributePathInstance"),
 	SchemaAttributePathInstance("SchemaAttributePathInstance");
