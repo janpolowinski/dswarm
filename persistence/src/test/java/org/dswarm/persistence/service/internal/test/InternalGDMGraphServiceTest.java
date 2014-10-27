@@ -20,6 +20,8 @@ import java.net.URL;
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.Ignore;
+
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
@@ -66,7 +68,7 @@ public class InternalGDMGraphServiceTest extends GuicedTest {
 	 *
 	 * @throws Exception
 	 */
-	@Test
+	@Test @Ignore
 	public void testReadGDMFromDB() throws Exception {
 
 		// process input data model
@@ -239,7 +241,7 @@ public class InternalGDMGraphServiceTest extends GuicedTest {
 //		resourceService.deleteObject(updatedResource.getId());
 //	}
 
-	@Test
+	@Test @Ignore
 	public void testCheckSchemaCreation() throws Exception {
 
 		// process input data model
