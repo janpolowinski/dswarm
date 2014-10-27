@@ -20,6 +20,7 @@ import org.junit.Assert;
 import org.dswarm.persistence.model.resource.Configuration;
 import org.dswarm.persistence.model.resource.DataModel;
 import org.dswarm.persistence.model.resource.Resource;
+import org.dswarm.persistence.model.resource.ResourceType;
 import org.dswarm.persistence.model.resource.proxy.ProxyDataModel;
 import org.dswarm.persistence.model.schema.Schema;
 import org.dswarm.persistence.service.resource.DataModelService;
@@ -28,19 +29,19 @@ import org.dswarm.persistence.service.test.utils.ExtendedBasicDMPJPAServiceTestU
 
 public class DataModelServiceTestUtils extends ExtendedBasicDMPJPAServiceTestUtils<DataModelService, ProxyDataModel, DataModel> {
 
-	private final ResourceServiceTestUtils		resourcesResourceTestUtils;
+	private final ResourceServiceTestUtils		resourcesServiceTestUtils;
 
-	private final ConfigurationServiceTestUtils	configurationsResourceTestUtils;
+	private final ConfigurationServiceTestUtils	configurationsServiceTestUtils;
 
-	private final SchemaServiceTestUtils		schemasResourceTestUtils;
+	private final SchemaServiceTestUtils		schemasServiceTestUtils;
 
 	public DataModelServiceTestUtils() {
 
 		super(DataModel.class, DataModelService.class);
 
-		resourcesResourceTestUtils = new ResourceServiceTestUtils();
-		configurationsResourceTestUtils = new ConfigurationServiceTestUtils();
-		schemasResourceTestUtils = new SchemaServiceTestUtils();
+		resourcesServiceTestUtils = new ResourceServiceTestUtils();
+		configurationsServiceTestUtils = new ConfigurationServiceTestUtils();
+		schemasServiceTestUtils = new SchemaServiceTestUtils();
 	}
 
 	/**
@@ -65,7 +66,7 @@ public class DataModelServiceTestUtils extends ExtendedBasicDMPJPAServiceTestUti
 			Assert.assertNull("the actual data model shouldn't have a resource", actualDataModel.getDataResource());
 
 		} else {
-			resourcesResourceTestUtils.compareObjects(expectedDataModel.getDataResource(), actualDataModel.getDataResource());
+			resourcesServiceTestUtils.compareObjects(expectedDataModel.getDataResource(), actualDataModel.getDataResource());
 		}
 
 		// check configuration
@@ -74,7 +75,7 @@ public class DataModelServiceTestUtils extends ExtendedBasicDMPJPAServiceTestUti
 			Assert.assertNull("the actual data model shouldn't have a configuration", actualDataModel.getConfiguration());
 
 		} else {
-			configurationsResourceTestUtils.compareObjects(expectedDataModel.getConfiguration(), actualDataModel.getConfiguration());
+			configurationsServiceTestUtils.compareObjects(expectedDataModel.getConfiguration(), actualDataModel.getConfiguration());
 		}
 
 		// check schema
@@ -83,7 +84,7 @@ public class DataModelServiceTestUtils extends ExtendedBasicDMPJPAServiceTestUti
 			Assert.assertNull("the actual data model shouldn't have a schema", actualDataModel.getSchema());
 
 		} else {
-			schemasResourceTestUtils.compareObjects(expectedDataModel.getSchema(), actualDataModel.getSchema());
+			schemasServiceTestUtils.compareObjects(expectedDataModel.getSchema(), actualDataModel.getSchema());
 		}
 	}
 
@@ -106,8 +107,51 @@ public class DataModelServiceTestUtils extends ExtendedBasicDMPJPAServiceTestUti
 	@Override
 	public void reset() {
 
-		schemasResourceTestUtils.reset();
-		resourcesResourceTestUtils.reset();
-		configurationsResourceTestUtils.reset();
+		schemasServiceTestUtils.reset();
+		resourcesServiceTestUtils.reset();
+		configurationsServiceTestUtils.reset();
+	}
+	
+	/**
+	 * A simple internal model example (using bibo:Document)
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	public DataModel getExampleDataModel1() throws Exception {
+		
+		DataModel dataModel = new DataModel();
+		dataModel.setName("my output data model");
+		dataModel.setDescription("my output data model description");
+		
+		dataModel.setSchema(schemasServiceTestUtils.getExampleSchema1());
+		
+		DataModel updatedDataModel = createObject(dataModel, dataModel);
+		
+		return updatedDataModel;
+	}
+
+	/**
+	 * A mab-XML example with a file resource and configuration for http://www.ddb.de/professionell/mabxml/mabxml-1.xsd
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	public DataModel getExampleDataModel2() throws Exception {
+		
+		DataModel dataModel = new DataModel();
+		//dataModel.setName("my input data model");
+		//dataModel.setDescription("my input data model description");
+		
+		Resource resource = resourcesServiceTestUtils.createResource("test-mabxml.xml", null, ResourceType.FILE, null, null);
+		
+		Configuration configuration = configurationsServiceTestUtils.getExampleConfiguration1(resource);
+		
+		dataModel.setConfiguration(configuration);
+		dataModel.setDataResource(resource);
+		
+		DataModel updatedDataModel = createObject(dataModel, dataModel);
+		
+		return updatedDataModel;
 	}
 }

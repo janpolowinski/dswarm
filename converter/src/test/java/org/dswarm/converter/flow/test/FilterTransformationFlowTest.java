@@ -31,6 +31,7 @@ import org.dswarm.converter.flow.TransformationFlow;
 import org.dswarm.converter.morph.MorphScriptBuilder;
 import org.dswarm.persistence.model.job.Task;
 import org.dswarm.persistence.service.InternalModelServiceFactory;
+import org.dswarm.persistence.service.job.test.utils.TaskServiceTestUtils;
 import org.dswarm.persistence.util.DMPPersistenceUtil;
 
 public class FilterTransformationFlowTest extends GuicedTest {
@@ -174,12 +175,15 @@ public class FilterTransformationFlowTest extends GuicedTest {
 		final Provider<InternalModelServiceFactory> internalModelServiceFactoryProvider = GuicedTest.injector
 				.getProvider(InternalModelServiceFactory.class);
 
-		final String request = DMPPersistenceUtil.getResourceAsString("task.filter.json");
+		final String request = DMPPersistenceUtil.getResourceAsString("task.filter.sapis.json");
 
 		final ObjectMapper objectMapper = GuicedTest.injector.getInstance(ObjectMapper.class);
 
 		final Task task = objectMapper.readValue(request, Task.class);
-
+		
+//		final Task task = new TaskServiceTestUtils().exampleTask1(); // TODO inject / reuse / delete old code above
+//		final String taskAsJson = DMPPersistenceUtil.getJSONObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(task);
+//		
 		final String morphScriptString = new MorphScriptBuilder().apply(task).toString();
 
 		final TransformationFlow flow = TransformationFlow.fromString(morphScriptString, internalModelServiceFactoryProvider);

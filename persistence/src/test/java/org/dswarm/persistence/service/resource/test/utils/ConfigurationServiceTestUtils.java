@@ -17,6 +17,8 @@ package org.dswarm.persistence.service.resource.test.utils;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.databind.node.TextNode;
+
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Sets;
 import org.junit.Assert;
@@ -24,6 +26,7 @@ import org.junit.Assert;
 import org.dswarm.persistence.model.resource.Configuration;
 import org.dswarm.persistence.model.resource.Resource;
 import org.dswarm.persistence.model.resource.proxy.ProxyConfiguration;
+import org.dswarm.persistence.model.resource.utils.ConfigurationStatics;
 import org.dswarm.persistence.service.resource.ConfigurationService;
 import org.dswarm.persistence.service.test.utils.ExtendedBasicDMPJPAServiceTestUtils;
 
@@ -105,5 +108,20 @@ public class ConfigurationServiceTestUtils extends ExtendedBasicDMPJPAServiceTes
 	@Override
 	public void reset() {
 
+	}
+
+	public Configuration getExampleConfiguration1(Resource resource) throws Exception { 
+		
+		Configuration configuration = new Configuration();
+		
+		configuration.addResource(resource);
+		
+		configuration.addParameter(ConfigurationStatics.RECORD_TAG, new TextNode("datensatz"));
+		configuration.addParameter(ConfigurationStatics.XML_NAMESPACE, new TextNode("http://www.ddb.de/professionell/mabxml/mabxml-1.xsd"));
+		configuration.addParameter(ConfigurationStatics.STORAGE_TYPE, new TextNode("xml"));
+		
+		Configuration updatedConfiguration = createObject(configuration, configuration);
+		
+		return updatedConfiguration;
 	}
 }
