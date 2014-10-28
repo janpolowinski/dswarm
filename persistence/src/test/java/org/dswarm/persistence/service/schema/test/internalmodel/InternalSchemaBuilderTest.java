@@ -51,15 +51,55 @@ public class InternalSchemaBuilderTest extends GuicedTest {
 	
 	//@Ignore
 	@Test
-	public void buildVerySimpleSchemaTypeIdVal1To4() {
+	public void buildVerySimpleSchemaTypeIdVal1To6() {
 		try {
-			Schema schema = new SchemaServiceTestUtils().getVerySimpleSchemaTypeIdVal1To4();
+			Schema schema = new SchemaServiceTestUtils().getVerySimpleSchemaTypeIdVal1To6();
 			String json = objectMapper.writeValueAsString(schema);
 			printSchemaJSON(schema);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+	
+	//@Ignore
+	@Test
+	public void buildFlatSchemaSomeRecordAttributes() {
+		try {
+			Schema schema = new SchemaServiceTestUtils().getFlatSchemaSomeRecordAttributes();
+			String json = objectMapper.writeValueAsString(schema);
+			printSchemaJSON(schema);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	//@Ignore
+	@Test
+	public void buildFlatSchemaSomeRecordAttributesFarbeJahrNummerName() {
+		try {
+			Schema schema = new SchemaServiceTestUtils().getFlatSchemaSomeRecordAttributesFarbeJahrNummerName();
+			String json = objectMapper.writeValueAsString(schema);
+			printSchemaJSON(schema);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	//@Ignore
+	@Test
+	public void buildFlatSchemaCSVRecordType() {
+		try {
+			Schema schema = new SchemaServiceTestUtils().getFlatSchemaCSVRecordType();
+			String json = objectMapper.writeValueAsString(schema);
+			printSchemaJSON(schema);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	
+	
 	
 	private void buildSchema(final SchemaBuilder schemaBuilder) {
 

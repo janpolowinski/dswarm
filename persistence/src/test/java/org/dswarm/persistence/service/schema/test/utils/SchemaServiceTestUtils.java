@@ -276,11 +276,11 @@ public class SchemaServiceTestUtils extends BasicDMPJPAServiceTestUtils<SchemaSe
 	}
 
 	/**
-	 * Creates a schema for a RecordType containing 6 simple attribute paths of lenght 1
-	 * (rdf:type, some id, and val1-4)
+	 * Creates a schema for a RecordType containing 8 simple attribute paths of lenght 1
+	 * (rdf:type, some id, and val1-6)
 	 * @throws Exception
 	 */
-	public Schema getVerySimpleSchemaTypeIdVal1To4() throws Exception {
+	public Schema getVerySimpleSchemaTypeIdVal1To6() throws Exception {
 		
 		// attributes
 
@@ -292,6 +292,10 @@ public class SchemaServiceTestUtils extends BasicDMPJPAServiceTestUtils<SchemaSe
 				.createAttribute("http://data.slub-dresden.de/resources/1/schema#val3", "val3");
 		final Attribute val4 = attributesServiceTestUtils
 				.createAttribute("http://data.slub-dresden.de/resources/1/schema#val4", "val4");
+		final Attribute val5 = attributesServiceTestUtils
+				.createAttribute("http://data.slub-dresden.de/resources/1/schema#val5", "val5");
+		final Attribute val6 = attributesServiceTestUtils
+				.createAttribute("http://data.slub-dresden.de/resources/1/schema#val6", "val6");
 		final Attribute id = attributesServiceTestUtils
 				.createAttribute("http://data.slub-dresden.de/resources/1/schema#id", "id");
 		final Attribute type = attributesServiceTestUtils
@@ -312,8 +316,133 @@ public class SchemaServiceTestUtils extends BasicDMPJPAServiceTestUtils<SchemaSe
 		attributePathInstances.add(schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance(val2));
 		attributePathInstances.add(schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance(val3));
 		attributePathInstances.add(schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance(val4));
+		attributePathInstances.add(schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance(val5));
+		attributePathInstances.add(schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance(val6));
 		
 		final Schema schema = createSchema("test_transf.csv schema", attributePathInstances, clasz);
+		
+		return schema;
+		
+	}
+	
+	
+	/**
+	 * Creates a schema for a RecordType containing a hand full of meaningfully named attributes:
+	 * isbn, description, id, name, year, rdf:type
+	 * @throws Exception
+	 */
+	public Schema getFlatSchemaSomeRecordAttributes() throws Exception {
+		
+		// attributes
+
+		final Attribute description = attributesServiceTestUtils
+				.createAttribute("http://data.slub-dresden.de/resources/1/schema#description", "description");
+		final Attribute isbn = attributesServiceTestUtils
+				.createAttribute("http://data.slub-dresden.de/resources/1/schema#isbn", "isbn");
+		final Attribute name = attributesServiceTestUtils
+				.createAttribute("http://data.slub-dresden.de/resources/1/schema#name", "name");
+		final Attribute year = attributesServiceTestUtils
+				.createAttribute("http://data.slub-dresden.de/resources/1/schema#year", "year");
+		final Attribute id = attributesServiceTestUtils
+				.createAttribute("http://data.slub-dresden.de/resources/1/schema#id", "id");
+		final Attribute type = attributesServiceTestUtils
+				.createAttribute("http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "type");
+
+		// record class
+
+		final Clasz clasz = claszesServiceTestUtils
+				.createClass("http://data.slub-dresden.de/resources/1/schema#RecordType", "record type");
+
+		// schema
+
+		final Set<SchemaAttributePathInstance> attributePathInstances = Sets.newLinkedHashSet();
+
+		attributePathInstances.add(schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance(description));
+		attributePathInstances.add(schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance(isbn));
+		attributePathInstances.add(schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance(name));
+		attributePathInstances.add(schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance(year));
+		attributePathInstances.add(schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance(id));
+		attributePathInstances.add(schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance(type));
+				
+		final Schema schema = createSchema("test_transf.csv schema", attributePathInstances, clasz);
+		
+		return schema;
+		
+	}
+
+	public Schema getFlatSchemaSomeRecordAttributesFarbeJahrNummerName() throws Exception {
+
+		// attributes
+
+		final Attribute farbe = attributesServiceTestUtils
+				.createAttribute("http://data.slub-dresden.de/resources/1/schema#farbe", "farbe");
+		final Attribute jahr = attributesServiceTestUtils
+				.createAttribute("http://data.slub-dresden.de/resources/1/schema#jahr", "jahr");
+		final Attribute nummer = attributesServiceTestUtils
+				.createAttribute("http://data.slub-dresden.de/resources/1/schema#nummer", "nummer");
+		final Attribute name = attributesServiceTestUtils
+				.createAttribute("http://data.slub-dresden.de/resources/1/schema#name", "name");
+		final Attribute id = attributesServiceTestUtils
+				.createAttribute("http://data.slub-dresden.de/resources/1/schema#id", "id");
+		final Attribute type = attributesServiceTestUtils
+				.createAttribute("http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "type");
+
+		// record class
+
+		final Clasz clasz = claszesServiceTestUtils
+				.createClass("http://data.slub-dresden.de/resources/1/schema#RecordType", "record type");
+
+		// schema
+
+		final Set<SchemaAttributePathInstance> attributePathInstances = Sets.newLinkedHashSet();
+
+		attributePathInstances.add(schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance(farbe));
+		attributePathInstances.add(schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance(jahr));
+		attributePathInstances.add(schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance(nummer));
+		attributePathInstances.add(schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance(name));
+		attributePathInstances.add(schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance(id));
+		attributePathInstances.add(schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance(type));
+				
+		final Schema schema = createSchema("demo.csv schema", attributePathInstances, clasz);
+		
+		return schema;
+		
+	}
+	
+	public Schema getFlatSchemaCSVRecordType() throws Exception {
+		
+		String base = "/test_csv.csv#";
+
+		// attributes
+
+		final Attribute description = attributesServiceTestUtils
+				.createAttribute(base + "description", "description");
+		final Attribute id = attributesServiceTestUtils
+				.createAttribute(base + "id", "id");
+		final Attribute name = attributesServiceTestUtils
+				.createAttribute(base + "name", "name");
+		final Attribute year = attributesServiceTestUtils
+				.createAttribute(base + "year", "year");
+		final Attribute isbn = attributesServiceTestUtils
+				.createAttribute(base + "isbn", "isbn");
+
+
+		// record class
+
+		final Clasz clasz = claszesServiceTestUtils
+				.createClass(base + "RecordType", "record type");
+
+		// schema
+
+		final Set<SchemaAttributePathInstance> attributePathInstances = Sets.newLinkedHashSet();
+
+		attributePathInstances.add(schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance(description));
+		attributePathInstances.add(schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance(id));
+		attributePathInstances.add(schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance(name));
+		attributePathInstances.add(schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance(year));
+		attributePathInstances.add(schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance(isbn));
+				
+		final Schema schema = createSchema("test.csv schema", attributePathInstances, clasz);
 		
 		return schema;
 		

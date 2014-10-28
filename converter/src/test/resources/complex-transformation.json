@@ -372,67 +372,7 @@
       "name": "test_csv.csv",
       "id": 2
     },
-    "schema": {
-      "record_class": {
-        "id": 80,
-        "name": "record type",
-        "uri": "/test_csv.csv#RecordType"
-      },
-      "attribute_paths": [
-        {
-          "attributes": [
-            {
-              "id": 89,
-              "name": "description",
-              "uri": "/test_csv.csv#description"
-            }
-          ],
-          "id": 98
-        },
-        {
-          "attributes": [
-            {
-              "id": 88,
-              "name": "id",
-              "uri": "/test_csv.csv#id"
-            }
-          ],
-          "id": 96
-        },
-        {
-          "attributes": [
-            {
-              "id": 87,
-              "name": "name",
-              "uri": "/test_csv.csv#name"
-            }
-          ],
-          "id": 97
-        },
-        {
-          "attributes": [
-            {
-              "id": 86,
-              "name": "year",
-              "uri": "/test_csv.csv#year"
-            }
-          ],
-          "id": 100
-        },
-        {
-          "attributes": [
-            {
-              "id": 85,
-              "name": "isbn",
-              "uri": "/test_csv.csv#isbn"
-            }
-          ],
-          "id": 99
-        }
-      ],
-      "name": "test_csv.csv schema",
-      "id": 6
-    },
+    "schema": {"name":"test.csv schema","id":8,"attribute_paths":[{"type":"SchemaAttributePathInstance","name":null,"id":57,"type":"SchemaAttributePathInstance","attribute_path":{"id":65,"attributes":[{"name":"description","uri":"/test_csv.csv#description","id":57}]}},{"type":"SchemaAttributePathInstance","name":null,"id":58,"type":"SchemaAttributePathInstance","attribute_path":{"id":66,"attributes":[{"name":"id","uri":"/test_csv.csv#id","id":58}]}},{"type":"SchemaAttributePathInstance","name":null,"id":59,"type":"SchemaAttributePathInstance","attribute_path":{"id":67,"attributes":[{"name":"name","uri":"/test_csv.csv#name","id":59}]}},{"type":"SchemaAttributePathInstance","name":null,"id":60,"type":"SchemaAttributePathInstance","attribute_path":{"id":68,"attributes":[{"name":"year","uri":"/test_csv.csv#year","id":60}]}},{"type":"SchemaAttributePathInstance","name":null,"id":61,"type":"SchemaAttributePathInstance","attribute_path":{"id":69,"attributes":[{"name":"isbn","uri":"/test_csv.csv#isbn","id":61}]}}],"record_class":{"name":"record type","uri":"/test_csv.csv#RecordType","id":5}},
     "configuration": {
       "parameters": {
         "storage_type": "csv",
@@ -480,67 +420,7 @@
       "name": "test_csv.csv",
       "id": 2
     },
-    "schema": {
-      "record_class": {
-        "id": 80,
-        "name": "record type",
-        "uri": "/test_csv.csv#RecordType"
-      },
-      "attribute_paths": [
-        {
-          "attributes": [
-            {
-              "id": 89,
-              "name": "description",
-              "uri": "/test_csv.csv#description"
-            }
-          ],
-          "id": 98
-        },
-        {
-          "attributes": [
-            {
-              "id": 88,
-              "name": "id",
-              "uri": "/test_csv.csv#id"
-            }
-          ],
-          "id": 96
-        },
-        {
-          "attributes": [
-            {
-              "id": 87,
-              "name": "name",
-              "uri": "/test_csv.csv#name"
-            }
-          ],
-          "id": 97
-        },
-        {
-          "attributes": [
-            {
-              "id": 86,
-              "name": "year",
-              "uri": "/test_csv.csv#year"
-            }
-          ],
-          "id": 100
-        },
-        {
-          "attributes": [
-            {
-              "id": 85,
-              "name": "isbn",
-              "uri": "/test_csv.csv#isbn"
-            }
-          ],
-          "id": 99
-        }
-      ],
-      "name": "test_csv.csv schema",
-      "id": 6
-    },
+    "schema": {"name":"test.csv schema","id":8,"attribute_paths":[{"type":"SchemaAttributePathInstance","name":null,"id":57,"type":"SchemaAttributePathInstance","attribute_path":{"id":65,"attributes":[{"name":"description","uri":"/test_csv.csv#description","id":57}]}},{"type":"SchemaAttributePathInstance","name":null,"id":58,"type":"SchemaAttributePathInstance","attribute_path":{"id":66,"attributes":[{"name":"id","uri":"/test_csv.csv#id","id":58}]}},{"type":"SchemaAttributePathInstance","name":null,"id":59,"type":"SchemaAttributePathInstance","attribute_path":{"id":67,"attributes":[{"name":"name","uri":"/test_csv.csv#name","id":59}]}},{"type":"SchemaAttributePathInstance","name":null,"id":60,"type":"SchemaAttributePathInstance","attribute_path":{"id":68,"attributes":[{"name":"year","uri":"/test_csv.csv#year","id":60}]}},{"type":"SchemaAttributePathInstance","name":null,"id":61,"type":"SchemaAttributePathInstance","attribute_path":{"id":69,"attributes":[{"name":"isbn","uri":"/test_csv.csv#isbn","id":61}]}}],"record_class":{"name":"record type","uri":"/test_csv.csv#RecordType","id":5}},
     "configuration": {
       "parameters": {
         "storage_type": "csv",
