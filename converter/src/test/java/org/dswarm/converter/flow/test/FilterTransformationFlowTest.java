@@ -175,20 +175,19 @@ public class FilterTransformationFlowTest extends GuicedTest {
 		final Provider<InternalModelServiceFactory> internalModelServiceFactoryProvider = GuicedTest.injector
 				.getProvider(InternalModelServiceFactory.class);
 
-		final String request = DMPPersistenceUtil.getResourceAsString("task.filter.sapis.json");
-
-		final ObjectMapper objectMapper = GuicedTest.injector.getInstance(ObjectMapper.class);
-
-		final Task task = objectMapper.readValue(request, Task.class);
+//		final String request = DMPPersistenceUtil.getResourceAsString("task.filter.json");
+//		final ObjectMapper objectMapper = GuicedTest.injector.getInstance(ObjectMapper.class);
+//		final Task task = objectMapper.readValue(request, Task.class);
 		
-//		final Task task = new TaskServiceTestUtils().exampleTask1(); // TODO inject / reuse / delete old code above
-//		final String taskAsJson = DMPPersistenceUtil.getJSONObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(task);
-//		
+		final Task task = new TaskServiceTestUtils().exampleTask1(); // TODO inject / reuse / delete old code above
+		
+		final String taskAsJson = DMPPersistenceUtil.getJSONObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(task);
+		
 		final String morphScriptString = new MorphScriptBuilder().apply(task).toString();
 
 		final TransformationFlow flow = TransformationFlow.fromString(morphScriptString, internalModelServiceFactoryProvider);
 
-		flow.getScript();
+		flow.getScript(); // TODO why this?
 
 		final String actual = flow.applyResource("test-mabxml.tuples.json");
 

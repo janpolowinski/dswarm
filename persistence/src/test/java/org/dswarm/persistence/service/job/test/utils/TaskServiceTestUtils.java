@@ -15,7 +15,11 @@
  */
 package org.dswarm.persistence.service.job.test.utils;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.dswarm.persistence.model.job.Job;
+import org.dswarm.persistence.model.job.Mapping;
 import org.dswarm.persistence.model.job.Task;
 import org.dswarm.persistence.model.job.proxy.ProxyTask;
 import org.dswarm.persistence.model.resource.DataModel;
@@ -33,7 +37,8 @@ public class TaskServiceTestUtils extends BasicDMPJPAServiceTestUtils<TaskServic
 
 
 
-	private JobServiceTestUtils	jobServiceTestUtils = new JobServiceTestUtils();
+	//private JobServiceTestUtils	jobServiceTestUtils = new JobServiceTestUtils();
+	private MappingServiceTestUtils	mappingsServiceTestUtils = new MappingServiceTestUtils();
 	private SchemaServiceTestUtils	schemaServiceTestUtils = new SchemaServiceTestUtils();
 	private DataModelServiceTestUtils dataModelsServiceTestUtils = new DataModelServiceTestUtils();
 
@@ -49,6 +54,12 @@ public class TaskServiceTestUtils extends BasicDMPJPAServiceTestUtils<TaskServic
 		
 	}
 	
+	/**
+	 * simulating task.filter.json
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
 	public Task exampleTask1() throws Exception {
 		
 		// tasks and jobs cannot yet be persisted
@@ -66,7 +77,12 @@ public class TaskServiceTestUtils extends BasicDMPJPAServiceTestUtils<TaskServic
 		task.setName("my task");
 		task.setDescription("my task description");
 		
+		Set<Mapping> mappings = new HashSet<>();
+		mappings.add(mappingsServiceTestUtils.getExampleMapping2());
+		
 		Job job  = new Job();
+		job.setMappings(mappings);
+		
 		//Schema outputSchema = schemaServiceTestUtils.getExampleSchema1();
 		DataModel inputDataModel = dataModelsServiceTestUtils.getExampleDataModel2();
 		DataModel outputDataModel = dataModelsServiceTestUtils.getExampleDataModel1();
