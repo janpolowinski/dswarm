@@ -15,13 +15,11 @@
  */
 package org.dswarm.persistence.service.schema.test.utils;
 
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
-
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.junit.Assert;
@@ -207,11 +205,12 @@ public class SchemaServiceTestUtils extends BasicDMPJPAServiceTestUtils<SchemaSe
 	 */
 	public Schema getExampleSchema1() throws Exception {
 		
-		
 		// first attribute path
 
-		final Attribute dctermsTitle = attributesServiceTestUtils.createAttribute("http://purl.org/dc/terms/title", "title");
-		final Attribute dctermsHasPart = attributesServiceTestUtils.createAttribute("http://purl.org/dc/terms/hasPart", "hasPart");
+		final Attribute dctermsTitle = attributesServiceTestUtils
+				.createAttribute("http://purl.org/dc/terms/title", "title");
+		final Attribute dctermsHasPart = attributesServiceTestUtils
+				.createAttribute("http://purl.org/dc/terms/hasPart", "hasPart");
 
 		final LinkedList<Attribute> attributePath1Arg = Lists.newLinkedList();
 
@@ -223,20 +222,16 @@ public class SchemaServiceTestUtils extends BasicDMPJPAServiceTestUtils<SchemaSe
 		System.out.println("attribute hasPart = '" + dctermsHasPart.toString());
 
 		final AttributePath attributePath1 = attributePathsServiceTestUtils.createAttributePath(attributePath1Arg);
-		final SchemaAttributePathInstance attributePathInstance1 = 
-				schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance("SAPI-1", attributePath1, null);
+		final SchemaAttributePathInstance attributePathInstance1 = schemaAttributePathInstanceServiceTestUtils
+				.createSchemaAttributePathInstance("SAPI-1", attributePath1, null);
 		
 		// second attribute path
 
-		final String dctermsCreatorId = "http://purl.org/dc/terms/creator";
-		final String dctermsCreatorName = "creator";
+		final Attribute dctermsCreator = attributesServiceTestUtils
+				.createAttribute("http://purl.org/dc/terms/creator", "creator");
 
-		final Attribute dctermsCreator = attributesServiceTestUtils.createAttribute(dctermsCreatorId, dctermsCreatorName);
-
-		final String foafNameId = "http://xmlns.com/foaf/0.1/name";
-		final String foafNameName = "name";
-
-		final Attribute foafName = attributesServiceTestUtils.createAttribute(foafNameId, foafNameName);
+		final Attribute foafName = attributesServiceTestUtils
+				.createAttribute("http://xmlns.com/foaf/0.1/name", "name");
 
 		final LinkedList<Attribute> attributePath2Arg = Lists.newLinkedList();
 
@@ -247,15 +242,12 @@ public class SchemaServiceTestUtils extends BasicDMPJPAServiceTestUtils<SchemaSe
 		System.out.println("attribute name = '" + foafName.toString());
 
 		final AttributePath attributePath2 = attributePathsServiceTestUtils.createAttributePath(attributePath2Arg);
-		final SchemaAttributePathInstance attributePathInstance2 = 
-				schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance("SAPI-2", attributePath2, null);
+		final SchemaAttributePathInstance attributePathInstance2 = schemaAttributePathInstanceServiceTestUtils
+				.createSchemaAttributePathInstance("SAPI-2", attributePath2, null);
 		
 		// third attribute path
 
-		final String dctermsCreatedId = "http://purl.org/dc/terms/created";
-		final String dctermsCreatedName = "created";
-
-		final Attribute dctermsCreated = attributesServiceTestUtils.createAttribute(dctermsCreatedId, dctermsCreatedName);
+		final Attribute dctermsCreated = attributesServiceTestUtils.createAttribute("http://purl.org/dc/terms/created", "created");
 		final LinkedList<Attribute> attributePath3Arg = Lists.newLinkedList();
 
 		attributePath3Arg.add(dctermsCreated);
@@ -268,10 +260,7 @@ public class SchemaServiceTestUtils extends BasicDMPJPAServiceTestUtils<SchemaSe
 		
 		// record class
 
-		final String biboDocumentId = "http://purl.org/ontology/bibo/Document";
-		final String biboDocumentName = "document";
-
-		final Clasz biboDocument = claszesServiceTestUtils.createClass(biboDocumentId, biboDocumentName);
+		final Clasz clasz = claszesServiceTestUtils.createClass("http://purl.org/ontology/bibo/Document", "document");
 
 		// schema
 
@@ -281,11 +270,54 @@ public class SchemaServiceTestUtils extends BasicDMPJPAServiceTestUtils<SchemaSe
 		attributePathInstances.add(attributePathInstance2);
 		attributePathInstances.add(attributePathInstance3);
 
-		final Schema schema = createSchema("my schema", attributePathInstances, biboDocument);
+		final Schema schema = createSchema("my schema", attributePathInstances, clasz);
 		
 		return schema;
 	}
 
+	/**
+	 * Creates a schema for a RecordType containing 6 simple attribute paths of lenght 1
+	 * (rdf:type, some id, and val1-4)
+	 * @throws Exception
+	 */
+	public Schema getVerySimpleSchemaTypeIdVal1To4() throws Exception {
+		
+		// attributes
+
+		final Attribute val1 = attributesServiceTestUtils
+				.createAttribute("http://data.slub-dresden.de/resources/1/schema#val1", "val1");
+		final Attribute val2 = attributesServiceTestUtils
+				.createAttribute("http://data.slub-dresden.de/resources/1/schema#val2", "val2");
+		final Attribute val3 = attributesServiceTestUtils
+				.createAttribute("http://data.slub-dresden.de/resources/1/schema#val3", "val3");
+		final Attribute val4 = attributesServiceTestUtils
+				.createAttribute("http://data.slub-dresden.de/resources/1/schema#val4", "val4");
+		final Attribute id = attributesServiceTestUtils
+				.createAttribute("http://data.slub-dresden.de/resources/1/schema#id", "id");
+		final Attribute type = attributesServiceTestUtils
+				.createAttribute("http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "type");
+
+		// record class
+
+		final Clasz clasz = claszesServiceTestUtils
+				.createClass("http://data.slub-dresden.de/resources/1/schema#RecordType", "record type");
+
+		// schema
+
+		final Set<SchemaAttributePathInstance> attributePathInstances = Sets.newLinkedHashSet();
+
+		attributePathInstances.add(schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance(type));
+		attributePathInstances.add(schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance(id));
+		attributePathInstances.add(schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance(val1));
+		attributePathInstances.add(schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance(val2));
+		attributePathInstances.add(schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance(val3));
+		attributePathInstances.add(schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance(val4));
+		
+		final Schema schema = createSchema("test_transf.csv schema", attributePathInstances, clasz);
+		
+		return schema;
+		
+	}
 
 
 }

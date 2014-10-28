@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import org.dswarm.converter.GuicedTest;
+import org.dswarm.converter.RefreshingTest;
 import org.dswarm.converter.flow.TransformationFlow;
 import org.dswarm.persistence.model.job.Task;
 import org.dswarm.persistence.service.InternalModelServiceFactory;
@@ -33,7 +34,7 @@ import org.dswarm.persistence.util.DMPPersistenceUtil;
 /**
  * @author tgaengler Created by tgaengler on 13/05/14.
  */
-public class CSVTransformationFlowTest extends GuicedTest {
+public class CSVTransformationFlowTest extends RefreshingTest {
 
 	@Test
 	public void testCSVEndToEndWithEmptyValues() throws Exception {

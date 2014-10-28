@@ -21,7 +21,6 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,6 +44,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import org.dswarm.converter.GuicedTest;
+import org.dswarm.converter.RefreshingTest;
 import org.dswarm.converter.flow.CSVSourceResourceTriplesFlow;
 import org.dswarm.converter.flow.TransformationFlow;
 import org.dswarm.converter.mf.stream.reader.CsvReader;
@@ -60,26 +60,16 @@ import org.dswarm.persistence.model.resource.Resource;
 import org.dswarm.persistence.model.resource.ResourceType;
 import org.dswarm.persistence.model.resource.utils.ConfigurationStatics;
 import org.dswarm.persistence.model.resource.utils.DataModelUtils;
-import org.dswarm.persistence.model.schema.Attribute;
-import org.dswarm.persistence.model.schema.AttributePath;
-import org.dswarm.persistence.model.schema.Clasz;
 import org.dswarm.persistence.model.schema.Schema;
-import org.dswarm.persistence.model.schema.SchemaAttributePathInstance;
 import org.dswarm.persistence.model.types.Tuple;
 import org.dswarm.persistence.service.InternalModelServiceFactory;
 import org.dswarm.persistence.service.internal.graph.InternalGDMGraphService;
-import org.dswarm.persistence.service.internal.test.utils.InternalGDMGraphServiceTestUtils;
 import org.dswarm.persistence.service.resource.ConfigurationService;
 import org.dswarm.persistence.service.resource.DataModelService;
 import org.dswarm.persistence.service.resource.ResourceService;
-import org.dswarm.persistence.service.schema.SchemaService;
-import org.dswarm.persistence.service.schema.test.utils.AttributePathServiceTestUtils;
-import org.dswarm.persistence.service.schema.test.utils.AttributeServiceTestUtils;
-import org.dswarm.persistence.service.schema.test.utils.ClaszServiceTestUtils;
-import org.dswarm.persistence.service.schema.test.utils.SchemaServiceTestUtils;
 import org.dswarm.persistence.util.DMPPersistenceUtil;
 
-public class TransformationFlowTest extends GuicedTest {
+public class TransformationFlowTest extends RefreshingTest {
 
 	@Test
 	public void testCSVDataResourceEndToEnd() throws Exception {
@@ -291,77 +281,77 @@ public class TransformationFlowTest extends GuicedTest {
 					Matchers.equalTo(expectedRecordData.get(expectedDataResourceSchemaBaseURI + "description").asText()));
 		}
 
-		final Clasz recordClass = schema.getRecordClass();
-		
-		// clean-up // largely overlaps with code in abstract super-class
-		// TODO: move clean-up to @After
-
-		final DataModel freshOutputDataModel = dataModelService.getObject(internalModelId);
-
-		final Schema outputDataModelSchema = freshOutputDataModel.getSchema();
-
-		final Map<Long, Attribute> attributes = Maps.newHashMap();
-
-		final Map<Long, AttributePath> attributePaths = Maps.newLinkedHashMap();
-		
-		final Map<Long, SchemaAttributePathInstance> attributePathInstances = Maps.newLinkedHashMap();
-
-		final Set<SchemaAttributePathInstance> attributePathsToDelete = schema.getUniqueAttributePaths();
-
-		if (attributePathsToDelete != null) {
-
-			for (final SchemaAttributePathInstance attributePathInstance : attributePathsToDelete) {
-				
-				attributePathInstances.put(attributePathInstance.getId(), attributePathInstance);
-				
-				final AttributePath attributePath = attributePathInstance.getAttributePath();
-
-				attributePaths.put(attributePath.getId(), attributePath);
-
-				final Set<Attribute> attributesToDelete = attributePath.getAttributes();
-
-				if (attributesToDelete != null) {
-
-					for (final Attribute attribute : attributesToDelete) {
-
-						attributes.put(attribute.getId(), attribute);
-					}
-				}
-			}
-		}
-
-		dataModelService.deleteObject(updatedInputDataModel.getId());
-		
-		final SchemaService schemaService = GuicedTest.injector.getInstance(SchemaService.class);
-		final SchemaServiceTestUtils schemaServiceTestUtils = new SchemaServiceTestUtils();
-
-		schemaServiceTestUtils.removeAddedAttributePathsFromOutputModelSchema(outputDataModelSchema, attributes, attributePathInstances);
-		schemaService.deleteObject(schema.getId());
-
-		final AttributePathServiceTestUtils attributePathServiceTestUtils = new AttributePathServiceTestUtils();
-
-		for (final AttributePath attributePath : attributePaths.values()) {
-
-			attributePathServiceTestUtils.deleteObject(attributePath);
-		}
-
-		final AttributeServiceTestUtils attributeServiceTestUtils = new AttributeServiceTestUtils();
-
-		for (final Attribute attribute : attributes.values()) {
-
-			attributeServiceTestUtils.deleteObject(attribute);
-		}
-
-		final ClaszServiceTestUtils claszServiceTestUtils = new ClaszServiceTestUtils();
-
-		claszServiceTestUtils.deleteObject(recordClass);
-
-		// clean-up
-		configurationService.deleteObject(updatedConfiguration.getId());
-		resourceService.deleteObject(updatedResource.getId());
-
-		// clean-up graph db
-		InternalGDMGraphServiceTestUtils.cleanGraphDB();
+//		final Clasz recordClass = schema.getRecordClass();
+//		
+//		// clean-up // largely overlaps with code in abstract super-class
+//		// TODO: move clean-up to @After
+//
+//		final DataModel freshOutputDataModel = dataModelService.getObject(internalModelId);
+//
+//		final Schema outputDataModelSchema = freshOutputDataModel.getSchema();
+//
+//		final Map<Long, Attribute> attributes = Maps.newHashMap();
+//
+//		final Map<Long, AttributePath> attributePaths = Maps.newLinkedHashMap();
+//		
+//		final Map<Long, SchemaAttributePathInstance> attributePathInstances = Maps.newLinkedHashMap();
+//
+//		final Set<SchemaAttributePathInstance> attributePathsToDelete = schema.getUniqueAttributePaths();
+//
+//		if (attributePathsToDelete != null) {
+//
+//			for (final SchemaAttributePathInstance attributePathInstance : attributePathsToDelete) {
+//				
+//				attributePathInstances.put(attributePathInstance.getId(), attributePathInstance);
+//				
+//				final AttributePath attributePath = attributePathInstance.getAttributePath();
+//
+//				attributePaths.put(attributePath.getId(), attributePath);
+//
+//				final Set<Attribute> attributesToDelete = attributePath.getAttributes();
+//
+//				if (attributesToDelete != null) {
+//
+//					for (final Attribute attribute : attributesToDelete) {
+//
+//						attributes.put(attribute.getId(), attribute);
+//					}
+//				}
+//			}
+//		}
+//
+//		dataModelService.deleteObject(updatedInputDataModel.getId());
+//		
+//		final SchemaService schemaService = GuicedTest.injector.getInstance(SchemaService.class);
+//		final SchemaServiceTestUtils schemaServiceTestUtils = new SchemaServiceTestUtils();
+//
+//		schemaServiceTestUtils.removeAddedAttributePathsFromOutputModelSchema(outputDataModelSchema, attributes, attributePathInstances);
+//		schemaService.deleteObject(schema.getId());
+//
+//		final AttributePathServiceTestUtils attributePathServiceTestUtils = new AttributePathServiceTestUtils();
+//
+//		for (final AttributePath attributePath : attributePaths.values()) {
+//
+//			attributePathServiceTestUtils.deleteObject(attributePath);
+//		}
+//
+//		final AttributeServiceTestUtils attributeServiceTestUtils = new AttributeServiceTestUtils();
+//
+//		for (final Attribute attribute : attributes.values()) {
+//
+//			attributeServiceTestUtils.deleteObject(attribute);
+//		}
+//
+//		final ClaszServiceTestUtils claszServiceTestUtils = new ClaszServiceTestUtils();
+//
+//		claszServiceTestUtils.deleteObject(recordClass);
+//
+//		// clean-up
+//		configurationService.deleteObject(updatedConfiguration.getId());
+//		resourceService.deleteObject(updatedResource.getId());
+//
+//		// clean-up graph db
+//		InternalGDMGraphServiceTestUtils.cleanGraphDB();
 	}
 
 	public void readCSVTest() throws Exception {

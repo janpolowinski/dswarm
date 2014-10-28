@@ -27,6 +27,7 @@ import org.dswarm.persistence.GuicedTest;
 import org.dswarm.persistence.model.schema.AttributePath;
 import org.dswarm.persistence.model.schema.Schema;
 import org.dswarm.persistence.model.schema.SchemaAttributePathInstance;
+import org.dswarm.persistence.service.schema.test.utils.SchemaServiceTestUtils;
 
 public class InternalSchemaBuilderTest extends GuicedTest {
 
@@ -47,7 +48,19 @@ public class InternalSchemaBuilderTest extends GuicedTest {
 	public void buildERMSchema() {
 		buildSchema(new BibrmContractItemSchemaBuilder());
 	}
-
+	
+	//@Ignore
+	@Test
+	public void buildVerySimpleSchemaTypeIdVal1To4() {
+		try {
+			Schema schema = new SchemaServiceTestUtils().getVerySimpleSchemaTypeIdVal1To4();
+			String json = objectMapper.writeValueAsString(schema);
+			printSchemaJSON(schema);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	private void buildSchema(final SchemaBuilder schemaBuilder) {
 
 		final Schema schema = schemaBuilder.buildSchema();

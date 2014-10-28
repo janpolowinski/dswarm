@@ -416,8 +416,8 @@ public class MappingServiceTestUtils extends BasicDMPJPAServiceTestUtils<Mapping
 		transformationComponentParameterMappings.put(transformationParameter2, transformationComponentParameter2);
 		transformationComponentParameterMappings.put(transformationParameter3, transformationComponentParameter3);
 	
-		final Component transformationComponent = componentServiceTestUtils.createComponent(transformation.getName() + " (component)",
-				transformationComponentParameterMappings, transformation, null, null);
+		final Component transformationComponent = componentServiceTestUtils.createComponent(transformation.getName() +
+				" (component)",	transformationComponentParameterMappings, transformation, null, null);
 	
 		// mapping
 	

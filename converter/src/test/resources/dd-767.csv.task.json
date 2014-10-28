@@ -68,42 +68,67 @@
         "schema": {
             "name": "dd-747.csv schema",
             "id": 5,
-            "attribute_paths": [{
-                "id": 73,
+            "attribute_paths": [        {
+          "type": "SchemaAttributePathInstance",
+          "name": "SAPI-2",
+          "id": 199,
+          "attribute_path": {
+            "id": 55,
+
                 "attributes": [{
                     "name": "name",
                     "uri": "http://data.slub-dresden.de/resources/1/schema#name",
                     "id": 51
                 }]
-            }, {
-                "id": 74,
+            }},         {
+          "type": "SchemaAttributePathInstance",
+          "name": "SAPI-2",
+          "id": 199,
+          "attribute_path": {
+            "id": 55,
+
                 "attributes": [{
                     "name": "number",
                     "uri": "http://data.slub-dresden.de/resources/1/schema#number",
                     "id": 52
                 }]
-            }, {
-                "id": 75,
+            }},         {
+          "type": "SchemaAttributePathInstance",
+          "name": "SAPI-2",
+          "id": 199,
+          "attribute_path": {
+            "id": 55,
+
                 "attributes": [{
                     "name": "color",
                     "uri": "http://data.slub-dresden.de/resources/1/schema#color",
                     "id": 53
                 }]
-            }, {
-                "id": 76,
+            }},         {
+          "type": "SchemaAttributePathInstance",
+          "name": "SAPI-2",
+          "id": 199,
+          "attribute_path": {
+            "id": 55,
+
                 "attributes": [{
                     "name": "date",
                     "uri": "http://data.slub-dresden.de/resources/1/schema#date",
                     "id": 54
                 }]
-            }, {
-                "id": 1,
+            }},         {
+          "type": "SchemaAttributePathInstance",
+          "name": "SAPI-2",
+          "id": 199,
+          "attribute_path": {
+            "id": 55,
+
                 "attributes": [{
                     "name": "type",
                     "uri": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
                     "id": 1
                 }]
-            }],
+            }}],
             "record_class": {
                 "name": "record type",
                 "uri": "http://data.slub-dresden.de/resources/1/schema#RecordType",
@@ -161,42 +186,67 @@
         "schema": {
             "name": "dd-747.csv schema",
             "id": 5,
-            "attribute_paths": [{
-                "id": 73,
+            "attribute_paths": [        {
+          "type": "SchemaAttributePathInstance",
+          "name": "SAPI-2",
+          "id": 199,
+          "attribute_path": {
+            "id": 55,
+
                 "attributes": [{
                     "name": "name",
                     "uri": "http://data.slub-dresden.de/resources/1/schema#name",
                     "id": 51
                 }]
-            }, {
-                "id": 74,
+            }},         {
+          "type": "SchemaAttributePathInstance",
+          "name": "SAPI-2",
+          "id": 199,
+          "attribute_path": {
+            "id": 55,
+
                 "attributes": [{
                     "name": "number",
                     "uri": "http://data.slub-dresden.de/resources/1/schema#number",
                     "id": 52
                 }]
-            }, {
-                "id": 75,
+            }},         {
+          "type": "SchemaAttributePathInstance",
+          "name": "SAPI-2",
+          "id": 199,
+          "attribute_path": {
+            "id": 55,
+
                 "attributes": [{
                     "name": "color",
                     "uri": "http://data.slub-dresden.de/resources/1/schema#color",
                     "id": 53
                 }]
-            }, {
-                "id": 76,
+            }},         {
+          "type": "SchemaAttributePathInstance",
+          "name": "SAPI-2",
+          "id": 199,
+          "attribute_path": {
+            "id": 55,
+
                 "attributes": [{
                     "name": "date",
                     "uri": "http://data.slub-dresden.de/resources/1/schema#date",
                     "id": 54
                 }]
-            }, {
-                "id": 1,
+            }},         {
+          "type": "SchemaAttributePathInstance",
+          "name": "SAPI-2",
+          "id": 199,
+          "attribute_path": {
+            "id": 55,
+
                 "attributes": [{
                     "name": "type",
                     "uri": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
                     "id": 1
                 }]
-            }],
+            }}],
             "record_class": {
                 "name": "record type",
                 "uri": "http://data.slub-dresden.de/resources/1/schema#RecordType",
