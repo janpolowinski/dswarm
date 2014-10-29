@@ -24,7 +24,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import org.dswarm.persistence.GuicedTest;
-import org.dswarm.persistence.model.schema.AttributePath;
 import org.dswarm.persistence.model.schema.Schema;
 import org.dswarm.persistence.model.schema.SchemaAttributePathInstance;
 import org.dswarm.persistence.service.schema.test.utils.SchemaServiceTestUtils;
@@ -37,23 +36,23 @@ public class InternalSchemaBuilderTest extends GuicedTest {
 
 	// private static final String NL = System.lineSeparator();
 
-	//@Ignore
+	@Ignore
 	@Test
 	public void buildInternalSchema() {
 		buildSchema(new BiboDocumentSchemaBuilder());
 	}
 
-	//@Ignore
+	@Ignore
 	@Test
 	public void buildERMSchema() {
 		buildSchema(new BibrmContractItemSchemaBuilder());
 	}
 	
-	//@Ignore
+	@Ignore
 	@Test
-	public void buildVerySimpleSchemaTypeIdVal1To6() {
+	public void buildFlatRecordSchemaWithIdTypeVal1To6() {
 		try {
-			Schema schema = new SchemaServiceTestUtils().getVerySimpleSchemaTypeIdVal1To6();
+			Schema schema = new SchemaServiceTestUtils().getFlatRecordSchemaWithIdTypeVal1To6();
 			String json = objectMapper.writeValueAsString(schema);
 			printSchemaJSON(schema);
 		} catch (Exception e) {
@@ -61,11 +60,11 @@ public class InternalSchemaBuilderTest extends GuicedTest {
 		}
 	}
 	
-	//@Ignore
+	@Ignore
 	@Test
-	public void buildFlatSchemaSomeRecordAttributes() {
+	public void buildFlatRecordSchemaWithDescriptionIdIsbnNameRdfTypeYear() {
 		try {
-			Schema schema = new SchemaServiceTestUtils().getFlatSchemaSomeRecordAttributes();
+			Schema schema = new SchemaServiceTestUtils().getFlatRecordSchemaWithDescriptionIdIsbnNameRdfTypeYear();
 			String json = objectMapper.writeValueAsString(schema);
 			printSchemaJSON(schema);
 		} catch (Exception e) {
@@ -73,11 +72,11 @@ public class InternalSchemaBuilderTest extends GuicedTest {
 		}
 	}
 	
-	//@Ignore
+	@Ignore
 	@Test
-	public void buildFlatSchemaSomeRecordAttributesFarbeJahrNummerName() {
+	public void buildFlatRecordSchemaWithFarbeIdJahrNameNummerRdfType() {
 		try {
-			Schema schema = new SchemaServiceTestUtils().getFlatSchemaSomeRecordAttributesFarbeJahrNummerName();
+			Schema schema = new SchemaServiceTestUtils().getFlatRecordSchemaWithFarbeIdJahrNameNummerRdfType();
 			String json = objectMapper.writeValueAsString(schema);
 			printSchemaJSON(schema);
 		} catch (Exception e) {
@@ -85,21 +84,17 @@ public class InternalSchemaBuilderTest extends GuicedTest {
 		}
 	}
 	
-	//@Ignore
+	@Ignore
 	@Test
-	public void buildFlatSchemaCSVRecordType() {
+	public void buildFlatCSVRecordSchemaWithDescriptionIdIsbnNameYear() {
 		try {
-			Schema schema = new SchemaServiceTestUtils().getFlatSchemaCSVRecordType();
+			Schema schema = new SchemaServiceTestUtils().getFlatCSVRecordSchemaWithDescriptionIdIsbnNameYear();
 			String json = objectMapper.writeValueAsString(schema);
 			printSchemaJSON(schema);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	
-	
-	
 	
 	private void buildSchema(final SchemaBuilder schemaBuilder) {
 
@@ -134,7 +129,6 @@ public class InternalSchemaBuilderTest extends GuicedTest {
 		System.out.println("****************************************************");
 		System.out.println("Schema as json: " + json);
 		System.out.println("****************************************************");
-
 	}
 
 	public void printSchemaText(final Schema schema) {
@@ -143,7 +137,7 @@ public class InternalSchemaBuilderTest extends GuicedTest {
 		System.out.println("Schema for " + schema.getRecordClass().getUri());
 		System.out.println("****************************************************");
 
-		final Set<SchemaAttributePathInstance> pathSet = schema.getUniqueAttributePaths();
+		final Set<SchemaAttributePathInstance> pathSet = schema.getUniqueAttributePathInstances();
 
 		for (final Iterator<SchemaAttributePathInstance> iterator = pathSet.iterator(); iterator.hasNext();) {
 
@@ -153,13 +147,11 @@ public class InternalSchemaBuilderTest extends GuicedTest {
 		}
 
 		System.out.println("****************************************************");
-
 	}
 
 	public static void printAttributePath(final SchemaAttributePathInstance path) {
 
 		System.out.println(path.getAttributePath().toAttributePath().replace("", " :: "));
-
 	}
 
 }

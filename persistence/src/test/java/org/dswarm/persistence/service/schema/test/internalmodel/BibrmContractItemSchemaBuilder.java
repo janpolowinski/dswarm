@@ -39,17 +39,17 @@ public class BibrmContractItemSchemaBuilder extends SchemaBuilder {
 		// basic properties for ERM example
 		// tempSchema.addAttributePath(builder.parsePrefixPath("bibrm:hasItem")); // this needs to go to the schema of Contract
 		// itself
-		tempSchema.addAttributePath(builder.parseAsAttributePathInstance("rdf:type"));
-		tempSchema.addAttributePath(builder.parseAsAttributePathInstance("bibrm:EISSN"));
-		tempSchema.addAttributePath(builder.parseAsAttributePathInstance("dc:title"));
-		tempSchema.addAttributePath(builder.parseAsAttributePathInstance("bibrm:price"));
+		tempSchema.addAttributePathInstance(builder.parseAsAttributePathInstance("rdf:type"));
+		tempSchema.addAttributePathInstance(builder.parseAsAttributePathInstance("bibrm:EISSN"));
+		tempSchema.addAttributePathInstance(builder.parseAsAttributePathInstance("dc:title"));
+		tempSchema.addAttributePathInstance(builder.parseAsAttributePathInstance("bibrm:price"));
 
 		// This can be generated from an excel file Jan curates
 
 		// store all parsed paths as an overview
 		prefixPaths = builder.getPrefixPaths();
 
-		final Schema persistentSchema = createSchema("bibrm:ContractItem-Schema (ERM-Scenario)", tempSchema.getUniqueAttributePaths(),
+		final Schema persistentSchema = createSchema("bibrm:ContractItem-Schema (ERM-Scenario)", tempSchema.getUniqueAttributePathInstances(),
 				tempSchema.getRecordClass());
 
 		return persistentSchema;

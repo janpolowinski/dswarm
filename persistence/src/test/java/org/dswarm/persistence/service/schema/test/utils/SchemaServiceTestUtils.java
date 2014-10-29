@@ -70,14 +70,14 @@ public class SchemaServiceTestUtils extends BasicDMPJPAServiceTestUtils<SchemaSe
 
 		super.compareObjects(expectedSchema, actualSchema);
 
-		if (expectedSchema.getUniqueAttributePaths() == null || expectedSchema.getUniqueAttributePaths().isEmpty()) {
+		if (expectedSchema.getUniqueAttributePathInstances() == null || expectedSchema.getUniqueAttributePathInstances().isEmpty()) {
 
-			final boolean actualSchemaHasNoAttributePaths = (actualSchema.getUniqueAttributePaths() == null || actualSchema.getUniqueAttributePaths().isEmpty());
+			final boolean actualSchemaHasNoAttributePaths = (actualSchema.getUniqueAttributePathInstances() == null || actualSchema.getUniqueAttributePathInstances().isEmpty());
 			Assert.assertTrue("the actual schema '" + actualSchema.getId() + "' shouldn't have attribute paths", actualSchemaHasNoAttributePaths);
 
 		} else { // !null && !empty
 
-			final Set<SchemaAttributePathInstance> actualAttributePaths = actualSchema.getUniqueAttributePaths();
+			final Set<SchemaAttributePathInstance> actualAttributePaths = actualSchema.getUniqueAttributePathInstances();
 
 			Assert.assertNotNull("attribute path instances of actual schema '" + actualSchema.getId() + "' shouldn't be null", actualAttributePaths);
 			Assert.assertFalse("attribute path instances of actual schema '" + actualSchema.getId() + "' shouldn't be empty", actualAttributePaths.isEmpty());
@@ -89,7 +89,7 @@ public class SchemaServiceTestUtils extends BasicDMPJPAServiceTestUtils<SchemaSe
 				actualAttributePathsMap.put(actualAttributePath.getId(), actualAttributePath);
 			}
 
-			schemaAttributePathInstanceServiceTestUtils.compareObjects(expectedSchema.getUniqueAttributePaths(), actualAttributePathsMap);
+			schemaAttributePathInstanceServiceTestUtils.compareObjects(expectedSchema.getUniqueAttributePathInstances(), actualAttributePathsMap);
 		}
 
 		if (expectedSchema.getRecordClass() == null) {
@@ -112,7 +112,7 @@ public class SchemaServiceTestUtils extends BasicDMPJPAServiceTestUtils<SchemaSe
 		final Schema schema = new Schema();
 
 		schema.setName(name);
-		schema.setAttributePaths(attributePaths);
+		schema.setAttributePathInstances(attributePaths);
 		schema.setRecordClass(recordClass);
 
 		// update schema
@@ -133,7 +133,7 @@ public class SchemaServiceTestUtils extends BasicDMPJPAServiceTestUtils<SchemaSe
 		// collect attribute paths of attributes that were created via processing the transformation result
 		if (outputDataModelSchema != null) {
 
-			final Set<SchemaAttributePathInstance> outputDataModelSchemaAttributePaths = outputDataModelSchema.getUniqueAttributePaths();
+			final Set<SchemaAttributePathInstance> outputDataModelSchemaAttributePaths = outputDataModelSchema.getUniqueAttributePathInstances();
 
 			if (outputDataModelSchemaAttributePaths != null) {
 
@@ -162,7 +162,7 @@ public class SchemaServiceTestUtils extends BasicDMPJPAServiceTestUtils<SchemaSe
 		for (final SchemaAttributePathInstance outputDataModelSchemaAttributePath : outputDataModelSchemaAttributePathRemovalCandidates) {
 
 			assert outputDataModelSchema != null;
-			outputDataModelSchema.removeAttributePath(outputDataModelSchemaAttributePath);
+			outputDataModelSchema.removeAttributePathInstance(outputDataModelSchemaAttributePath);
 		}
 
 		// update output data model schema to persist possible changes
@@ -178,9 +178,9 @@ public class SchemaServiceTestUtils extends BasicDMPJPAServiceTestUtils<SchemaSe
 
 		super.prepareObjectForUpdate(objectWithUpdates, object);
 
-		final Set<SchemaAttributePathInstance> attributePaths = objectWithUpdates.getUniqueAttributePaths();
+		final Set<SchemaAttributePathInstance> attributePaths = objectWithUpdates.getUniqueAttributePathInstances();
 
-		object.setAttributePaths(attributePaths);
+		object.setAttributePathInstances(attributePaths);
 
 		final Clasz recordClass = objectWithUpdates.getRecordClass();
 
@@ -203,7 +203,7 @@ public class SchemaServiceTestUtils extends BasicDMPJPAServiceTestUtils<SchemaSe
 	 * 
 	 * @throws Exception
 	 */
-	public Schema getExampleSchema1() throws Exception {
+	public Schema getDeepBiboDocumentSchemaWithTitleHasPartAndCreatorNameAndCreated() throws Exception {
 		
 		// first attribute path
 
@@ -280,7 +280,7 @@ public class SchemaServiceTestUtils extends BasicDMPJPAServiceTestUtils<SchemaSe
 	 * (rdf:type, some id, and val1-6)
 	 * @throws Exception
 	 */
-	public Schema getVerySimpleSchemaTypeIdVal1To6() throws Exception {
+	public Schema getFlatRecordSchemaWithIdTypeVal1To6() throws Exception {
 		
 		// attributes
 
@@ -331,7 +331,7 @@ public class SchemaServiceTestUtils extends BasicDMPJPAServiceTestUtils<SchemaSe
 	 * isbn, description, id, name, year, rdf:type
 	 * @throws Exception
 	 */
-	public Schema getFlatSchemaSomeRecordAttributes() throws Exception {
+	public Schema getFlatRecordSchemaWithDescriptionIdIsbnNameRdfTypeYear() throws Exception {
 		
 		// attributes
 
@@ -370,7 +370,7 @@ public class SchemaServiceTestUtils extends BasicDMPJPAServiceTestUtils<SchemaSe
 		
 	}
 
-	public Schema getFlatSchemaSomeRecordAttributesFarbeJahrNummerName() throws Exception {
+	public Schema getFlatRecordSchemaWithFarbeIdJahrNameNummerRdfType() throws Exception {
 
 		// attributes
 
@@ -409,7 +409,7 @@ public class SchemaServiceTestUtils extends BasicDMPJPAServiceTestUtils<SchemaSe
 		
 	}
 	
-	public Schema getFlatSchemaCSVRecordType() throws Exception {
+	public Schema getFlatCSVRecordSchemaWithDescriptionIdIsbnNameYear() throws Exception {
 		
 		String base = "/test_csv.csv#";
 

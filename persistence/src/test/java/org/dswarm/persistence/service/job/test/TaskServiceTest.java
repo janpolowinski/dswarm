@@ -126,6 +126,6 @@ public class TaskServiceTest extends IDBasicJPAServiceTest<ProxyTask, Task, Task
 	
 	@Test
 	public void example() throws Exception {
-		taskServiceTestUtils.exampleTask1();
+		taskServiceTestUtils.exampleTaskWithExampleMappingConcatFunctionMabXmlFeldnrAndFeldvalue();
 	}
 }

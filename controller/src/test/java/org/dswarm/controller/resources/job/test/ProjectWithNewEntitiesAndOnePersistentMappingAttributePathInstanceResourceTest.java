@@ -295,7 +295,7 @@ public class ProjectWithNewEntitiesAndOnePersistentMappingAttributePathInstanceR
 
 			if (inputSchema != null) {
 
-				final Set<AttributePath> inputAttributePaths = inputSchema.getUniqueAttributePaths();
+				final Set<AttributePath> inputAttributePaths = inputSchema.getUniqueAttributePathInstances();
 
 				if (inputAttributePaths != null) {
 
@@ -334,7 +334,7 @@ public class ProjectWithNewEntitiesAndOnePersistentMappingAttributePathInstanceR
 
 			if (outputSchema != null) {
 
-				final Set<AttributePath> outputAttributePaths = outputSchema.getUniqueAttributePaths();
+				final Set<AttributePath> outputAttributePaths = outputSchema.getUniqueAttributePathInstances();
 
 				if (outputAttributePaths != null) {
 

@@ -15,6 +15,10 @@
  */
 package org.dswarm.persistence.service.schema.test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
@@ -24,7 +28,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,7 +84,6 @@ public class SchemaServiceTest extends IDBasicJPAServiceTest<ProxySchema, Schema
 		contentSchemaServiceTestUtils = new ContentSchemaServiceTestUtils();
 		schemaAttributePathInstanceServiceTestUtils = new SchemaAttributePathInstanceServiceTestUtils();
 		schemaServiceTestUtils = new SchemaServiceTestUtils();
-	
 	}
 
 	private void resetObjectVars() {
@@ -206,9 +208,9 @@ public class SchemaServiceTest extends IDBasicJPAServiceTest<ProxySchema, Schema
 		SchemaAttributePathInstance attributePathInstance2 = schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance("api2", attributePath2, null);
 		SchemaAttributePathInstance attributePathInstance3 = schemaAttributePathInstanceServiceTestUtils.createSchemaAttributePathInstance("api3", attributePath3, null);
 		
-		schema.addAttributePath(attributePathInstance1);
-		schema.addAttributePath(attributePathInstance2);
-		schema.addAttributePath(attributePathInstance3);
+		schema.addAttributePathInstance(attributePathInstance1);
+		schema.addAttributePathInstance(attributePathInstance2);
+		schema.addAttributePathInstance(attributePathInstance3);
 		schema.setRecordClass(biboDocument);
 		schema.setContentSchema(contentSchema);
 
@@ -218,38 +220,38 @@ public class SchemaServiceTest extends IDBasicJPAServiceTest<ProxySchema, Schema
 		
 		// tests
 
-		Assert.assertNotNull("the schema's attribute paths of the updated schema shouldn't be null",
-				updatedSchema.getUniqueAttributePaths());
+		assertNotNull("the schema's attribute paths of the updated schema shouldn't be null",
+				updatedSchema.getUniqueAttributePathInstances());
 		
-		Assert.assertEquals("the schema's attribute paths are not equal",
-				schema.getUniqueAttributePaths(), updatedSchema.getUniqueAttributePaths());
+		assertEquals("the schema's attribute paths are not equal",
+				schema.getUniqueAttributePathInstances(), updatedSchema.getUniqueAttributePathInstances());
 		
-		Assert.assertEquals("the attribute path instance '" + attributePathInstance1.getId() + "' of the schema are not equal",
-				schema.getAttributePath(attributePathInstance1.getId()), updatedSchema.getAttributePath(attributePathInstance1.getId()));
+		assertEquals("the attribute path instance '" + attributePathInstance1.getId() + "' of the schema are not equal",
+				schema.getAttributePathInstance(attributePathInstance1.getId()), updatedSchema.getAttributePathInstance(attributePathInstance1.getId()));
 		
-		Assert.assertNotNull("the attributes of attribute path '" + attributePath1.getId()
+		assertNotNull("the attributes of attribute path instance '" + attributePathInstance1.getId()
 				+ "' of the updated schema shouldn't be null",
-				updatedSchema.getAttributePath(attributePathInstance1.getId()).getAttributePath().getAttributes());
+				updatedSchema.getAttributePathInstance(attributePathInstance1.getId()).getAttributePath().getAttributes());
 		
-		Assert.assertEquals("the attributes of attribute path '" + attributePath1.getId() + "' are not equal",
+		assertEquals("the attributes of attribute path instance'" + attributePathInstance1.getId() + "' are not equal",
 				attributePath1.getAttributes(),
-				updatedSchema.getAttributePath(attributePathInstance1.getId()).getAttributePath().getAttributes());
+				updatedSchema.getAttributePathInstance(attributePathInstance1.getId()).getAttributePath().getAttributes());
 		
-		Assert.assertEquals("the first attributes of attribute path '" + attributePath1.getId() + "' are not equal", attributePath1
+		assertEquals("the first attributes of attribute path '" + attributePath1.getId() + "' are not equal", attributePath1
 				.getAttributePath().get(0),
-				updatedSchema.getAttributePath(attributePathInstance1.getId()).getAttributePath().getAttributePath().get(0));
+				updatedSchema.getAttributePathInstance(attributePathInstance1.getId()).getAttributePath().getAttributePath().get(0));
 		
-		Assert.assertNotNull("the attribute path string of attribute path '" + attributePath1.getId() + "' of the update schema shouldn't be null",
-				updatedSchema.getAttributePath(attributePathInstance1.getId()).getAttributePath().toAttributePath());
+		assertNotNull("the attribute path string of attribute path '" + attributePath1.getId() + "' of the update schema shouldn't be null",
+				updatedSchema.getAttributePathInstance(attributePathInstance1.getId()).getAttributePath().toAttributePath());
 		
-		Assert.assertEquals("the attribute path's strings attribute path '" + attributePath1.getId() + "' are not equal",
-				attributePath1.toAttributePath(), updatedSchema.getAttributePath(attributePathInstance1.getId()).getAttributePath().toAttributePath());
+		assertEquals("the attribute path's strings attribute path '" + attributePath1.getId() + "' are not equal",
+				attributePath1.toAttributePath(), updatedSchema.getAttributePathInstance(attributePathInstance1.getId()).getAttributePath().toAttributePath());
 		
-		Assert.assertNotNull("the record class of the updated schema shouldn't be null", updatedSchema.getRecordClass());
-		Assert.assertEquals("the recod classes are not equal", schema.getRecordClass(), updatedSchema.getRecordClass());
+		assertNotNull("the record class of the updated schema shouldn't be null", updatedSchema.getRecordClass());
+		assertEquals("the recod classes are not equal", schema.getRecordClass(), updatedSchema.getRecordClass());
 		
-		Assert.assertNotNull("the content schema of the updated schema shouldn't be null", updatedSchema.getContentSchema());
-		Assert.assertEquals("the content schemata are not equal", schema.getContentSchema(), updatedSchema.getContentSchema());
+		assertNotNull("the content schema of the updated schema shouldn't be null", updatedSchema.getContentSchema());
+		assertEquals("the content schemata are not equal", schema.getContentSchema(), updatedSchema.getContentSchema());
 
 		// json mapping
 		
@@ -265,22 +267,6 @@ public class SchemaServiceTest extends IDBasicJPAServiceTest<ProxySchema, Schema
 		}
 
 		SchemaServiceTest.LOG.debug("schema json: " + json);
-
-//		// clean up DB
-//		deleteObject(schema.getId());
-//
-//		claszServiceTestUtils.deleteObject(biboDocument);
-//		contentSchemaServiceTestUtils.deleteObject(contentSchema);
-//
-//		attributePathServiceTestUtils.deleteObject(attributePath1);
-//		attributePathServiceTestUtils.deleteObject(attributePath2);
-//		attributePathServiceTestUtils.deleteObject(attributePath3);
-//		attributePathServiceTestUtils.deleteObject(rdfValueAP);
-//
-//		for (final Attribute attribute : attributes.values()) {
-//
-//			attributeServiceTestUtils.deleteObject(attribute);
-//		}
 	}
 
 	
@@ -344,11 +330,11 @@ public class SchemaServiceTest extends IDBasicJPAServiceTest<ProxySchema, Schema
 		Schema documentSchema = schemaServiceTestUtils.createSchema("Document schema", attributePaths, biboDocument);
 		
 		// minimum testing here, some more possible, but other functionality also already covered by other tests in this test class
-		Schema personSchemaAsSubSchema = documentSchema.getAttributePath(attributePathInstance3.getId()).getSubSchema();
-		Assert.assertNotNull("The subschema got lost.", personSchemaAsSubSchema);
-		Assert.assertEquals("The subschema is not the expected one.", personSchema, personSchemaAsSubSchema);
-		Assert.assertNotNull("The schema's subschema has no attribute paths (null).", personSchemaAsSubSchema.getAttributePaths());
-		Assert.assertFalse("The schema's subschema has no attribute paths (empty).", personSchemaAsSubSchema.getAttributePaths().isEmpty());
+		Schema personSchemaAsSubSchema = documentSchema.getAttributePathInstance(attributePathInstance3.getId()).getSubSchema();
+		assertNotNull("The subschema got lost.", personSchemaAsSubSchema);
+		assertEquals("The subschema is not the expected one.", personSchema, personSchemaAsSubSchema);
+		assertNotNull("The schema's subschema has no attribute paths (null).", personSchemaAsSubSchema.getAttributePathInstances());
+		assertFalse("The schema's subschema has no attribute paths (empty).", personSchemaAsSubSchema.getAttributePathInstances().isEmpty());
 		
 		return documentSchema;
 	}

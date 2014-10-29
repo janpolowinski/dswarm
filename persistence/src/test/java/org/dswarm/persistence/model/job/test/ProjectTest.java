@@ -663,9 +663,9 @@ public class ProjectTest extends GuicedTest {
 		final Schema schema = new Schema();
 		// schema.setId(UUID.randomUUID().toString());
 
-		schema.addAttributePath(createAttributePathInstance(attributePath1));
-		schema.addAttributePath(createAttributePathInstance(attributePath2));
-		schema.addAttributePath(createAttributePathInstance(attributePath3));
+		schema.addAttributePathInstance(createAttributePathInstance(attributePath1));
+		schema.addAttributePathInstance(createAttributePathInstance(attributePath2));
+		schema.addAttributePathInstance(createAttributePathInstance(attributePath3));
 		schema.setRecordClass(biboDocument);
 
 		// data resource

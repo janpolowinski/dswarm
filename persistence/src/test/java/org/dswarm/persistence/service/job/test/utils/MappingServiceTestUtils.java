@@ -208,12 +208,15 @@ public class MappingServiceTestUtils extends BasicDMPJPAServiceTestUtils<Mapping
 	}
 	
 	/**
-	 * taken from on MappingServiceTest.simplyMapping()
+	 * An example mapping with a trim function, mapping 
+	 * from dcterms:title
+	 * to rdfs:label
 	 * 
-	 * @return
+	 * (taken from on MappingServiceTest.simpleMapping())
+	 * 
 	 * @throws Exception 
 	 */
-	public Mapping getExampleMapping1() throws Exception {
+	public Mapping getExampleMappingTrimFunctionDctermsTitle2RdfsLabel() throws Exception {
 		
 		final LinkedList<String> parameters = Lists.newLinkedList();
 
@@ -310,11 +313,15 @@ public class MappingServiceTestUtils extends BasicDMPJPAServiceTestUtils<Mapping
 	}
 
 	/**
-	 * as needed to replace mapping in task.filter.json 
+	 * An example mapping with a concat function, mapping 
+	 * from mabxml-1.xsd:feldnr and mabxml-1.xsd:feldvalue
+	 * to "output mapping attribute path instance" // TODO check this. This seems not to make sense
+	 * 
+	 * (as needed to replace mapping in task.filter.json)
 	 * 
 	 * @throws Exception 
 	 */
-	public Mapping getExampleMapping2() throws Exception {
+	public Mapping getExampleMappingConcatFunctionMabXmlFeldnrAndFeldvalue() throws Exception {
 		
 		// concat function and component
 		

@@ -56,7 +56,7 @@ public class SchemaService extends BasicDMPJPAService<ProxySchema, Schema> {
 	protected void prepareObjectForRemoval(final Schema object) {
 
 		// should clear the relationship to the attribute paths + record class
-		object.setAttributePaths(null);
+		object.setAttributePathInstances(null);
 		object.setRecordClass(null);
 		object.setContentSchema(null);
 	}
@@ -68,7 +68,7 @@ public class SchemaService extends BasicDMPJPAService<ProxySchema, Schema> {
 	protected void updateObjectInternal(final Schema object, final Schema updateObject, final EntityManager entityManager)
 			throws DMPPersistenceException {
 
-		final List<SchemaAttributePathInstance> attributePaths = object.getAttributePaths();
+		final List<SchemaAttributePathInstance> attributePathInstances = object.getAttributePathInstances();
 		final Clasz recordClass = object.getRecordClass();
 		final ContentSchema contentSchema = object.getContentSchema();
 
@@ -82,7 +82,7 @@ public class SchemaService extends BasicDMPJPAService<ProxySchema, Schema> {
 		//
 		// } else {
 		//
-		updateObject.setAttributePaths(attributePaths);
+		updateObject.setAttributePathInstances(attributePathInstances);
 		// }
 
 		updateObject.setRecordClass(recordClass);

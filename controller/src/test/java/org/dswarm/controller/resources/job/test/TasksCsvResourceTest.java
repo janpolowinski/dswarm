@@ -329,7 +329,7 @@ public class TasksCsvResourceTest extends ResourceTest {
 
 		if (schema != null) {
 
-			final Set<AttributePath> attributePathsToDelete = schema.getUniqueAttributePaths();
+			final Set<AttributePath> attributePathsToDelete = schema.getUniqueAttributePathInstances();
 
 			if (attributePathsToDelete != null) {
 
@@ -352,7 +352,7 @@ public class TasksCsvResourceTest extends ResourceTest {
 
 		if(outputDataModel.getSchema() != null) {
 
-			final Set<AttributePath> attributePathsToDelete = outputDataModel.getSchema().getUniqueAttributePaths();
+			final Set<AttributePath> attributePathsToDelete = outputDataModel.getSchema().getUniqueAttributePathInstances();
 
 			if (attributePathsToDelete != null) {
 

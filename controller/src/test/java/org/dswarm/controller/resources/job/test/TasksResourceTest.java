@@ -286,7 +286,7 @@ public class TasksResourceTest extends ResourceTest {
 
 		if (schema != null) {
 
-			final Set<AttributePath> attributePathsToDelete = schema.getUniqueAttributePaths();
+			final Set<AttributePath> attributePathsToDelete = schema.getUniqueAttributePathInstances();
 
 			if (attributePathsToDelete != null) {
 

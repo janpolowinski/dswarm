@@ -219,7 +219,7 @@ public class SchemaEventRecorder {
 			attributePaths.add(attributePath);
 		}
 
-		schema.setAttributePaths(attributePaths);
+		schema.setAttributePathInstances(attributePaths);
 		schema.setRecordClass(clasz);
 		schema.setName(dataModel.getDataResource().getName() + " schema");
 

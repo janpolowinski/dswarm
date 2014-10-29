@@ -58,7 +58,7 @@ final class CleanupDataModelSchemaTask {
 	}
 
 	void cleanUpResources(final DataModel dataModel, final Schema schema) {
-		final Tuple<Map<Long, AttributePath>, Map<Long, Attribute>> schemaAttributePaths = determineSchemaAttributePaths(schema.getUniqueAttributePaths());
+		final Tuple<Map<Long, AttributePath>, Map<Long, Attribute>> schemaAttributePaths = determineSchemaAttributePaths(schema.getUniqueAttributePathInstances());
 
 		cleanUpDataModel(dataModel);
 		cleanUpSchema(schema);

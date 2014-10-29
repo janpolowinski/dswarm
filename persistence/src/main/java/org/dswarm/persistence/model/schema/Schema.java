@@ -77,35 +77,35 @@ public class Schema extends BasicDMPJPAObject {
 	@ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	@JoinTable(name = "SCHEMAS_ATTRIBUTE_PATHS", joinColumns = { @JoinColumn(name = "SCHEMA_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "ATTRIBUTE_PATH_ID", referencedColumnName = "ID") })
 	@JsonIgnore
-	private Set<SchemaAttributePathInstance>	attributePaths;
+	private Set<SchemaAttributePathInstance>	attributePathInstances;
 
 	/**
 	 * All attribute path (instances) of the schema in their correct order.
 	 */
 	@Transient
-	private List<SchemaAttributePathInstance>		orderedAttributePaths;
+	private List<SchemaAttributePathInstance>		orderedAttributePathInstances;
 
 	/**
 	 * All attribute path (instances) of the schema in their correct order as a Json array.
 	 */
 	@Transient
-	private ArrayNode				orderedAttributePathsJson;
+	private ArrayNode				orderedAttributePathInstancesJson;
 
 	/**
 	 * true if the attribute paths were already initialized
 	 */
 	@Transient
-	private boolean					isOrderedAttributePathsInitialized;
+	private boolean					isOrderedAttributePathInstancesInitialized;
 
 	/**
 	 * A Json string of all attribute path (instances) of this schema.
-	 * This is a serialization of {@link #orderedAttributePathsJson}
+	 * This is a serialization of {@link #orderedAttributePathInstancesJson}
 	 */
 	@JsonIgnore
 	@Lob
 	@Access(AccessType.FIELD)
 	@Column(name = "ATTRIBUTE_PATHS", columnDefinition = "VARCHAR(4000)", length = 4000)
-	private String					attributePathsJsonString;
+	private String					attributePathInstancesJsonString;
 
 	/**
 	 * The record class of the schema.
@@ -131,9 +131,9 @@ public class Schema extends BasicDMPJPAObject {
 	 * @return an ordered list of all attribute path (instances).
 	 */
 	@XmlElement(name = "attribute_paths")
-	public List<SchemaAttributePathInstance> getAttributePaths() {
-		tryInitializeOrderedAttributePaths();
-		return orderedAttributePaths;
+	public List<SchemaAttributePathInstance> getAttributePathInstances() {
+		tryInitializeOrderedAttributePathInstances();
+		return orderedAttributePathInstances;
 	}
 
 	/**
@@ -142,11 +142,11 @@ public class Schema extends BasicDMPJPAObject {
 	 * @param attributePathsArg all attribute paths instances of the schema
 	 */
 	@XmlElement(name = "attribute_paths")
-	public void setAttributePaths(final Collection<SchemaAttributePathInstance> attributePathsArg) {
+	public void setAttributePathInstances(final Collection<SchemaAttributePathInstance> attributePathsArg) {
 		if (attributePathsArg == null) {
-			removeAllAttributePaths();
+			removeAllAttributePathInstances();
 		} else {
-			setAllAttributePaths(attributePathsArg);
+			setAllAttributePathInstances(attributePathsArg);
 		}
 	}
 
@@ -156,8 +156,8 @@ public class Schema extends BasicDMPJPAObject {
 	 * @return all attribute paths instances of the schema
 	 */
 	@JsonIgnore
-	public Set<SchemaAttributePathInstance> getUniqueAttributePaths() {
-		return attributePaths;
+	public Set<SchemaAttributePathInstance> getUniqueAttributePathInstances() {
+		return attributePathInstances;
 	}
 
 	/**
@@ -166,11 +166,11 @@ public class Schema extends BasicDMPJPAObject {
 	 * @param id an attribute path identifier
 	 * @return that matched attribute path (instance) or null
 	 */
-	public SchemaAttributePathInstance getAttributePath(final Long id) {
+	public SchemaAttributePathInstance getAttributePathInstance(final Long id) {
 		Preconditions.checkNotNull(id);
 
-		if (attributePaths != null) {
-			for (final SchemaAttributePathInstance attributePath : attributePaths) {
+		if (attributePathInstances != null) {
+			for (final SchemaAttributePathInstance attributePath : attributePathInstances) {
 				if (attributePath.getId().equals(id)) {
 					return attributePath;
 				}
@@ -185,21 +185,21 @@ public class Schema extends BasicDMPJPAObject {
 	 *
 	 * @param attributePath a new attribute path
 	 */
-	public void addAttributePath(final SchemaAttributePathInstance attributePath) {
+	public void addAttributePathInstance(final SchemaAttributePathInstance attributePath) {
 		
 		Preconditions.checkNotNull(attributePath);
 
-		ensureAttributePaths();
-		ensureInitializedOrderedAttributePaths();
+		ensureAttributePathInstances();
+		ensureInitializedOrderedAttributePathInstances();
 		
 		// TODO check if equals method works for SAPIs, otherwise the usage of contains may fail here
 
-		if (!attributePaths.contains(attributePath)) {
+		if (!attributePathInstances.contains(attributePath)) {
 
-			attributePaths.add(attributePath);
-			orderedAttributePaths.add(attributePath);
+			attributePathInstances.add(attributePath);
+			orderedAttributePathInstances.add(attributePath);
 
-			refreshAttributePathsString();
+			refreshAttributePathInstancesString();
 		}
 	}
 
@@ -209,18 +209,18 @@ public class Schema extends BasicDMPJPAObject {
 	 * @param attributePath the attribute path instance to add
 	 * @param atIndex		the index at which to add
 	 */
-	public void addAttributePath(final SchemaAttributePathInstance attributePath, final int atIndex) {
+	public void addAttributePathInstance(final SchemaAttributePathInstance attributePath, final int atIndex) {
 		Preconditions.checkNotNull(attributePath);
 		Preconditions.checkArgument(atIndex >= 0, "insertion index must be positive");
-		Preconditions.checkArgument(atIndex <= orderedAttributePaths.size(), "insertion index must not be greater than %s", orderedAttributePaths.size());
+		Preconditions.checkArgument(atIndex <= orderedAttributePathInstances.size(), "insertion index must not be greater than %s", orderedAttributePathInstances.size());
 
-		ensureAttributePaths();
-		ensureInitializedOrderedAttributePaths();
+		ensureAttributePathInstances();
+		ensureInitializedOrderedAttributePathInstances();
 
-		if (!attributePath.equals(orderedAttributePaths.get(atIndex))) {
-			orderedAttributePaths.add(atIndex, attributePath);
-			attributePaths.add(attributePath);
-			refreshAttributePathsString();
+		if (!attributePath.equals(orderedAttributePathInstances.get(atIndex))) {
+			orderedAttributePathInstances.add(atIndex, attributePath);
+			attributePathInstances.add(attributePath);
+			refreshAttributePathInstancesString();
 		}
 	}
 
@@ -230,11 +230,11 @@ public class Schema extends BasicDMPJPAObject {
 	 *
 	 * @param attributePath an existing attribute path instance that should be removed
 	 */
-	public void removeAttributePath(final AttributePathInstance attributePath) {
-		if (attributePath != null && attributePaths != null) {
-			final boolean isRemoved = attributePaths.remove(attributePath);
-			if (isRemoved && orderedAttributePaths != null) {
-				orderedAttributePaths.remove(attributePath);
+	public void removeAttributePathInstance(final AttributePathInstance attributePath) {
+		if (attributePath != null && attributePathInstances != null) {
+			final boolean isRemoved = attributePathInstances.remove(attributePath);
+			if (isRemoved && orderedAttributePathInstances != null) {
+				orderedAttributePathInstances.remove(attributePath);
 			}
 		}
 	}
@@ -246,22 +246,22 @@ public class Schema extends BasicDMPJPAObject {
 	 * @param atIndex       the index from which to remove
 	 * @return true if the attribute path instance could be removed, false otherwise.
 	 */
-	public boolean removeAttributePath(final AttributePath attributePath, final int atIndex) {
+	public boolean removeAttributePathInstance(final AttributePath attributePath, final int atIndex) {
 		Preconditions.checkNotNull(attributePath);
 		Preconditions.checkArgument(atIndex >= 0, "deletion index must be positive");
-		Preconditions.checkArgument(atIndex < orderedAttributePaths.size(), "deletion index must be less than {}", orderedAttributePaths.size());
+		Preconditions.checkArgument(atIndex < orderedAttributePathInstances.size(), "deletion index must be less than {}", orderedAttributePathInstances.size());
 
-		if (orderedAttributePaths != null) {
-			if (orderedAttributePaths.get(atIndex).equals(attributePath)) {
-				orderedAttributePaths.remove(atIndex);
-				if (attributePaths != null) {
-					attributePaths.remove(attributePath);
+		if (orderedAttributePathInstances != null) {
+			if (orderedAttributePathInstances.get(atIndex).equals(attributePath)) {
+				orderedAttributePathInstances.remove(atIndex);
+				if (attributePathInstances != null) {
+					attributePathInstances.remove(attributePath);
 				}
 				return true;
 			}
 		} else {
-			if (attributePaths != null) {
-				return attributePaths.remove(attributePath);
+			if (attributePathInstances != null) {
+				return attributePathInstances.remove(attributePath);
 			}
 		}
 		return false;
@@ -318,114 +318,114 @@ public class Schema extends BasicDMPJPAObject {
 	public boolean completeEquals(final Object obj) {
 
 		return Schema.class.isInstance(obj) && super.completeEquals(obj)
-				&& DMPPersistenceUtil.getSchemaAttributePathInstanceUtils().completeEquals(((Schema) obj).getUniqueAttributePaths(), getUniqueAttributePaths())
+				&& DMPPersistenceUtil.getSchemaAttributePathInstanceUtils().completeEquals(((Schema) obj).getUniqueAttributePathInstances(), getUniqueAttributePathInstances())
 				&& DMPPersistenceUtil.getClaszUtils().completeEquals(((Schema) obj).getRecordClass(), getRecordClass())
 				&& DMPPersistenceUtil.getContentSchemaUtils().completeEquals(((Schema) obj).getContentSchema(), getContentSchema());
 	}
 
-	private void ensureAttributePaths() {
-		if (attributePaths == null) {
-			attributePaths = Sets.newCopyOnWriteArraySet();
+	private void ensureAttributePathInstances() {
+		if (attributePathInstances == null) {
+			attributePathInstances = Sets.newCopyOnWriteArraySet();
 		}
 	}
 
-	private void ensureOrderedAttributePaths() {
-		if (orderedAttributePaths == null) {
-			orderedAttributePaths = Lists.newLinkedList();
+	private void ensureOrderedAttributePathInstances() {
+		if (orderedAttributePathInstances == null) {
+			orderedAttributePathInstances = Lists.newLinkedList();
 		}
 	}
 
 	@JsonIgnore
-	private void setAllAttributePaths(final Collection<SchemaAttributePathInstance> attributePathsArg) {
-		ensureOrderedAttributePaths();
+	private void setAllAttributePathInstances(final Collection<SchemaAttributePathInstance> attributePathsArg) {
+		ensureOrderedAttributePathInstances();
 
-		if (!DMPPersistenceUtil.getSchemaAttributePathInstanceUtils().completeEquals(orderedAttributePaths, attributePathsArg)) {
-			ensureAttributePaths();
+		if (!DMPPersistenceUtil.getSchemaAttributePathInstanceUtils().completeEquals(orderedAttributePathInstances, attributePathsArg)) {
+			ensureAttributePathInstances();
 
-			attributePaths.clear();
-			orderedAttributePaths.clear();
+			attributePathInstances.clear();
+			orderedAttributePathInstances.clear();
 
 			for (final SchemaAttributePathInstance newAttributePath : attributePathsArg) {
-				orderedAttributePaths.add(newAttributePath);
-				attributePaths.add(newAttributePath);
+				orderedAttributePathInstances.add(newAttributePath);
+				attributePathInstances.add(newAttributePath);
 			}
 		}
 
-		refreshAttributePathsString();
+		refreshAttributePathInstancesString();
 	}
 
-	private void removeAllAttributePaths() {
-		if (orderedAttributePaths != null) {
-			if (attributePaths != null) {
-				attributePaths.clear();
+	private void removeAllAttributePathInstances() {
+		if (orderedAttributePathInstances != null) {
+			if (attributePathInstances != null) {
+				attributePathInstances.clear();
 			}
-			orderedAttributePaths.clear();
-			refreshAttributePathsString();
+			orderedAttributePathInstances.clear();
+			refreshAttributePathInstancesString();
 		}
 	}
 
-	private void ensureInitializedOrderedAttributePaths() {
-		if (orderedAttributePaths == null) {
-			final Optional<List<SchemaAttributePathInstance>> paths = initializedAttributePaths(true);
-			orderedAttributePaths = paths.or(Lists.<SchemaAttributePathInstance>newLinkedList());
+	private void ensureInitializedOrderedAttributePathInstances() {
+		if (orderedAttributePathInstances == null) {
+			final Optional<List<SchemaAttributePathInstance>> paths = initializedAttributePathInstances(true);
+			orderedAttributePathInstances = paths.or(Lists.<SchemaAttributePathInstance>newLinkedList());
 		}
 	}
 
-	private void tryInitializeOrderedAttributePaths() {
-		final Optional<List<SchemaAttributePathInstance>> paths = initializedAttributePaths(false);
-		orderedAttributePaths = paths.orNull();
+	private void tryInitializeOrderedAttributePathInstances() {
+		final Optional<List<SchemaAttributePathInstance>> paths = initializedAttributePathInstances(false);
+		orderedAttributePathInstances = paths.orNull();
 	}
 
-	private Optional<List<SchemaAttributePathInstance>> initializedAttributePaths(final boolean fromScratch) {
-		if (orderedAttributePathsJson == null && !isOrderedAttributePathsInitialized) {
+	private Optional<List<SchemaAttributePathInstance>> initializedAttributePathInstances(final boolean fromScratch) {
+		if (orderedAttributePathInstancesJson == null && !isOrderedAttributePathInstancesInitialized) {
 
-			if (attributePathsJsonString == null) {
+			if (attributePathInstancesJsonString == null) {
 				Schema.LOG.debug("attribute paths JSON is null for {}", getId());
 
 				if (fromScratch) {
-					orderedAttributePathsJson = new ArrayNode(DMPPersistenceUtil.getJSONFactory());
-					orderedAttributePaths = Lists.newLinkedList();
+					orderedAttributePathInstancesJson = new ArrayNode(DMPPersistenceUtil.getJSONFactory());
+					orderedAttributePathInstances = Lists.newLinkedList();
 
-					isOrderedAttributePathsInitialized = true;
+					isOrderedAttributePathInstancesInitialized = true;
 				}
 
-				return Optional.fromNullable(orderedAttributePaths);
+				return Optional.fromNullable(orderedAttributePathInstances);
 			}
 
 			try {
-				orderedAttributePaths = Lists.newLinkedList();
-				orderedAttributePathsJson = DMPPersistenceUtil.getJSONArray(attributePathsJsonString);
+				orderedAttributePathInstances = Lists.newLinkedList();
+				orderedAttributePathInstancesJson = DMPPersistenceUtil.getJSONArray(attributePathInstancesJsonString);
 
-				if (orderedAttributePathsJson != null) {
+				if (orderedAttributePathInstancesJson != null) {
 
-					for (final JsonNode attributePathIdNode : orderedAttributePathsJson) {
-						final SchemaAttributePathInstance attributePath = getAttributePath(attributePathIdNode.longValue());
+					for (final JsonNode attributePathIdNode : orderedAttributePathInstancesJson) {
+						final SchemaAttributePathInstance attributePath = getAttributePathInstance(attributePathIdNode.longValue());
 						if (attributePath != null) {
-							orderedAttributePaths.add(attributePath);
+							orderedAttributePathInstances.add(attributePath);
 						}
 					}
 				}
 			} catch (final DMPException e) {
 				Schema.LOG.debug("couldn't parse attribute path JSON for attribute path '" + getId() + "'", e);
 			}
-			isOrderedAttributePathsInitialized = true;
+			isOrderedAttributePathInstancesInitialized = true;
 		}
 
-		return Optional.fromNullable(orderedAttributePaths);
+		return Optional.fromNullable(orderedAttributePathInstances);
 	}
 
-	private void refreshAttributePathsString() {
-		if (orderedAttributePaths != null) {
-			orderedAttributePathsJson = new ArrayNode(DMPPersistenceUtil.getJSONFactory());
-			for (final SchemaAttributePathInstance attributePath : orderedAttributePaths) {
-				orderedAttributePathsJson.add(attributePath.getId());
+	private void refreshAttributePathInstancesString() {
+		if (orderedAttributePathInstances != null) {
+			orderedAttributePathInstancesJson = new ArrayNode(DMPPersistenceUtil.getJSONFactory());
+			for (final SchemaAttributePathInstance attributePath : orderedAttributePathInstances) {
+				orderedAttributePathInstancesJson.add(attributePath.getId());
 			}
 		}
 
-		if (orderedAttributePathsJson != null && orderedAttributePathsJson.size() > 0) {
-			attributePathsJsonString = orderedAttributePathsJson.toString();
+		if (orderedAttributePathInstancesJson != null && orderedAttributePathInstancesJson.size() > 0) {
+			attributePathInstancesJsonString = orderedAttributePathInstancesJson.toString();
 		} else {
-			attributePathsJsonString = null;
+			attributePathInstancesJsonString = null;
 		}
 	}
 }

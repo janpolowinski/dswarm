@@ -56,7 +56,7 @@ public class SchemasResourceUtils extends BasicDMPResourceUtils<SchemaService, P
 
 		super.replaceRelevantDummyIds(object, jsonNode, dummyIdCandidates);
 
-		final Set<AttributePath> attributePaths = object.getUniqueAttributePaths();
+		final Set<AttributePath> attributePaths = object.getUniqueAttributePathInstances();
 
 		if (attributePaths != null) {
 

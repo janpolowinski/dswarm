@@ -23,10 +23,8 @@ import org.dswarm.persistence.model.job.Mapping;
 import org.dswarm.persistence.model.job.Task;
 import org.dswarm.persistence.model.job.proxy.ProxyTask;
 import org.dswarm.persistence.model.resource.DataModel;
-import org.dswarm.persistence.model.schema.Schema;
 import org.dswarm.persistence.service.job.TaskService;
 import org.dswarm.persistence.service.resource.test.utils.DataModelServiceTestUtils;
-import org.dswarm.persistence.service.schema.test.utils.SchemaServiceTestUtils;
 import org.dswarm.persistence.service.test.utils.BasicDMPJPAServiceTestUtils;
 
 /**
@@ -39,7 +37,6 @@ public class TaskServiceTestUtils extends BasicDMPJPAServiceTestUtils<TaskServic
 
 	//private JobServiceTestUtils	jobServiceTestUtils = new JobServiceTestUtils();
 	private MappingServiceTestUtils	mappingsServiceTestUtils = new MappingServiceTestUtils();
-	private SchemaServiceTestUtils	schemaServiceTestUtils = new SchemaServiceTestUtils();
 	private DataModelServiceTestUtils dataModelsServiceTestUtils = new DataModelServiceTestUtils();
 
 	public TaskServiceTestUtils() {
@@ -60,7 +57,7 @@ public class TaskServiceTestUtils extends BasicDMPJPAServiceTestUtils<TaskServic
 	 * @return
 	 * @throws Exception
 	 */
-	public Task exampleTask1() throws Exception {
+	public Task exampleTaskWithExampleMappingConcatFunctionMabXmlFeldnrAndFeldvalue() throws Exception {
 		
 		// tasks and jobs cannot yet be persisted
 		/*
@@ -78,7 +75,7 @@ public class TaskServiceTestUtils extends BasicDMPJPAServiceTestUtils<TaskServic
 		task.setDescription("my task description");
 		
 		Set<Mapping> mappings = new HashSet<>();
-		mappings.add(mappingsServiceTestUtils.getExampleMapping2());
+		mappings.add(mappingsServiceTestUtils.getExampleMappingConcatFunctionMabXmlFeldnrAndFeldvalue());
 		
 		Job job  = new Job();
 		job.setMappings(mappings);

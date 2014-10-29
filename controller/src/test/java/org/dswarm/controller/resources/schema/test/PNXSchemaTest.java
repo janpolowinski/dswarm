@@ -247,7 +247,7 @@ public class PNXSchemaTest extends ResourceTest {
 	private PathHelper makeActual(final Schema schema, final String dataModelUri) {
 		final PathHelper actual = PathHelpers.newActual(dataModelUri);
 
-		for (final AttributePath attributePath : schema.getUniqueAttributePaths()) {
+		for (final AttributePath attributePath : schema.getUniqueAttributePathInstances()) {
 			final List<Attribute> attributes = attributePath.getAttributePath();
 
 			final String[] attributeNames = new String[attributes.size()];

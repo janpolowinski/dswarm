@@ -244,7 +244,7 @@ public final class SchemaUtils extends BasicDMPJPAObjectUtils<Schema> {
 			
 			}
 
-			schema.addAttributePath(schemaAttributePathInstance);
+			schema.addAttributePathInstance(schemaAttributePathInstance);
 		}
 
 		return true;

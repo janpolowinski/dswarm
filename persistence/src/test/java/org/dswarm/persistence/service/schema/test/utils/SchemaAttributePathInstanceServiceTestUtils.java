@@ -15,7 +15,8 @@
  */
 package org.dswarm.persistence.service.schema.test.utils;
 
-import org.junit.Assert;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.dswarm.persistence.model.schema.Attribute;
 import org.dswarm.persistence.model.schema.AttributePath;
@@ -27,8 +28,6 @@ import org.dswarm.persistence.service.schema.SchemaAttributePathInstanceService;
 public class SchemaAttributePathInstanceServiceTestUtils extends
 		AttributePathInstanceServiceTestUtils<SchemaAttributePathInstanceService, ProxySchemaAttributePathInstance, SchemaAttributePathInstance> {
 
-	//private final FilterServiceTestUtils	filtersResourceTestUtils;
-
 	private final AttributePathServiceTestUtils	attributePathsResourceTestUtils;
 
 	public SchemaAttributePathInstanceServiceTestUtils() {
@@ -36,8 +35,6 @@ public class SchemaAttributePathInstanceServiceTestUtils extends
 		super(SchemaAttributePathInstance.class, SchemaAttributePathInstanceService.class);
 		
 		attributePathsResourceTestUtils = new AttributePathServiceTestUtils();
-
-		//filtersResourceTestUtils = new FilterServiceTestUtils();
 	}
 
 	/**
@@ -51,18 +48,9 @@ public class SchemaAttributePathInstanceServiceTestUtils extends
 			final SchemaAttributePathInstance actualSchemaAttributePathInstance) {
 
 		super.compareObjects(expectedSchemaAttributePathInstance, actualSchemaAttributePathInstance);
-
-//		Assert.assertEquals("the ordinals of the schema attribute path should be equal", expectedSchemaAttributePathInstance.getOrdinal(),
-//				actualSchemaAttributePathInstance.getOrdinal());
-
-//		if (expectedSchemaAttributePathInstance.getFilter() == null) {
-//
-//			Assert.assertNull("the actual schema attribute path instance should not have a filter", actualSchemaAttributePathInstance.getFilter());
-//
-//		} else {
-//
-//			filtersResourceTestUtils.compareObjects(expectedSchemaAttributePathInstance.getFilter(), actualSchemaAttributePathInstance.getFilter());
-//		}
+		
+		assertEquals("the subschema should be equal", expectedSchemaAttributePathInstance.getSubSchema(),
+				actualSchemaAttributePathInstance.getSubSchema());
 	}
 
 	public SchemaAttributePathInstance createSchemaAttributePathInstance(final String name, final AttributePath attributePath,
@@ -73,13 +61,11 @@ public class SchemaAttributePathInstanceServiceTestUtils extends
 		schemaAttributePathInstance.setName(name);
 		schemaAttributePathInstance.setAttributePath(attributePath);
 		schemaAttributePathInstance.setSubSchema(subSchema);
-//		schemaAttributePathInstance.setOrdinal(ordinal);
-//		schemaAttributePathInstance.setFilter(filter);
 
 		final SchemaAttributePathInstance updatedSchemaAttributePathInstance = createObject(schemaAttributePathInstance,
 				schemaAttributePathInstance);
 
-		Assert.assertNotNull(updatedSchemaAttributePathInstance.getId());
+		assertNotNull(updatedSchemaAttributePathInstance.getId());
 
 		return updatedSchemaAttributePathInstance;
 	}
@@ -128,8 +114,6 @@ public class SchemaAttributePathInstanceServiceTestUtils extends
 		super.prepareObjectForUpdate(objectWithUpdates, object);
 
 		object.setSubSchema(objectWithUpdates.getSubSchema());
-//		object.setFilter(objectWithUpdates.getFilter());
-//		object.setOrdinal(objectWithUpdates.getOrdinal());
 
 		return object;
 	}

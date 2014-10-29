@@ -141,13 +141,13 @@ public class SchemaTest extends GuicedTest {
 		final Schema schema = new Schema();
 		schema.setRecordClass(recordClass);
 		for (final SchemaAttributePathInstance attributePathInstance : attributePaths) {
-			schema.addAttributePath(attributePathInstance);
+			schema.addAttributePathInstance(attributePathInstance);
 		}
 
 		Assert.assertNotNull("the record class should not be null", schema.getRecordClass());
 		Assert.assertEquals("the record class is not the same", recordClass, schema.getRecordClass());
-		Assert.assertNotNull("the attribute paths should not be null", schema.getUniqueAttributePaths());
-		Assert.assertEquals("the attribute paths have the wrong size", attributePaths.length, schema.getUniqueAttributePaths().size());
+		Assert.assertNotNull("the attribute paths should not be null", schema.getUniqueAttributePathInstances());
+		Assert.assertEquals("the attribute paths have the wrong size", attributePaths.length, schema.getUniqueAttributePathInstances().size());
 
 		return schema;
 	}

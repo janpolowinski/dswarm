@@ -260,7 +260,7 @@ public class ProjectsResourceTest extends
 
 			if (dataModel.getSchema() != null) {
 
-				final Set<AttributePath> attributePaths = dataModel.getSchema().getUniqueAttributePaths();
+				final Set<AttributePath> attributePaths = dataModel.getSchema().getUniqueAttributePathInstances();
 
 				if (attributePaths != null) {
 
@@ -354,7 +354,7 @@ public class ProjectsResourceTest extends
 
 		updateSchema = schemasResourceTestUtils.createObject(tmpSchemaJSONString, tmpSchema);
 
-		final Set<AttributePath> updateAttributePaths = updateSchema.getUniqueAttributePaths();
+		final Set<AttributePath> updateAttributePaths = updateSchema.getUniqueAttributePathInstances();
 
 		if (updateAttributePaths != null) {
 

@@ -242,7 +242,7 @@ public class ProjectRemoveMappingResourceTest extends
 
 			if (inputSchema != null) {
 
-				final Set<AttributePath> inputAttributePaths = inputSchema.getUniqueAttributePaths();
+				final Set<AttributePath> inputAttributePaths = inputSchema.getUniqueAttributePathInstances();
 
 				if (inputAttributePaths != null) {
 
@@ -281,7 +281,7 @@ public class ProjectRemoveMappingResourceTest extends
 
 			if (outputSchema != null) {
 
-				final Set<AttributePath> outputAttributePaths = outputSchema.getUniqueAttributePaths();
+				final Set<AttributePath> outputAttributePaths = outputSchema.getUniqueAttributePathInstances();
 
 				if (outputAttributePaths != null) {
 

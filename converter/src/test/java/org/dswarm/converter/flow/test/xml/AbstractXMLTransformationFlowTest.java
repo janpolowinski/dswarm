@@ -263,7 +263,7 @@ public abstract class AbstractXMLTransformationFlowTest extends GuicedTest {
 		
 		final Map<Long, SchemaAttributePathInstance> attributePathInstances = Maps.newLinkedHashMap();
 
-		final Set<SchemaAttributePathInstance> attributePathsToDelete = schema.getUniqueAttributePaths();
+		final Set<SchemaAttributePathInstance> attributePathsToDelete = schema.getUniqueAttributePathInstances();
 
 		if (attributePathsToDelete != null) {
 

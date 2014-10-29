@@ -124,7 +124,7 @@ public class DataModelServiceTestUtils extends ExtendedBasicDMPJPAServiceTestUti
 		dataModel.setName("my output data model");
 		dataModel.setDescription("my output data model description");
 		
-		dataModel.setSchema(schemasServiceTestUtils.getExampleSchema1());
+		dataModel.setSchema(schemasServiceTestUtils.getDeepBiboDocumentSchemaWithTitleHasPartAndCreatorNameAndCreated());
 		
 		DataModel updatedDataModel = createObject(dataModel, dataModel);
 		

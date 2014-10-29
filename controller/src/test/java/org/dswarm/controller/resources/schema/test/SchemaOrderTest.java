@@ -119,7 +119,7 @@ public class SchemaOrderTest extends ResourceTest {
 
 	private List<String> getActuals() {
 		final List<String> actuals = Lists.newArrayList();
-		final Collection<AttributePath> attributePaths = dataModel.getSchema().getAttributePaths();
+		final Collection<AttributePath> attributePaths = dataModel.getSchema().getAttributePathInstances();
 		for (final AttributePath attributePath : attributePaths) {
 			final Iterable<Attribute> path = attributePath.getAttributePath();
 			final Iterable<String> pathUris = Iterables.transform(path, new Function<Attribute, String>() {

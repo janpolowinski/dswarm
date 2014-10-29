@@ -384,7 +384,7 @@ public class DataModelsResourceTest extends
 
 		pojoClassResourceTestUtils.deleteObject(dataModel);
 
-		final Set<AttributePath> attributePaths = schema.getUniqueAttributePaths();
+		final Set<AttributePath> attributePaths = schema.getUniqueAttributePathInstances();
 		final Clasz recordClasz = schema.getRecordClass();
 
 		schemasResourceTestUtils.deleteObject(schema);
@@ -498,7 +498,7 @@ public class DataModelsResourceTest extends
 
 		if (schema != null) {
 
-			final Set<AttributePath> attributePaths = schema.getUniqueAttributePaths();
+			final Set<AttributePath> attributePaths = schema.getUniqueAttributePathInstances();
 
 			if (attributePaths != null) {
 
@@ -610,7 +610,7 @@ public class DataModelsResourceTest extends
 
 		if (schema != null) {
 
-			final Set<AttributePath> attributePaths = schema.getUniqueAttributePaths();
+			final Set<AttributePath> attributePaths = schema.getUniqueAttributePathInstances();
 
 			if (attributePaths != null) {
 
@@ -723,7 +723,7 @@ public class DataModelsResourceTest extends
 
 		if (schema != null) {
 
-			final Set<AttributePath> attributePaths = schema.getUniqueAttributePaths();
+			final Set<AttributePath> attributePaths = schema.getUniqueAttributePathInstances();
 
 			if (attributePaths != null) {
 

@@ -223,7 +223,7 @@ public class SchemasResource extends BasicDMPResource<SchemasResourceUtils, Sche
 
 		final AttributePath attributePath = createAttributePath(attributeDescriptionsJSONArrayString, id);
 
-		object.addAttributePath(attributePath);
+		object.addAttributePathInstance(attributePath);
 
 		final ProxySchema proxySchema = updateObject(object, id);
 
@@ -321,7 +321,7 @@ public class SchemasResource extends BasicDMPResource<SchemasResourceUtils, Sche
 
 		final AttributePath attributePath = createOrGetAttributePath(attributes, attributePathService);
 
-		object.addAttributePath(attributePath);
+		object.addAttributePathInstance(attributePath);
 
 		final ProxySchema proxySchema = updateObject(object, schemaId);
 
@@ -381,9 +381,9 @@ public class SchemasResource extends BasicDMPResource<SchemasResourceUtils, Sche
 
 		super.prepareObjectForUpdate(objectFromJSON, object);
 
-		final List<AttributePath> attributePaths = objectFromJSON.getAttributePaths();
+		final List<AttributePath> attributePaths = objectFromJSON.getAttributePathInstances();
 
-		object.setAttributePaths(attributePaths);
+		object.setAttributePathInstances(attributePaths);
 
 		final Clasz recordClass = objectFromJSON.getRecordClass();
 
