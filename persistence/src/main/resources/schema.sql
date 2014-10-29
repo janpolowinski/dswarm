@@ -44,7 +44,7 @@ SET foreign_key_checks = 0;
 
     drop table if exists RESOURCE;
 
-    drop table if exists SCHEMAS_ATTRIBUTE_PATHS;
+    drop table if exists SCHEMAS_SCHEMA_ATTRIBUTE_PATHS_INSTANCES;
 
     drop table if exists SCHEMA_ATTRIBUTE_PATH_INSTANCE;
 
@@ -216,10 +216,10 @@ SET foreign_key_checks = 0;
         primary key (ID)
     ) ENGINE=InnoDB;
 
-    create table SCHEMAS_ATTRIBUTE_PATHS (
+    create table SCHEMAS_SCHEMA_ATTRIBUTE_PATHS_INSTANCES (
         SCHEMA_ID bigint not null,
-        ATTRIBUTE_PATH_ID bigint not null,
-        primary key (SCHEMA_ID, ATTRIBUTE_PATH_ID)
+        SCHEMA_ATTRIBUTE_PATH_INSTANCE_ID bigint not null,
+        primary key (SCHEMA_ID, SCHEMA_ATTRIBUTE_PATH_INSTANCE_ID)
     ) ENGINE=InnoDB;
 
     create table SCHEMA_ATTRIBUTE_PATH_INSTANCE (
@@ -413,15 +413,15 @@ SET foreign_key_checks = 0;
         foreign key (PROJECT_ID) 
         references PROJECT (ID);
 
-    alter table SCHEMAS_ATTRIBUTE_PATHS 
-        add index FK_bn6agrogclcpeuvsua2ndpreu (ATTRIBUTE_PATH_ID), 
-        add constraint FK_bn6agrogclcpeuvsua2ndpreu 
-        foreign key (ATTRIBUTE_PATH_ID) 
+    alter table SCHEMAS_SCHEMA_ATTRIBUTE_PATHS_INSTANCES 
+        add index FK_76uukfot19irvclsukcfvp0vf (SCHEMA_ATTRIBUTE_PATH_INSTANCE_ID), 
+        add constraint FK_76uukfot19irvclsukcfvp0vf 
+        foreign key (SCHEMA_ATTRIBUTE_PATH_INSTANCE_ID) 
         references SCHEMA_ATTRIBUTE_PATH_INSTANCE (ID);
 
-    alter table SCHEMAS_ATTRIBUTE_PATHS 
-        add index FK_fs9dl6u7bs5fsd6wc08depa1a (SCHEMA_ID), 
-        add constraint FK_fs9dl6u7bs5fsd6wc08depa1a 
+    alter table SCHEMAS_SCHEMA_ATTRIBUTE_PATHS_INSTANCES 
+        add index FK_qdl2ykqtv2syc8iwaxpadvsqx (SCHEMA_ID), 
+        add constraint FK_qdl2ykqtv2syc8iwaxpadvsqx 
         foreign key (SCHEMA_ID) 
         references DATA_SCHEMA (ID);
 

@@ -96,7 +96,6 @@ public class SchemaAttributePathInstance extends AttributePathInstance {
 	public boolean completeEquals(final Object obj) {
 
 		return SchemaAttributePathInstance.class.isInstance(obj) && super.completeEquals(obj)
-				//&& Objects.equal(((SchemaAttributePathInstance) obj).getOrdinal(), getOrdinal())
 				&& Objects.equal(((SchemaAttributePathInstance) obj).getSubSchema(), getSubSchema())
 				;
 	}

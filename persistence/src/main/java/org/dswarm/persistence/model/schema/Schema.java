@@ -75,7 +75,7 @@ public class Schema extends BasicDMPJPAObject {
 	// @ManyToMany(mappedBy = "schemas", fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.MERGE,
 	// CascadeType.PERSIST, CascadeType.REFRESH })
 	@ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
-	@JoinTable(name = "SCHEMAS_ATTRIBUTE_PATHS", joinColumns = { @JoinColumn(name = "SCHEMA_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "ATTRIBUTE_PATH_ID", referencedColumnName = "ID") })
+	@JoinTable(name = "SCHEMAS_SCHEMA_ATTRIBUTE_PATHS_INSTANCES", joinColumns = { @JoinColumn(name = "SCHEMA_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "SCHEMA_ATTRIBUTE_PATH_INSTANCE_ID", referencedColumnName = "ID") })
 	@JsonIgnore
 	private Set<SchemaAttributePathInstance>	attributePathInstances;
 
