@@ -23,6 +23,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -44,6 +45,7 @@ import org.dswarm.persistence.model.internal.helper.AttributePathHelperHelper;
 import org.dswarm.persistence.model.internal.helper.ConverterHelper;
 import org.dswarm.persistence.model.internal.helper.SchemaHelper;
 import org.dswarm.persistence.model.internal.helper.SchemaHelperHelper;
+import org.dswarm.persistence.model.types.Tuple;
 import org.dswarm.persistence.util.DMPPersistenceUtil;
 import org.dswarm.persistence.util.GDMUtil;
 
@@ -155,7 +157,7 @@ public class GDMModel implements Model {
 	@Override
 	public JsonNode toRawJSON() {
 
-		// note: simply copied from RDFModel and apdapted
+		// note: simply copied from RDFModel and adapted
 
 		if (model == null) {
 
@@ -193,7 +195,7 @@ public class GDMModel implements Model {
 			return null;
 		}
 
-		convertRDFToJSON(recordResource, recordResourceNode, json, json);
+		convertGDMResourceToJSON(recordResource, recordResourceNode, json, json);
 
 		return json;
 	}
@@ -289,6 +291,10 @@ public class GDMModel implements Model {
 	}
 
 	/**
+	 * TODO: The result of the original GDMEncoder seems to be rawJson not json (with v1,v2 tuples)
+	 * TODO: we should soon change these confusing terms for the various formats to
+	 * something like "GDMJson" and "FrontendGDMJsonVariant").
+	 * 
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -343,7 +349,7 @@ public class GDMModel implements Model {
 				return null;
 			}
 
-			convertRDFToJSON(recordResource, recordResourceNode, json, json);
+			convertGDMResourceToJSON(recordResource, recordResourceNode, json, json);
 
 			if (json == null) {
 
@@ -352,44 +358,63 @@ public class GDMModel implements Model {
 				continue;
 			}
 
-			final ObjectNode resourceJson = DMPPersistenceUtil.getJSONObjectMapper().createObjectNode();
+			// build array / node structure to represent v1, v2 ....
+			final ObjectNode recordV1V2jsonObject = createV1V2jsonObject(recordResourceNode.getUri(),
+					json);
 
-			resourceJson.put(resourceURI, json);
-			jsonArray.add(resourceJson);
+
+			jsonArray.add(recordV1V2jsonObject);
 		}
 
 		return jsonArray;
 	}
 
-	private JsonNode convertRDFToJSON(final Resource recordResource, final Node resourceNode, final ArrayNode rootJson, final ArrayNode json) {
+	/**
+	 * Creates a JSON node from a resource and its statements. 
+	 * Recursively calls itself to handle resources that are used as objects of the statements.
+	 * 
+	 * TODO: clarify/check "blank node" handling, i.e. how are "resource nodes" handles that do not correspond to a 
+	 * resource in the sense of CBD / those without an URI.
+	 * 
+	 * @param resource
+	 * @param resourceNode
+	 * @param rootJson
+	 * @param json
+	 * @return
+	 */
+	private JsonNode convertGDMResourceToJSON(final Resource resource, final Node resourceNode,
+			final ArrayNode rootJson, final ArrayNode json) {
+		
+		final ObjectMapper objectMapper = DMPPersistenceUtil.getJSONObjectMapper();
 
 		final Map<String, ConverterHelper> converterHelpers = Maps.newLinkedHashMap();
 
-		// filter record resource statements to statements for subject uri/id (resource node))
-		final Set<Statement> statements = GDMUtil.getResourceStatement(resourceNode, recordResource);
+		// filter resource statements to statements for subject uri/id (resource node))
+		final Set<Statement> statements = GDMUtil.getResourceStatement(resourceNode, resource);
 
 		for (final Statement statement : statements) {
 
 			final String propertyURI = statement.getPredicate().getUri();
-			final Node gdmNode = statement.getObject();
+			final Node objectGdmNode = statement.getObject();
 
-			if (gdmNode instanceof LiteralNode) {
+			if (objectGdmNode instanceof LiteralNode) {
 
-				ConverterHelperGDMHelper.addLiteralToConverterHelper(converterHelpers, propertyURI, gdmNode);
+				ConverterHelperGDMHelper.addLiteralToConverterHelper(converterHelpers, propertyURI, objectGdmNode);
 
 				continue;
 			}
 
-			if (gdmNode instanceof ResourceNode) {
+			if (objectGdmNode instanceof ResourceNode) {
 
-				final ResourceNode object = (ResourceNode) gdmNode;
+				final ResourceNode objectResourceNode = (ResourceNode) objectGdmNode;
+				final Resource objectResource = objectResourceNode.getResource();
 
-				// filter record resource statements to statements for object uri (object node))
-				final Set<Statement> objectStatements = GDMUtil.getResourceStatement(object, recordResource);
+				// filter resource statements to statements for object uri (object node))
+				final Set<Statement> objectStatements = GDMUtil.getResourceStatement(objectResourceNode, objectResource);
 
 				if (objectStatements == null || objectStatements.isEmpty()) {
 
-					ConverterHelperGDMHelper.addURIResourceToConverterHelper(converterHelpers, propertyURI, gdmNode);
+					ConverterHelperGDMHelper.addURIResourceToConverterHelper(converterHelpers, propertyURI, objectGdmNode);
 
 					continue;
 				}
@@ -397,24 +422,29 @@ public class GDMModel implements Model {
 				// resource has an uri, but is deeper in the hierarchy -> it will be attached to the root json node as separate
 				// entry
 
-				final ArrayNode objectNode = DMPPersistenceUtil.getJSONObjectMapper().createArrayNode();
+				final ArrayNode subEntityStatementsJsonArray = objectMapper.createArrayNode();
 
-				final JsonNode jsonNode = convertRDFToJSON(recordResource, object, rootJson, objectNode);
+				convertGDMResourceToJSON(objectResource, objectResourceNode, rootJson, subEntityStatementsJsonArray);
+				
+				// build array / node structure to represent v1, v2 ....
+				final ObjectNode subEntityV1V2jsonObject = createV1V2jsonObject(objectResourceNode.getUri(),
+						subEntityStatementsJsonArray);
+				
+				final ObjectNode subEntityKeyValueJSONObject = objectMapper.createObjectNode();
+				
+				// build object holding a predicate as a key and the v1V2-object as a value 
+				subEntityKeyValueJSONObject.put(propertyURI, subEntityV1V2jsonObject);
 
-				final ObjectNode objectJSONObject = DMPPersistenceUtil.getJSONObjectMapper().createObjectNode();
-
-				objectJSONObject.put(object.getUri(), jsonNode);
-
-				rootJson.add(objectJSONObject);
+				rootJson.add(subEntityKeyValueJSONObject);
 
 				continue;
 			}
 
 			// node is (/must be) a blank node
 
-			final ArrayNode objectNode = DMPPersistenceUtil.getJSONObjectMapper().createArrayNode();
+			final ArrayNode objectNode = objectMapper.createArrayNode();
 
-			final JsonNode jsonNode = convertRDFToJSON(recordResource, gdmNode, rootJson, objectNode);
+			final JsonNode jsonNode = convertGDMResourceToJSON(resource, objectGdmNode, rootJson, objectNode);
 
 			ConverterHelperGDMHelper.addJSONNodeToConverterHelper(converterHelpers, propertyURI, jsonNode);
 		}
@@ -427,6 +457,26 @@ public class GDMModel implements Model {
 		return json;
 	}
 
+	private ObjectNode createV1V2jsonObject(String valueV1, ArrayNode valueV2) {
+		
+		final ObjectMapper objectMapper = DMPPersistenceUtil.getJSONObjectMapper();
+		
+		Tuple<String, ArrayNode> v1V2Tuple = new Tuple<String, ArrayNode>(valueV1, valueV2);
+
+		final ObjectNode v1V2jsonObject = objectMapper.convertValue(v1V2Tuple, ObjectNode.class);
+
+		return v1V2jsonObject;
+	}
+
+	/**
+	 * TODO: This method seems to be copied from convertGDMResourceToJSON(). REUSE?
+	 * 
+	 * @param recordResource
+	 * @param resourceNode
+	 * @param rootJson
+	 * @param json
+	 * @return
+	 */
 	private JsonNode determineUnnormalizedSchema(final Resource recordResource, final Node resourceNode, final ObjectNode rootJson,
 			final JsonNode json) {
 

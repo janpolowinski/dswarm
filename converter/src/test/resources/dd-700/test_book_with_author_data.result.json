@@ -1,0 +1,19 @@
+[ {
+  "v1" : "http://data.slub-dresden.de/datamodels/2/records/6c6d50f7-9713-4927-a6f1-7fdc4d8f5a3d",
+  "v2" : [ {
+    "http://dc/creator" : {
+      "v1" : "http://example.org/some/Person",
+      "v2" : [ {
+        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : "http://foaf.de/Person"
+      }, {
+        "http://xmlns.com/foaf/0.1/givenName" : "charlie"
+      }, {
+        "http://xmlns.com/foaf/0.1/familyName" : "brown"
+      } ]
+    }
+  }, {
+    "http://rdvocab.info/Elements/otherTitleInformation" : "isbn10-3183057131"
+  }, {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : "http://purl.org/ontology/bibo/Document"
+  } ]
+} ]
