@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2013, 2014 SLUB Dresden & Avantgarde Labs GmbH (<code@dswarm.org>)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.dswarm.persistence.service.internal.test;
 
 import java.io.File;
@@ -47,7 +62,7 @@ public class InternalGDMGraphServiceTest extends GuicedTest {
 	/**
 	 * write data via InternalRDFGraphService and read it via InternalGDMGraphService. TODO: adapt record uri re. current model
 	 * (to ensure integrity)
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -142,7 +157,7 @@ public class InternalGDMGraphServiceTest extends GuicedTest {
 
 		if (schema != null) {
 
-			final Set<AttributePath> attributePathsToDelete = schema.getAttributePaths();
+			final Set<AttributePath> attributePathsToDelete = schema.getUniqueAttributePaths();
 
 			if (attributePaths != null) {
 
@@ -256,7 +271,7 @@ public class InternalGDMGraphServiceTest extends GuicedTest {
 
 		Assert.assertNotNull(schema);
 
-		final Set<AttributePath> sattributePaths = schema.getAttributePaths();
+		final Set<AttributePath> sattributePaths = schema.getUniqueAttributePaths();
 
 		Assert.assertNotNull(sattributePaths);
 
@@ -283,7 +298,7 @@ public class InternalGDMGraphServiceTest extends GuicedTest {
 
 		final Clasz recordClass = schema.getRecordClass();
 
-		final Set<AttributePath> attributePathsToDelete = schema.getAttributePaths();
+		final Set<AttributePath> attributePathsToDelete = schema.getUniqueAttributePaths();
 
 		if (attributePaths != null) {
 
@@ -311,9 +326,10 @@ public class InternalGDMGraphServiceTest extends GuicedTest {
 
 		final AttributePathServiceTestUtils attributePathServiceTestUtils = new AttributePathServiceTestUtils();
 
-		for (final AttributePath attributePath : attributePaths.values()) {
-
-			attributePathServiceTestUtils.deleteObject(attributePath);
+		if (attributePaths != null) {
+			for (final AttributePath attributePath : attributePaths.values()) {
+				attributePathServiceTestUtils.deleteObject(attributePath);
+			}
 		}
 
 		final AttributeServiceTestUtils attributeServiceTestUtils = new AttributeServiceTestUtils();

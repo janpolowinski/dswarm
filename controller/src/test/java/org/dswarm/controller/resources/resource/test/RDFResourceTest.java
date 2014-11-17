@@ -1,9 +1,25 @@
+/**
+ * Copyright (C) 2013, 2014 SLUB Dresden & Avantgarde Labs GmbH (<code@dswarm.org>)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.dswarm.controller.resources.resource.test;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.net.URL;
 
 import javax.ws.rs.client.WebTarget;
@@ -128,13 +144,13 @@ public class RDFResourceTest extends ResourceTest {
 	 * 
 	 * @param requestedExportLanguage the requested serialization format to be used in export. may be empty to test the default
 	 *            fallback of the endpoint.
-	 * @param expectedHTTPResponseCode the expected HTTP status code of the response, e.g. {@link HttpStatus.SC_OK} or
-	 *            {@link HttpStatus.SC_NOT_ACCEPTABLE}
+	 * @param expectedHTTPResponseCode the expected HTTP status code of the response, e.g. {@link HttpStatus#SC_OK} or
+	 *            {@link HttpStatus#SC_NOT_ACCEPTABLE}
 	 * @param expectedExportMediaType the language the exported data is expected to be serialized in. hint: language may differ
 	 *            from {@code requestedExportLanguage} to test for default values. (ignored if expectedHTTPResponseCode !=
-	 *            {@link HttpStatus.SC_OK})
+	 *            {@link HttpStatus#SC_OK})
 	 * @param expectedFileEnding the expected file ending to be received from neo4j (ignored if expectedHTTPResponseCode !=
-	 *            {@link HttpStatus.SC_OK})
+	 *            {@link HttpStatus#SC_OK})
 	 * @throws Exception
 	 */
 	private void exportInternal(final String requestedExportLanguage, final int expectedHTTPResponseCode, final MediaType expectedExportMediaType, final String expectedFileEnding)
@@ -192,6 +208,9 @@ public class RDFResourceTest extends ResourceTest {
 
 		// count number of statements that were loaded to db while prepare
 		long expectedStatements = countStatementsInSerializedN3("atMostTwoRows.n3") + countStatementsInSerializedN3("UTF-8.n3");
+
+		// + 2 triples from data model statements (for versioning)
+		expectedStatements += 2;
 
 		// compare number of exported statements with expected
 		Assert.assertEquals("the number of exported statements should be " + expectedStatements, expectedStatements, statementsInExportedRDFModel);

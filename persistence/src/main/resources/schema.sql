@@ -110,6 +110,7 @@ SET foreign_key_checks = 0;
         ID bigint not null auto_increment,
         NAME varchar(255),
         KEY_ATTRIBUTE_PATHS VARCHAR(4000),
+        RECORD_IDENTIFIER_ATTRIBUTE_PATH bigint,
         VALUE_ATTRIBUTE_PATH bigint,
         primary key (ID)
     ) ENGINE=InnoDB;
@@ -133,6 +134,7 @@ SET foreign_key_checks = 0;
     create table DATA_SCHEMA (
         ID bigint not null auto_increment,
         NAME varchar(255),
+        ATTRIBUTE_PATHS VARCHAR(4000),
         CONTENT_SCHEMA bigint,
         RECORD_CLASS bigint,
         primary key (ID)
@@ -264,6 +266,12 @@ SET foreign_key_checks = 0;
         add constraint FK_1umqe7aqc5k80n1pixjv34vpi 
         foreign key (CONFIGURATION_ID) 
         references CONFIGURATION (ID);
+
+    alter table CONTENT_SCHEMA 
+        add index FK_8agn2bar1meoko64cxj0f7uhq (RECORD_IDENTIFIER_ATTRIBUTE_PATH), 
+        add constraint FK_8agn2bar1meoko64cxj0f7uhq 
+        foreign key (RECORD_IDENTIFIER_ATTRIBUTE_PATH) 
+        references ATTRIBUTE_PATH (ID);
 
     alter table CONTENT_SCHEMA 
         add index FK_9l1ily6bu8wklhep4d4t99qmh (VALUE_ATTRIBUTE_PATH), 

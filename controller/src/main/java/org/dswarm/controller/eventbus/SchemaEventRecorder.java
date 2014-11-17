@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2013, 2014 SLUB Dresden & Avantgarde Labs GmbH (<code@dswarm.org>)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.dswarm.controller.eventbus;
 
 import java.util.LinkedList;
@@ -33,6 +48,7 @@ import org.dswarm.persistence.model.schema.proxy.ProxyAttribute;
 import org.dswarm.persistence.model.schema.proxy.ProxyAttributePath;
 import org.dswarm.persistence.model.schema.proxy.ProxyClasz;
 import org.dswarm.persistence.model.schema.proxy.ProxySchema;
+import org.dswarm.persistence.model.schema.utils.SchemaUtils;
 import org.dswarm.persistence.service.resource.DataModelService;
 import org.dswarm.persistence.service.schema.AttributePathService;
 import org.dswarm.persistence.service.schema.AttributeService;
@@ -163,7 +179,7 @@ public class SchemaEventRecorder {
 		final Set<AttributePath> attributePaths = Sets.newLinkedHashSet();
 
 		for (final String stringAttribute : stringAttributes) {
-			final String attributeUri = dataResourceBaseSchemaURI + stringAttribute;
+			final String attributeUri = SchemaUtils.mintTermUri(stringAttribute, dataResourceBaseSchemaURI);
 			final ProxyAttribute proxyAttribute = attributeService.createOrGetObjectTransactional(attributeUri);
 
 			if (proxyAttribute == null) {

@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2013, 2014 SLUB Dresden & Avantgarde Labs GmbH (<code@dswarm.org>)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.dswarm.persistence.service.resource.test;
 
 import java.util.LinkedList;
@@ -187,9 +202,9 @@ public class DataModelServiceTest extends IDBasicJPAServiceTest<ProxyDataModel, 
 		Assert.assertNotNull("the updated data model shouldn't be null", updatedDataModel);
 		Assert.assertNotNull("the update data model id shouldn't be null", updatedDataModel.getId());
 		Assert.assertNotNull("the schema of the updated data model shouldn't be null", updatedDataModel.getSchema());
-		Assert.assertNotNull("the schema's attribute paths of the updated schema shouldn't be null", updatedDataModel.getSchema().getAttributePaths());
-		Assert.assertEquals("the schema's attribute paths size are not equal", schema.getAttributePaths(), updatedDataModel.getSchema()
-				.getAttributePaths());
+		Assert.assertNotNull("the schema's attribute paths of the updated schema shouldn't be null", updatedDataModel.getSchema().getUniqueAttributePaths());
+		Assert.assertEquals("the schema's attribute paths size are not equal", schema.getUniqueAttributePaths(), updatedDataModel.getSchema()
+				.getUniqueAttributePaths());
 		Assert.assertEquals("the attribute path '" + attributePath1.getId() + "' of the schema are not equal",
 				schema.getAttributePath(attributePath1.getId()), updatedDataModel.getSchema().getAttributePath(attributePath1.getId()));
 		Assert.assertNotNull("the attribute path's attributes of the attribute path '" + attributePath1.getId()

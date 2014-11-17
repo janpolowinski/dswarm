@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2013, 2014 SLUB Dresden & Avantgarde Labs GmbH (<code@dswarm.org>)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.dswarm.controller.resources.resource.test;
 
 import java.io.ByteArrayInputStream;
@@ -5,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -216,8 +230,8 @@ public class DataModelsResourceTest extends
 			String attributePathJSONString = DMPPersistenceUtil.getResourceAsString(attributePathJSONFileName);
 			final AttributePath attributePath = objectMapper.readValue(attributePathJSONString, AttributePath.class);
 
-			final LinkedList<Attribute> attributes = attributePath.getAttributePath();
-			final LinkedList<Attribute> newAttributes = Lists.newLinkedList();
+			final List<Attribute> attributes = attributePath.getAttributePath();
+			final List<Attribute> newAttributes = Lists.newLinkedList();
 
 			for (final Attribute attribute : attributes) {
 
@@ -370,7 +384,7 @@ public class DataModelsResourceTest extends
 
 		pojoClassResourceTestUtils.deleteObject(dataModel);
 
-		final Set<AttributePath> attributePaths = schema.getAttributePaths();
+		final Set<AttributePath> attributePaths = schema.getUniqueAttributePaths();
 		final Clasz recordClasz = schema.getRecordClass();
 
 		schemasResourceTestUtils.deleteObject(schema);
@@ -413,7 +427,7 @@ public class DataModelsResourceTest extends
 
 		final Resource expectedResource = objectMapper.readValue(resourceJSONString, Resource.class);
 
-		final URL fileURL = Resources.getResource("test-mabxml.xml");
+		final URL fileURL = Resources.getResource("controller_test-mabxml.xml");
 		final File resourceFile = FileUtils.toFile(fileURL);
 
 		final String configurationJSONString = DMPPersistenceUtil.getResourceAsString("xml-configuration.json");
@@ -484,7 +498,7 @@ public class DataModelsResourceTest extends
 
 		if (schema != null) {
 
-			final Set<AttributePath> attributePaths = schema.getAttributePaths();
+			final Set<AttributePath> attributePaths = schema.getUniqueAttributePaths();
 
 			if (attributePaths != null) {
 
@@ -523,7 +537,7 @@ public class DataModelsResourceTest extends
 
 		final Resource expectedResource = objectMapper.readValue(resourceJSONString, Resource.class);
 
-		final URL fileURL = Resources.getResource("test-mabxml.xml");
+		final URL fileURL = Resources.getResource("controller_test-mabxml.xml");
 		final File resourceFile = FileUtils.toFile(fileURL);
 
 		final String configurationJSONString = DMPPersistenceUtil.getResourceAsString("mabxml-configuration.json");
@@ -596,7 +610,7 @@ public class DataModelsResourceTest extends
 
 		if (schema != null) {
 
-			final Set<AttributePath> attributePaths = schema.getAttributePaths();
+			final Set<AttributePath> attributePaths = schema.getUniqueAttributePaths();
 
 			if (attributePaths != null) {
 
@@ -709,7 +723,7 @@ public class DataModelsResourceTest extends
 
 		if (schema != null) {
 
-			final Set<AttributePath> attributePaths = schema.getAttributePaths();
+			final Set<AttributePath> attributePaths = schema.getUniqueAttributePaths();
 
 			if (attributePaths != null) {
 
@@ -936,16 +950,15 @@ public class DataModelsResourceTest extends
 	 * @param requestedExportLanguage the serialization format neo4j should export the data to. (this value is used as accept
 	 *            header arg to query neo4j)
 	 * @param datamodelID identifier of the datamodel to be exported
-	 * @param provenanceURI identifier of the graph to export
-	 * @param expectedHTTPResponseCode the expected HTTP status code of the response, e.g. {@link HttpStatus.SC_OK} or
-	 *            {@link HttpStatus.SC_NOT_ACCEPTABLE}
+	 * @param expectedHTTPResponseCode the expected HTTP status code of the response, e.g. {@link HttpStatus#SC_OK} or
+	 *            {@link HttpStatus#SC_NOT_ACCEPTABLE}
 	 * @param expectedExportMediaType the language the exported data is expected to be serialized in. hint: language may differ
 	 *            from {@code requestedExportLanguage} to test for default values. (ignored if expectedHTTPResponseCode !=
-	 *            {@link HttpStatus.SC_OK})
+	 *            {@link HttpStatus#SC_OK})
 	 * @param expectedModelFile name of file containing a serialized model, this (expected) model is equal to the actual model
-	 *            exported by neo4j. (ignored if expectedHTTPResponseCode != {@link HttpStatus.SC_OK})
+	 *            exported by neo4j. (ignored if expectedHTTPResponseCode != {@link HttpStatus#SC_OK})
 	 * @param expectedFileEnding the expected file ending to be received from neo4j (ignored if expectedHTTPResponseCode !=
-	 *            {@link HttpStatus.SC_OK})
+	 *            {@link HttpStatus#SC_OK})
 	 * @throws IOException
 	 */
 	private void testExportInternal(final String requestedExportLanguage, final long datamodelID, final int expectedHTTPResponseCode,

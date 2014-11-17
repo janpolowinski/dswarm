@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2013, 2014 SLUB Dresden & Avantgarde Labs GmbH (<code@dswarm.org>)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.dswarm.controller.resources.resource;
 
 import java.util.Iterator;
@@ -6,7 +21,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -37,7 +51,6 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.dswarm.common.MediaTypeUtil;
 import org.dswarm.controller.DMPControllerException;
 import org.dswarm.controller.eventbus.CSVConverterEvent;
 import org.dswarm.controller.eventbus.CSVConverterEventRecorder;
@@ -64,7 +77,7 @@ import org.dswarm.persistence.util.GDMUtil;
 
 /**
  * A resource (controller service) for {@link DataModel}s.
- * 
+ *
  * @author tgaengler
  */
 @RequestScoped
@@ -90,7 +103,7 @@ public class DataModelsResource extends ExtendedBasicDMPResource<DataModelsResou
 	/**
 	 * Creates a new resource (controller service) for {@link DataModel}s with the provider of the data model persistence service,
 	 * the object mapper, metrics registry, event bus provider and data model util.
-	 * 
+	 *
 	 * @param utilsFactory
 	 * @param dmpStatusArg an metrics registry
 	 * @param dataModelUtilArg the data model util
@@ -120,7 +133,7 @@ public class DataModelsResource extends ExtendedBasicDMPResource<DataModelsResou
 
 	/**
 	 * This endpoint returns a data model as JSON representation for the provided data model identifier.
-	 * 
+	 *
 	 * @param id a data model identifier
 	 * @return a JSON representation of a data model
 	 */
@@ -142,7 +155,7 @@ public class DataModelsResource extends ExtendedBasicDMPResource<DataModelsResou
 	 * This endpoint consumes a data model as JSON representation and persists this data model in the database, i.e., the data
 	 * resource of this data model will be processed re. the parameters in the configuration of the data model. Thereby, the
 	 * schema of the data will be created as well.
-	 * 
+	 *
 	 * @param jsonObjectString a JSON representation of one data model
 	 * @return the persisted data model as JSON representation
 	 * @throws DMPControllerException
@@ -162,7 +175,7 @@ public class DataModelsResource extends ExtendedBasicDMPResource<DataModelsResou
 
 	/**
 	 * This endpoint returns a list of all data models as JSON representation.
-	 * 
+	 *
 	 * @return a list of all data models as JSON representation
 	 * @throws DMPControllerException
 	 */
@@ -180,7 +193,7 @@ public class DataModelsResource extends ExtendedBasicDMPResource<DataModelsResou
 
 	/**
 	 * This endpoint consumes a data model as JSON representation and updates this data model in the database.
-	 * 
+	 *
 	 * @param jsonObjectString a JSON representation of one data model
 	 * @param id a data model identifier
 	 * @return the updated data model as JSON representation
@@ -203,7 +216,7 @@ public class DataModelsResource extends ExtendedBasicDMPResource<DataModelsResou
 
 	/**
 	 * Returns the data for a given data model.
-	 * 
+	 *
 	 * @param id the data model identifier
 	 * @param atMost the number of records that should be returned at most
 	 * @return the data for a given data model
@@ -292,23 +305,21 @@ public class DataModelsResource extends ExtendedBasicDMPResource<DataModelsResou
 			return Response.status(Status.NOT_FOUND).build();
 		}
 
-		// construct provenanceURI from data model id
-		final String provenanceURI = GDMUtil.getDataModelGraphURI(id);
+		// construct dataModelURI from data model id
+		final String dataModelURI = GDMUtil.getDataModelGraphURI(id);
 
 		LOG.debug("Forwarding to graph db: request to export rdf of datamodel with id \"" + id + "\" to " + format);
 
 		// send the request to graph DB
 		final WebTarget target = target("/export");
-		final Response responseFromGraph = target.queryParam("provenanceuri", provenanceURI).request().accept(format).get(Response.class);
+		final Response responseFromGraph = target.queryParam("data_model_uri", dataModelURI).request().accept(format).get(Response.class);
 
-		Response responseToRequester = ExportUtils.processGraphDBResponseInternal(responseFromGraph);
-
-		return responseToRequester;
+		return ExportUtils.processGraphDBResponseInternal(responseFromGraph);
 	}
 
 	/**
 	 * This endpoint deletes a data model that matches the given id.
-	 * 
+	 *
 	 * @param id a data model identifier
 	 * @return status 204 if removal was successful, 404 if id not found, 409 if it couldn't be removed, or 500 if something else
 	 *         went wrong

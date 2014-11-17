@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2013, 2014 SLUB Dresden & Avantgarde Labs GmbH (<code@dswarm.org>)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.dswarm.converter.flow.test;
 
 import java.io.File;
@@ -144,6 +159,8 @@ public class TransformationFlowTest extends GuicedTest {
 		//
 		// System.out.println(objectMapper.configure(SerializationFeature.INDENT_OUTPUT,
 		// true).writeValueAsString(gdmModel.toJSON()));
+		// System.out.println(Util.getJSONObjectMapper().configure(SerializationFeature.INDENT_OUTPUT,
+		// true).writeValueAsString(gdmModel.getModel()));
 
 		gdmService.createObject(inputDataModel.getId(), gdmModel);
 		// finished writing CSV statements to graph
@@ -156,7 +173,7 @@ public class TransformationFlowTest extends GuicedTest {
 
 		final Schema schema = freshInputDataModel.getSchema();
 
-		final Optional<Map<String, Model>> optionalModelMap = gdmService.getObjects(updatedInputDataModel.getId(), Optional.<Integer> absent());
+		final Optional<Map<String, Model>> optionalModelMap = gdmService.getObjects(updatedInputDataModel.getId(), Optional.<Integer>absent());
 
 		Assert.assertNotNull("CSV record model map optional shouldn't be null", optionalModelMap);
 		Assert.assertTrue("CSV record model map should be present", optionalModelMap.isPresent());
@@ -185,7 +202,6 @@ public class TransformationFlowTest extends GuicedTest {
 		final ObjectNode taskJSON = objectMapper.readValue(taskJSONString, ObjectNode.class);
 		taskJSON.put("input_data_model", inputDataModelJSON);
 
-		// manipulate output data model (output data model = internal model (for now))
 		final long internalModelId = 1;
 		final DataModel outputDataModel = dataModelService.getObject(internalModelId);
 		final String outputDataModelJSONString = objectMapper.writeValueAsString(outputDataModel);
@@ -193,12 +209,12 @@ public class TransformationFlowTest extends GuicedTest {
 		taskJSON.put("output_data_model", outputDataModelJSON);
 
 		// manipulate attributes
-		final ObjectNode mappingJSON = (ObjectNode) ((ArrayNode) ((ObjectNode) taskJSON.get("job")).get("mappings")).get(0);
+		final ObjectNode mappingJSON = (ObjectNode) taskJSON.get("job").get("mappings").get(0);
 
 		final String dataResourceSchemaBaseURI = DataModelUtils.determineDataModelSchemaBaseURI(updatedInputDataModel);
 
-		final ObjectNode outputAttributePathAttributeJSON = (ObjectNode) ((ArrayNode) ((ObjectNode) ((ObjectNode) mappingJSON
-				.get("output_attribute_path")).get("attribute_path")).get("attributes")).get(0);
+		final ObjectNode outputAttributePathAttributeJSON = (ObjectNode) mappingJSON
+				.get("output_attribute_path").get("attribute_path").get("attributes").get(0);
 		final String outputAttributeName = outputAttributePathAttributeJSON.get("name").asText();
 		outputAttributePathAttributeJSON.put("uri", dataResourceSchemaBaseURI + outputAttributeName);
 
@@ -206,17 +222,17 @@ public class TransformationFlowTest extends GuicedTest {
 
 		for (final JsonNode inputAttributePathsJSONNode : inputAttributePathsJSON) {
 
-			final ObjectNode inputAttributeJSON = (ObjectNode) ((ArrayNode) ((ObjectNode) ((ObjectNode) inputAttributePathsJSONNode)
-					.get("attribute_path")).get("attributes")).get(0);
+			final ObjectNode inputAttributeJSON = (ObjectNode) inputAttributePathsJSONNode
+					.get("attribute_path").get("attributes").get(0);
 			final String inputAttributeName = inputAttributeJSON.get("name").asText();
 			inputAttributeJSON.put("uri", dataResourceSchemaBaseURI + inputAttributeName);
 		}
 
 		// manipulate parameter mappings in transformation component
-		final ObjectNode transformationComponentParameterMappingsJSON = (ObjectNode) ((ObjectNode) mappingJSON.get("transformation"))
+		final ObjectNode transformationComponentParameterMappingsJSON = (ObjectNode) mappingJSON.get("transformation")
 				.get("parameter_mappings");
-		transformationComponentParameterMappingsJSON.put("description", dataResourceSchemaBaseURI + outputAttributeName);
-		transformationComponentParameterMappingsJSON.put("__TRANSFORMATION_OUTPUT_VARIABLE__1", dataResourceSchemaBaseURI + outputAttributeName);
+		transformationComponentParameterMappingsJSON.put("description", "description");
+		transformationComponentParameterMappingsJSON.put("__TRANSFORMATION_OUTPUT_VARIABLE__1", "output mapping attribute path instance");
 
 		final String finalTaskJSONString = objectMapper.writeValueAsString(taskJSON);
 
@@ -248,7 +264,7 @@ public class TransformationFlowTest extends GuicedTest {
 
 			final ObjectNode expectedElementInArray = (ObjectNode) expectedNode;
 			final String expectedKeyInArray = expectedElementInArray.fieldNames().next();
-			final String recordData = ((ObjectNode) expectedElementInArray.get(expectedKeyInArray).get(0)).get(
+			final String recordData = expectedElementInArray.get(expectedKeyInArray).get(0).get(
 					expectedDataResourceSchemaBaseURI + "description").asText();
 			final JsonNode actualNode = getRecordData(recordData, actualNodes, actualDataResourceSchemaBaseURI + "description");
 
@@ -287,24 +303,21 @@ public class TransformationFlowTest extends GuicedTest {
 
 		final Clasz recordClass = schema.getRecordClass();
 
-		if (schema != null) {
+		final Set<AttributePath> attributePathsToDelete = schema.getUniqueAttributePaths();
 
-			final Set<AttributePath> attributePathsToDelete = schema.getAttributePaths();
+		if (attributePathsToDelete != null) {
 
-			if (attributePathsToDelete != null) {
+			for (final AttributePath attributePath : attributePathsToDelete) {
 
-				for (final AttributePath attributePath : attributePathsToDelete) {
+				attributePaths.put(attributePath.getId(), attributePath);
 
-					attributePaths.put(attributePath.getId(), attributePath);
+				final Set<Attribute> attributesToDelete = attributePath.getAttributes();
 
-					final Set<Attribute> attributesToDelete = attributePath.getAttributes();
+				if (attributesToDelete != null) {
 
-					if (attributesToDelete != null) {
+					for (final Attribute attribute : attributesToDelete) {
 
-						for (final Attribute attribute : attributesToDelete) {
-
-							attributes.put(attribute.getId(), attribute);
-						}
+						attributes.put(attribute.getId(), attribute);
 					}
 				}
 			}

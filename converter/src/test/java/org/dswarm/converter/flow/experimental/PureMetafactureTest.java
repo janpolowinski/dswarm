@@ -22,6 +22,7 @@ import org.junit.Test;
  */
 public class PureMetafactureTest {
 	
+	public final static String MORPH_DEFINITION_STRUCTURED_OUTPUT_NESTED = "dd-700/structured-output-subentities.xml";
 	public final static String MORPH_DEFINITION_STRUCTURED_OUTPUT = "dd-700/structured-output.xml";
 	public final static String MORPH_DEFINITION_SUBSTRING = "dd-700/substring-replace.xml";
 	public final static String EXAMPLE_DATA_CSV = "dd-700/test_book_with_author_data_flat.csv";
@@ -42,7 +43,7 @@ public class PureMetafactureTest {
 		
 		//final CsvDecoder csvDecoder = new CsvDecoder(",");	
 		//final PicaOccurenceRemover occurenceFilter = new PicaOccurenceRemover();
-		final Metamorph metamorph = new Metamorph(Resources.getResource(MORPH_DEFINITION_STRUCTURED_OUTPUT).getPath());
+		final Metamorph metamorph = new Metamorph(Resources.getResource(MORPH_DEFINITION_STRUCTURED_OUTPUT_NESTED).getPath());
 		//final RdfMacroPipe rdfMacroPipe = new RdfMacroPipe();
 		final SimpleXmlEncoder xmlEncoder = new SimpleXmlEncoder();	
 		final FormetaEncoder formetaEncoder = new FormetaEncoder();	
@@ -91,7 +92,7 @@ public class PureMetafactureTest {
 		final CsvReader csvReader = new CsvReader(",");
 		csvReader.setHasHeader(true);
 		
-		final Metamorph metamorph = new Metamorph(Resources.getResource(MORPH_DEFINITION_STRUCTURED_OUTPUT).getPath());
+		final Metamorph metamorph = new Metamorph(Resources.getResource(MORPH_DEFINITION_STRUCTURED_OUTPUT_NESTED).getPath());
 		final FormetaEncoder formetaEncoder = new FormetaEncoder();	
 		formetaEncoder.setStyle(FormatterStyle.MULTILINE);
 		

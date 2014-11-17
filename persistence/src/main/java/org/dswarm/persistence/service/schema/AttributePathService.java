@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2013, 2014 SLUB Dresden & Avantgarde Labs GmbH (<code@dswarm.org>)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.dswarm.persistence.service.schema;
 
 import java.util.LinkedList;
@@ -23,7 +38,7 @@ import org.dswarm.persistence.service.BasicIDJPAService;
 
 /**
  * A persistence service for {@link AttributePath}s.
- * 
+ *
  * @author tgaengler
  */
 public class AttributePathService extends BasicIDJPAService<ProxyAttributePath, AttributePath> {
@@ -32,7 +47,7 @@ public class AttributePathService extends BasicIDJPAService<ProxyAttributePath, 
 
 	/**
 	 * Creates a new attribute path persistence service with the given entity manager provider.
-	 * 
+	 *
 	 * @param entityManagerProvider an entity manager provider
 	 */
 	@Inject
@@ -43,13 +58,13 @@ public class AttributePathService extends BasicIDJPAService<ProxyAttributePath, 
 
 	/**
 	 * Creates an attribute path with the given ordered list of attributes or returns the existing one from the DB.
-	 * 
+	 *
 	 * @param attributes an ordered list of attributes
 	 * @return the persisted or matched attribute path from DB
 	 * @throws DMPPersistenceException
 	 */
 	@Transactional(rollbackOn = Exception.class)
-	public ProxyAttributePath createOrGetObjectTransactional(final LinkedList<Attribute> attributes) throws DMPPersistenceException {
+	public ProxyAttributePath createOrGetObjectTransactional(final List<Attribute> attributes) throws DMPPersistenceException {
 
 		final AttributePath tempAttributePath = new AttributePath(attributes);
 
@@ -58,7 +73,7 @@ public class AttributePathService extends BasicIDJPAService<ProxyAttributePath, 
 
 	/**
 	 * Tries to retrieve an attribute path object for the given ordered list of attribute paths
-	 * 
+	 *
 	 * @param attributePathJSONArrayString
 	 * @return
 	 * @throws DMPPersistenceException
@@ -170,7 +185,7 @@ public class AttributePathService extends BasicIDJPAService<ProxyAttributePath, 
 
 		final AttributePath tempAttributePath = new AttributePath();
 
-		final LinkedList<Attribute> attributes = object.getAttributePath();
+		final List<Attribute> attributes = object.getAttributePath();
 
 		if (attributes != null) {
 
@@ -195,7 +210,7 @@ public class AttributePathService extends BasicIDJPAService<ProxyAttributePath, 
 	protected void updateObjectInternal(final AttributePath object, final AttributePath updateObject, final EntityManager entityManager)
 			throws DMPPersistenceException {
 
-		final LinkedList<Attribute> attributes = object.getAttributePath();
+		final List<Attribute> attributes = object.getAttributePath();
 
 		updateObject.setAttributePath(attributes);
 	}

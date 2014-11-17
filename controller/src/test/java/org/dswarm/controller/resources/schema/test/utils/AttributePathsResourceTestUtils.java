@@ -1,9 +1,26 @@
+/**
+ * Copyright (C) 2013, 2014 SLUB Dresden & Avantgarde Labs GmbH (<code@dswarm.org>)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.dswarm.controller.resources.schema.test.utils;
 
-import java.util.LinkedList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -33,7 +50,7 @@ public class AttributePathsResourceTestUtils extends
 		// didn't exist before)
 		// => replace dummy id'ed attributes with real ids by attribute uri
 
-		final LinkedList<Attribute> attributePath = expectedObject.getAttributePath();
+		final List<Attribute> attributePath = expectedObject.getAttributePath();
 
 		if (attributePath != null) {
 
@@ -50,7 +67,7 @@ public class AttributePathsResourceTestUtils extends
 
 					// note: one could even collect all attribute ids and replace them by their actual ones
 
-					if (attribute.getId().longValue() < 0) {
+					if (attribute.getId() < 0) {
 
 						attributeURIsFromDummyIdsFromObjectFromJSON.add(attribute.getUri());
 					}
@@ -66,7 +83,7 @@ public class AttributePathsResourceTestUtils extends
 					}
 				}
 
-				final LinkedList<Attribute> newAttributePath = Lists.newLinkedList();
+				final List<Attribute> newAttributePath = Lists.newLinkedList();
 
 				// construct new attribute path
 
@@ -96,20 +113,11 @@ public class AttributePathsResourceTestUtils extends
 		String attributePathJSONString = DMPPersistenceUtil.getResourceAsString(attributePathJSONFileName);
 		final AttributePath attributePath = objectMapper.readValue(attributePathJSONString, AttributePath.class);
 
-		final LinkedList<Attribute> attributePathAttributes = attributePath.getAttributePath();
-		final LinkedList<Attribute> newAttributes = Lists.newLinkedList();
+		final Iterable<Attribute> attributePathAttributes = attributePath.getAttributePath();
+		final List<Attribute> newAttributes = Lists.newLinkedList();
 
 		for (final Attribute attribute : attributePathAttributes) {
-
-			for (final Attribute newAttribute : attributes.values()) {
-
-				if (attribute.getUri().equals(newAttribute.getUri())) {
-
-					newAttributes.add(newAttribute);
-
-					break;
-				}
-			}
+			newAttributes.addAll(findAttribute(attributes.values(), attribute).asSet());
 		}
 
 		attributePath.setAttributePath(newAttributes);
@@ -121,5 +129,14 @@ public class AttributePathsResourceTestUtils extends
 		attributePaths.put(actualAttributePath.getId(), actualAttributePath);
 
 		return actualAttributePath;
+	}
+
+	private static Optional<Attribute> findAttribute(final Iterable<Attribute> haystack, final Attribute needle) {
+		for (final Attribute attribute : haystack) {
+			if (attribute.getUri().equals(needle.getUri())) {
+				return Optional.of(attribute);
+			}
+		}
+		return Optional.absent();
 	}
 }

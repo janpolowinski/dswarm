@@ -1,6 +1,22 @@
+/**
+ * Copyright (C) 2013, 2014 SLUB Dresden & Avantgarde Labs GmbH (<code@dswarm.org>)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.dswarm.controller.resources.schema;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -42,7 +58,7 @@ import org.dswarm.persistence.service.schema.AttributePathService;
 
 /**
  * A resource (controller service) for {@link AttributePath}s.
- * 
+ *
  * @author tgaengler
  */
 @RequestScoped
@@ -55,7 +71,7 @@ public class AttributePathsResource extends BasicIDResource<AttributePathsResour
 	/**
 	 * Creates a new resource (controller service) for {@link AttributePath}s with the provider of the attribute path persistence
 	 * service, the object mapper and metrics registry.
-	 * 
+	 *
 	 * @param attributePathServiceProviderArg the attribute path persistence service provider
 	 * @param objectMapperArg an object mapper
 	 * @param dmpStatusArg a metrics registry
@@ -68,7 +84,7 @@ public class AttributePathsResource extends BasicIDResource<AttributePathsResour
 
 	/**
 	 * This endpoint returns an attribute path as JSON representation for the provided attribute paths identifier.
-	 * 
+	 *
 	 * @param id an attribute path identifier
 	 * @return a JSON representation of an attribute path
 	 */
@@ -88,7 +104,7 @@ public class AttributePathsResource extends BasicIDResource<AttributePathsResour
 
 	/**
 	 * This endpoint consumes an attribute path as JSON representation and persists this attribute path in the database.
-	 * 
+	 *
 	 * @param jsonObjectString a JSON representation of one attribute path
 	 * @return the persisted attribute path as JSON representation
 	 * @throws DMPControllerException
@@ -109,7 +125,7 @@ public class AttributePathsResource extends BasicIDResource<AttributePathsResour
 
 	/**
 	 * This endpoint returns a list of all attribute paths as JSON representation.
-	 * 
+	 *
 	 * @return a list of all attribute paths as JSON representation
 	 * @throws DMPControllerException
 	 */
@@ -127,7 +143,7 @@ public class AttributePathsResource extends BasicIDResource<AttributePathsResour
 
 	/**
 	 * This endpoint consumes a attribute path as JSON representation and updates this attribute path in the database.
-	 * 
+	 *
 	 * @param jsonObjectString a JSON representation of one attribute path
 	 * @param id a attribute path identifier
 	 * @return the updated attribute path as JSON representation
@@ -150,7 +166,7 @@ public class AttributePathsResource extends BasicIDResource<AttributePathsResour
 
 	/**
 	 * This endpoint deletes a attribute path that matches the given id.
-	 * 
+	 *
 	 * @param id an attribute path identifier
 	 * @return status 204 if removal was successful, 404 if id not found, 409 if it couldn't be removed, or 500 if something else
 	 *         went wrong
@@ -186,7 +202,7 @@ public class AttributePathsResource extends BasicIDResource<AttributePathsResour
 		// didn't exist before)
 		// => replace dummy id'ed attributes with real ids by attribute uri
 
-		final LinkedList<Attribute> attributePath = objectFromJSON.getAttributePath();
+		final List<Attribute> attributePath = objectFromJSON.getAttributePath();
 
 		if (attributePath != null) {
 

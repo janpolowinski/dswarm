@@ -1,7 +1,21 @@
+/**
+ * Copyright (C) 2013, 2014 SLUB Dresden & Avantgarde Labs GmbH (<code@dswarm.org>)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.dswarm.controller.resources.job.test;
 
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -9,6 +23,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
@@ -245,7 +260,7 @@ public class ProjectsResourceTest extends
 
 			if (dataModel.getSchema() != null) {
 
-				final Set<AttributePath> attributePaths = dataModel.getSchema().getAttributePaths();
+				final Set<AttributePath> attributePaths = dataModel.getSchema().getUniqueAttributePaths();
 
 				if (attributePaths != null) {
 
@@ -339,7 +354,7 @@ public class ProjectsResourceTest extends
 
 		updateSchema = schemasResourceTestUtils.createObject(tmpSchemaJSONString, tmpSchema);
 
-		final Set<AttributePath> updateAttributePaths = updateSchema.getAttributePaths();
+		final Set<AttributePath> updateAttributePaths = updateSchema.getUniqueAttributePaths();
 
 		if (updateAttributePaths != null) {
 
@@ -418,7 +433,7 @@ public class ProjectsResourceTest extends
 		updateMappingJSONString = objectMapper.writeValueAsString(expectedMapping);
 
 		updateMapping = mappingsResourceTestUtils.createObject(updateMappingJSONString, expectedMapping);
-		final Set<Mapping> updateMappings = new LinkedHashSet<Mapping>();
+		final Set<Mapping> updateMappings = Sets.newLinkedHashSet();
 		updateMappings.add(updateMapping);
 
 		persistedProject.setMappings(updateMappings);
@@ -554,8 +569,8 @@ public class ProjectsResourceTest extends
 			String attributePathJSONString = DMPPersistenceUtil.getResourceAsString(attributePathJSONFileName);
 			final AttributePath attributePath = objectMapper.readValue(attributePathJSONString, AttributePath.class);
 
-			final LinkedList<Attribute> attributes = attributePath.getAttributePath();
-			final LinkedList<Attribute> newAttributes = Lists.newLinkedList();
+			final List<Attribute> attributes = attributePath.getAttributePath();
+			final List<Attribute> newAttributes = Lists.newLinkedList();
 
 			for (final Attribute attribute : attributes) {
 
@@ -811,8 +826,8 @@ public class ProjectsResourceTest extends
 		String attributePathJSONString = DMPPersistenceUtil.getResourceAsString(attributePathJSONFileName);
 		final AttributePath attributePath = objectMapper.readValue(attributePathJSONString, AttributePath.class);
 
-		final LinkedList<Attribute> attributes = attributePath.getAttributePath();
-		final LinkedList<Attribute> newAttributes = Lists.newLinkedList();
+		final List<Attribute> attributes = attributePath.getAttributePath();
+		final List<Attribute> newAttributes = Lists.newLinkedList();
 
 		for (final Attribute attribute : attributes) {
 

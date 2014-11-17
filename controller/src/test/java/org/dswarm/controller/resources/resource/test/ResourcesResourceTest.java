@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2013, 2014 SLUB Dresden & Avantgarde Labs GmbH (<code@dswarm.org>)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.dswarm.controller.resources.resource.test;
 
 import java.io.File;
@@ -214,7 +229,7 @@ public class ResourcesResourceTest extends ResourceTest {
 
 		expectedResource = objectMapper.readValue(resourceJSONString, Resource.class);
 
-		final URL fileURL = Resources.getResource("test-mabxml.xml");
+		final URL fileURL = Resources.getResource("controller_test-mabxml.xml");
 		resourceFile = FileUtils.toFile(fileURL);
 
 		final String resourceJSON = resourceUploadInteral(resourceFile, expectedResource);
@@ -310,8 +325,7 @@ public class ResourcesResourceTest extends ResourceTest {
 
 		ResourcesResourceTest.LOG.debug("end get resource configurations test");
 	}
-
-	// FIXME cross-test dependencies: test can not be run separately, need to run #testGetResources() first.
+	
 	@Test
 	public void testCurlGetResourceConfigurations() throws Exception {
 
@@ -431,7 +445,6 @@ public class ResourcesResourceTest extends ResourceTest {
 		ResourcesResourceTest.LOG.debug("end get resource configuration test");
 	}
 
-	// FIXME cross-test dependencies: ignoring this test crashes #testCurlGetResourceConfigurations()!!
 	@Test
 	public void testGetResources() throws Exception {
 
@@ -469,9 +482,8 @@ public class ResourcesResourceTest extends ResourceTest {
 		final String responseResources = response.readEntity(String.class);
 
 		Assert.assertEquals("200 OK was expected", 200, response.getStatus());
-		// Assert.assertEquals("resources JSONs are not equal", resourcesJSONArray.toString(), responseResources);
+		Assert.assertEquals("resources JSONs are not equal", resourcesJSONArray.toString(), responseResources);
 
-		// FIXME if we do not call cleanUpDB(resource), testCurlGetResourceConfigurations() crashes.
 		cleanUpDB(resource);
 		cleanUpDB(resource2);
 

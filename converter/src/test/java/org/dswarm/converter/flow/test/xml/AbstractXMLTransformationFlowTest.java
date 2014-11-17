@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2013, 2014 SLUB Dresden & Avantgarde Labs GmbH (<code@dswarm.org>)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.dswarm.converter.flow.test.xml;
 
 import java.util.Collection;
@@ -245,24 +260,21 @@ public abstract class AbstractXMLTransformationFlowTest extends GuicedTest {
 
 		final Map<Long, AttributePath> attributePaths = Maps.newLinkedHashMap();
 
-		if (schema != null) {
+		final Set<AttributePath> attributePathsToDelete = schema.getUniqueAttributePaths();
 
-			final Set<AttributePath> attributePathsToDelete = schema.getAttributePaths();
+		if (attributePathsToDelete != null) {
 
-			if (attributePathsToDelete != null) {
+			for (final AttributePath attributePath : attributePathsToDelete) {
 
-				for (final AttributePath attributePath : attributePathsToDelete) {
+				attributePaths.put(attributePath.getId(), attributePath);
 
-					attributePaths.put(attributePath.getId(), attributePath);
+				final Set<Attribute> attributesToDelete = attributePath.getAttributes();
 
-					final Set<Attribute> attributesToDelete = attributePath.getAttributes();
+				if (attributesToDelete != null) {
 
-					if (attributesToDelete != null) {
+					for (final Attribute attribute : attributesToDelete) {
 
-						for (final Attribute attribute : attributesToDelete) {
-
-							attributes.put(attribute.getId(), attribute);
-						}
+						attributes.put(attribute.getId(), attribute);
 					}
 				}
 			}
@@ -306,7 +318,7 @@ public abstract class AbstractXMLTransformationFlowTest extends GuicedTest {
 		final ArrayNode actualJSONArray = objectMapper.readValue(actualResultJSONString, ArrayNode.class);
 		final ObjectNode actualElementInArray = (ObjectNode) actualJSONArray.get(0);
 		final String actualKeyInArray = actualElementInArray.fieldNames().next();
-		final ArrayNode actualKeyArray = (ArrayNode) actualElementInArray.get(actualKeyInArray);
+		final Iterable<JsonNode> actualKeyArray = actualElementInArray.get(actualKeyInArray);
 		ObjectNode actualJSON = null;
 
 		for (final JsonNode actualKeyArrayItem : actualKeyArray) {

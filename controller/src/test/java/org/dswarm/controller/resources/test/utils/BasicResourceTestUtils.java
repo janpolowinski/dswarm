@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2013, 2014 SLUB Dresden & Avantgarde Labs GmbH (<code@dswarm.org>)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.dswarm.controller.resources.test.utils;
 
 import java.io.UnsupportedEncodingException;
@@ -207,7 +222,24 @@ public abstract class BasicResourceTestUtils<POJOCLASSPERSISTENCESERVICETESTUTIL
 
 		final POJOCLASSIDTYPE objectId = objectMapper.readValue(updateObjectJSONString, pojoClass).getId();
 
-		Assert.assertEquals("the id of the updeted object should be equal", objectId, expectedObject.getId());
+		Assert.assertEquals("the ids of the updated object should be equal", expectedObject.getId(), objectId);
+
+		final POJOCLASS updatedObject = updateObjectWithoutComparison(updateObjectJSONString, objectId);
+
+		compareObjects(expectedObject, updatedObject);
+
+		return updatedObject;
+	}
+
+	public POJOCLASS updateObjectWithoutComparison(final POJOCLASS updateObject) throws Exception {
+
+		final String updateObjectJSONString = objectMapper.writeValueAsString(updateObject);
+		final POJOCLASSIDTYPE objectId = updateObject.getId();
+
+		return updateObjectWithoutComparison(updateObjectJSONString, objectId);
+	}
+
+	private POJOCLASS updateObjectWithoutComparison(final String updateObjectJSONString, final POJOCLASSIDTYPE objectId) throws Exception {
 
 		final Response response = target(String.valueOf(objectId)).request(MediaType.APPLICATION_JSON_TYPE).accept(MediaType.APPLICATION_JSON_TYPE)
 				.put(Entity.json(updateObjectJSONString));
@@ -218,11 +250,7 @@ public abstract class BasicResourceTestUtils<POJOCLASSPERSISTENCESERVICETESTUTIL
 
 		Assert.assertNotNull("the response JSON shouldn't be null", responseString);
 
-		final POJOCLASS updatedObject = objectMapper.readValue(responseString, pojoClass);
-
-		compareObjects(expectedObject, updatedObject);
-
-		return updatedObject;
+		return objectMapper.readValue(responseString, pojoClass);
 	}
 
 	public void deleteObject(final POJOCLASS object) {
