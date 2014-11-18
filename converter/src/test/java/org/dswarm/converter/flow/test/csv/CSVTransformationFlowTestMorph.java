@@ -1,7 +1,5 @@
 package org.dswarm.converter.flow.test.csv;
 
-import org.junit.Ignore;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;

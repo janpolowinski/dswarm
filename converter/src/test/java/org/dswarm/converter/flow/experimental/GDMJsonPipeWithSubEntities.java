@@ -148,7 +148,7 @@ public class GDMJsonPipeWithSubEntities extends GuicedTest {
 		.setReceiver(writer);
 		;	
 
-		jsonNodeReader.process(getTupleList(DMPPersistenceUtil.getResourceAsString("dd-700/test_2_book_with_author_data_flat.tuples.json")).iterator());
+		jsonNodeReader.process(getTupleList(DMPPersistenceUtil.getResourceAsString("dd-700/test_book_with_author_data_flat.tuples.json")).iterator());
 		jsonNodeReader.closeStream();
 
 		
