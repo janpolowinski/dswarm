@@ -15,7 +15,9 @@
  */
 package org.dswarm.persistence.service.schema.test.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import org.json.JSONException;
 
 import org.dswarm.persistence.model.schema.Attribute;
 import org.dswarm.persistence.model.schema.AttributePath;
@@ -66,6 +68,16 @@ public class SchemaAttributePathInstanceServiceTestUtils extends
 		return createSchemaAttributePathInstance(attributePathServiceTestUtils.getDctermsTitleDctermHaspartAP());
 	}
 
+	public SchemaAttributePathInstance getDctermsCreatorFOAFNameSAPI() throws Exception {
+
+		return createSchemaAttributePathInstance(attributePathServiceTestUtils.getDctermsCreatorFoafNameAP());
+	}
+
+	public SchemaAttributePathInstance getDctermsCreatedSAPI() throws Exception {
+
+		return createSchemaAttributePathInstance(attributePathServiceTestUtils.getDctermsCreatedAP());
+	}
+
 	/**
 	 * {@inheritDoc}<br />
 	 *
@@ -74,7 +86,7 @@ public class SchemaAttributePathInstanceServiceTestUtils extends
 	 */
 	@Override
 	public void compareObjects(final SchemaAttributePathInstance expectedSchemaAttributePathInstance,
-			final SchemaAttributePathInstance actualSchemaAttributePathInstance) {
+			final SchemaAttributePathInstance actualSchemaAttributePathInstance) throws JsonProcessingException, JSONException {
 
 		super.compareObjects(expectedSchemaAttributePathInstance, actualSchemaAttributePathInstance);
 
