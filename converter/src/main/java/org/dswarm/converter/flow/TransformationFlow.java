@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2013, 2014 SLUB Dresden & Avantgarde Labs GmbH (<code@dswarm.org>)
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
 import org.dswarm.converter.DMPConverterException;
 import org.dswarm.converter.DMPMorphDefException;
 import org.dswarm.converter.mf.stream.GDMEncoder;
-import org.dswarm.converter.mf.stream.GDMEncoderEntityAware;
+import org.dswarm.converter.mf.stream.GDMEncoder;
 import org.dswarm.converter.mf.stream.GDMModelReceiver;
 import org.dswarm.converter.mf.stream.reader.JsonNodeReader;
 import org.dswarm.converter.morph.MorphScriptBuilder;
@@ -186,17 +186,15 @@ public class TransformationFlow {
 
 		// final String recordDummy = "record";
 
-		//final StreamUnflattener unflattener = new StreamUnflattener("", DMPStatics.ATTRIBUTE_DELIMITER);
-		//final StreamJsonCollapser collapser = new StreamJsonCollapser();
-		final GDMEncoderEntityAware converter = new GDMEncoderEntityAware(outputDataModel);
+		// final StreamUnflattener unflattener = new StreamUnflattener("", DMPStatics.ATTRIBUTE_DELIMITER);
+		// final StreamJsonCollapser collapser = new StreamJsonCollapser();
+		final GDMEncoder converter = new GDMEncoder(outputDataModel);
 		final GDMModelReceiver writer = new GDMModelReceiver();
 
-		opener
-		.setReceiver(transformer)
-		//.setReceiver(unflattener) // TODO: check if still necessary. outcommented to make new entity-aware GDM encoder work
-		//.setReceiver(collapser) // TODO: check if still necessary. outcommented to make new entity-aware GDM encoder work
-		.setReceiver(converter)
-		.setReceiver(writer);
+		opener.setReceiver(transformer)
+		// .setReceiver(unflattener) // TODO: check if still necessary. outcommented to make new entity-aware GDM encoder work
+		// .setReceiver(collapser) // TODO: check if still necessary. outcommented to make new entity-aware GDM encoder work
+				.setReceiver(converter).setReceiver(writer);
 
 		opener.process(tuples);
 		opener.closeStream();
@@ -251,7 +249,8 @@ public class TransformationFlow {
 				if (recordResource != null) {
 
 					// TODO check this: subject OK?
-					recordResource.addStatement(new ResourceNode(recordResource.getUri()), new Predicate(GDMUtil.RDF_type), new ResourceNode(defaultRecordClassURI));
+					recordResource.addStatement(new ResourceNode(recordResource.getUri()), new Predicate(GDMUtil.RDF_type), new ResourceNode(
+							defaultRecordClassURI));
 				}
 
 				// re-write GDM model
@@ -261,7 +260,7 @@ public class TransformationFlow {
 				finalGDMModel = gdmModel;
 			}
 
-			if(recordClassUri == null) {
+			if (recordClassUri == null) {
 
 				recordClassUri = finalGDMModel.getRecordClassURI();
 			}

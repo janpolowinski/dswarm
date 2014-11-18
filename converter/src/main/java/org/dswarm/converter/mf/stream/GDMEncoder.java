@@ -1,27 +1,18 @@
-/**
- * Copyright (C) 2013, 2014 SLUB Dresden & Avantgarde Labs GmbH (<code@dswarm.org>)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.dswarm.converter.mf.stream;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.Stack;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.annotation.Nullable;
 
+import com.sun.mail.imap.protocol.Namespaces;
+
+import org.hibernate.internal.jaxb.mapping.hbm.SubEntityElement;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
@@ -41,28 +32,38 @@ import org.dswarm.graph.json.Node;
 import org.dswarm.graph.json.Predicate;
 import org.dswarm.graph.json.Resource;
 import org.dswarm.graph.json.ResourceNode;
+import org.dswarm.graph.json.Statement;
 import org.dswarm.persistence.model.internal.gdm.GDMModel;
 import org.dswarm.persistence.model.resource.DataModel;
 import org.dswarm.persistence.model.resource.utils.DataModelUtils;
 import org.dswarm.persistence.util.GDMUtil;
 
 /**
- * Converts records to GDM-JSON.
+ * TODO: copied from GDMEncoder. Reuse code from GDMEncoder if both classes should coexist in future Converts records to a GDM
+ * Model, being aware of nested entities.
  * 
  * @author polowins
  * @author tgaengler
  * @author phorn
  */
-@Description("converts records to GDM-JSON")
+@Description("converts records to a GDM Model")
 @In(StreamReceiver.class)
 @Out(GDMModel.class)
-public class GDMEncoder extends DefaultStreamPipe<ObjectReceiver<GDMModel>> {
+public final class GDMEncoder extends DefaultStreamPipe<ObjectReceiver<GDMModel>> {
 
-	private String							currentId;
+	private final Random					random			= new Random();
+
 	private final Model						internalGDMModel;
+	private String							recordId;
 	private Resource						recordResource;
 	private ResourceNode					recordNode;
+
+	private String							currentId;
+	private Resource						currentEntityResource;
+	private ResourceNode					currentEntityNode;
+
 	// private Stack<Tuple<Node, Predicate>> entityStack;
+	private Stack<Resource>					entityStack;
 	// private final Stack<String> elementURIStack; // TODO use stack when statements for deeper hierarchy levels are possible
 
 	// not used: private ResourceNode recordType;
@@ -84,6 +85,7 @@ public class GDMEncoder extends DefaultStreamPipe<ObjectReceiver<GDMModel>> {
 		dataModelUri = init(dataModel);
 
 		// init
+		entityStack = new Stack<Resource>();
 		// elementURIStack = new Stack<>(); // TODO use stack when statements for deeper hierarchy levels are possible
 		internalGDMModel = new Model();
 
@@ -92,19 +94,24 @@ public class GDMEncoder extends DefaultStreamPipe<ObjectReceiver<GDMModel>> {
 	@Override
 	public void startRecord(final String identifier) {
 
-		// System.out.println("in start record with: identifier = '" + identifier + "'");
+		System.out.println("in start record with: identifier = '" + identifier + "'");
 
 		assert !isClosed();
 
-		currentId = isValidUri(identifier) ? identifier : mintRecordUri(identifier);
+		recordId = isValidUri(identifier) ? identifier : mintRecordUri(identifier);
 
-		recordResource = new Resource(currentId);
-		recordNode = new ResourceNode(currentId);
+		recordResource = new Resource(recordId);
+		recordNode = new ResourceNode(recordId);
+
+		currentEntityResource = recordResource;
+		currentEntityNode = recordNode;
 
 	}
 
 	@Override
 	public void endRecord() {
+
+		System.out.println("in end record");
 
 		assert !isClosed();
 
@@ -115,45 +122,98 @@ public class GDMEncoder extends DefaultStreamPipe<ObjectReceiver<GDMModel>> {
 
 		if (recordTypeUri == null) {
 
-			gdmModel = new GDMModel(internalGDMModel, currentId);
+			gdmModel = new GDMModel(internalGDMModel, recordId);
+
 		} else {
 
-			gdmModel = new GDMModel(internalGDMModel, currentId, recordTypeUri);
+			gdmModel = new GDMModel(internalGDMModel, recordId, recordTypeUri);
+
 		}
 
 		getReceiver().process(gdmModel);
 	}
 
+	// TODO multiple times nested entities not yet supported (only record entity with one subentity)
 	@Override
 	public void startEntity(final String name) {
 
-		// System.out.println("in start entity with name = '" + name + "'");
+		System.out.println("in start entity with name = '" + name + "'");
+
+		System.out.println("current resource " + currentEntityResource.getUri() + " current resource node " + currentEntityNode.getUri());
 
 		assert !isClosed();
+
+		final Predicate attributeProperty = getPredicate(name);
+
+		currentId = "http://example.org/object/uri/to/be/replaced/by/better/minting/" + random.nextDouble();
+
+		final Resource subEntityResource = new Resource(currentId);
+		final ResourceNode subEntityNode = new ResourceNode(subEntityResource);
+
+		// add the new entity to the parent entity
+		addStatement(currentEntityNode, attributeProperty, subEntityNode);
+
+		currentEntityResource = subEntityResource;
+		currentEntityNode = subEntityNode;
+
+		// can we access the type here? it seems not - so the default type needs to be provided by the morph script and must be
+		// processed like a "literal" from a data part of the morphscript (we already look for special "literals" in the
+		// literal(..) method - those that are actually URIs of resources describing the rdf:type. However so far, the default
+		// setting is not provided by the script, only in the case that someone manually maps to rdf:type
+		// so we only set a default-default-type here - the minimum know type is rdfs:Resource (this may also be skipped, but may
+		// be a good fall-back)
+
+		// TODO do the same for records (upper most entity level)
+		final ResourceNode defaultTypeResource = new ResourceNode("http://www.w3.org/2000/01/rdf-schema#Resource");
+		addStatement(currentEntityNode, getPredicate(GDMUtil.RDF_type), defaultTypeResource);
+
+		/*
+		 * // test creating a subentity manually final Resource subSubEntityResource = new Resource("http://foaf.de/some/Place");
+		 * final ResourceNode subSubEntityNode = new ResourceNode(subSubEntityResource); final ResourceNode typeResourcePlace =
+		 * new ResourceNode("http://foaf.de/Place"); subSubEntityResource.addStatement(subSubEntityNode,
+		 * getPredicate(GDMUtil.RDF_type), typeResourcePlace); subEntityResource.addStatement(subEntityNode,
+		 * getPredicate("bornIn"), subSubEntityNode); printStatements(subSubEntityResource);
+		 */
+
+		// currentEntityResource.addStatement(currentEntityNode, getPredicate(GDMUtil.RDF_type), new LiteralNode("test"));
+
+		System.out.println("current resource " + currentEntityResource.getUri() + " current resource node " + currentEntityNode.getUri());
 
 	}
 
+	// TODO multiple times nested entities not yet supported (only record entity with one subentity)
 	@Override
 	public void endEntity() {
 
-		// System.out.println("in end entity");
+		System.out.println("in end entity");
+
+		System.out.println("current resource " + currentEntityResource.getUri() + " current resource node " + currentEntityNode.getUri());
 
 		assert !isClosed();
+
+		internalGDMModel.addResource(currentEntityResource);
+
+		currentEntityResource = recordResource;
+		currentEntityNode = recordNode;
+		currentId = recordId;
+
+		System.out.println("current resource " + currentEntityResource.getUri() + " current resource node " + currentEntityNode.getUri());
 
 	}
 
 	@Override
 	public void literal(final String name, final String value) {
 
-		// System.out.println("in literal with name = '" + name + "' :: value = '" + value + "'");
+		System.out.println("in literal with name = '" + name + "' :: value = '" + value + "'");
+
+		System.out.println("current resource " + currentEntityResource.getUri() + " current resource node " + currentEntityNode.getUri());
 
 		assert !isClosed();
 
 		// create triple
 		// name = predicate
-		// value = literal or object
-		// TODO: only literals atm, i.e., how to determine other resources?
-		// => still valid: how to determine other resources!
+		// value = literal or object -> no. now handled by entities
+		// TODO: only literals atm, i.e., how to determine other resources? -> entities
 		// ==> @phorn proposed to utilise "<" ">" to identify resource ids (uris)
 		if (name == null) {
 
@@ -165,6 +225,7 @@ public class GDMEncoder extends DefaultStreamPipe<ObjectReceiver<GDMModel>> {
 		if (isValidUri(name)) {
 
 			propertyUri = name;
+
 		} else {
 
 			propertyUri = mintUri(dataModelUri.get(), name);
@@ -175,14 +236,15 @@ public class GDMEncoder extends DefaultStreamPipe<ObjectReceiver<GDMModel>> {
 			final Predicate attributeProperty = getPredicate(propertyUri);
 			final LiteralNode literalObject = new LiteralNode(value);
 
-			if (null != recordResource) {
+			if (null != currentEntityResource) {
 
 				// TODO: this is only a HOTFIX for creating resources from resource type uris
 
 				if (!GDMUtil.RDF_type.equals(propertyUri)) {
 
 					// recordResource.addProperty(attributeProperty, value);
-					recordResource.addStatement(recordNode, attributeProperty, literalObject);
+					// currentEntityResource.addStatement(currentEntityNode, attributeProperty, literalObject);
+					addStatement(currentEntityNode, attributeProperty, literalObject);
 				} else {
 
 					// check, whether value is really a URI
@@ -191,13 +253,13 @@ public class GDMEncoder extends DefaultStreamPipe<ObjectReceiver<GDMModel>> {
 						final ResourceNode typeResource = new ResourceNode(value);// ResourceFactory.createResource(value);
 
 						// recordResource.addStatement(entityNode, attributeProperty, typeResource);
-						addStatement(recordNode, attributeProperty, typeResource);
+						addStatement(currentEntityNode, attributeProperty, typeResource);
 
-						recordTypeUri = value;
+						// recordTypeUri = value; // TODO not only set record type here, generalize!
 					} else {
 
 						// recordResource.addStatement(entityNode, attributeProperty, literalObject);
-						addStatement(recordNode, attributeProperty, literalObject);
+						addStatement(currentEntityNode, attributeProperty, literalObject);
 					}
 				}
 			} else {
@@ -206,6 +268,18 @@ public class GDMEncoder extends DefaultStreamPipe<ObjectReceiver<GDMModel>> {
 			}
 		}
 
+		System.out.println("current resource " + currentEntityResource.getUri() + " current resource node " + currentEntityNode.getUri());
+
+		printStatements(currentEntityResource);
+
+	}
+
+	private void printStatements(Resource resource) {
+		Set<Statement> statements = resource.getStatements();
+
+		for (Statement statement : statements) {
+			System.out.println(statement);
+		}
 	}
 
 	private Optional<String> init(final Optional<DataModel> dataModel) {
@@ -273,7 +347,7 @@ public class GDMEncoder extends DefaultStreamPipe<ObjectReceiver<GDMModel>> {
 
 	private String mintRecordUri(@Nullable final String identifier) {
 
-		if (currentId == null) {
+		if (recordId == null) {
 
 			// mint completely new uri
 
@@ -313,17 +387,29 @@ public class GDMEncoder extends DefaultStreamPipe<ObjectReceiver<GDMModel>> {
 		return sb.toString();
 	}
 
-	private String mintUri(final String uri, final String localName) {
+	/**
+	 * Combine an URI from a base URI and a local name.
+	 * 
+	 * @param baseUri - may end with a hash or slash
+	 * @param localName
+	 * @return the minted URI as a string
+	 */
+	private String mintUri(final String baseUri, final String localName) {
 
-		// allow has and slash uris
-		if (uri != null && uri.endsWith("/")) {
+		if (baseUri != null && baseUri.endsWith("/")) {
 
-			return uri + localName;
+			return baseUri + localName;
 		}
 
-		return uri + "#" + localName;
+		return baseUri + "#" + localName;
 	}
 
+	/**
+	 * Builds a predicate URI from the predicateId and returns the according Predicate.
+	 * 
+	 * @param predicateId
+	 * @return the found or newly created predicate
+	 */
 	private Predicate getPredicate(final String predicateId) {
 
 		final String predicateURI = getURI(predicateId);
@@ -338,6 +424,13 @@ public class GDMEncoder extends DefaultStreamPipe<ObjectReceiver<GDMModel>> {
 		return predicates.get(predicateURI);
 	}
 
+	/**
+	 * Adds an ordered statement to the current entity resource
+	 * 
+	 * @param subject
+	 * @param predicate
+	 * @param object
+	 */
 	private void addStatement(final Node subject, final Predicate predicate, final Node object) {
 
 		String key;
@@ -345,6 +438,7 @@ public class GDMEncoder extends DefaultStreamPipe<ObjectReceiver<GDMModel>> {
 		if (subject instanceof ResourceNode) {
 
 			key = ((ResourceNode) subject).getUri();
+
 		} else {
 
 			key = subject.getId().toString();
@@ -360,9 +454,15 @@ public class GDMEncoder extends DefaultStreamPipe<ObjectReceiver<GDMModel>> {
 
 		final Long order = valueCounter.get(key).incrementAndGet();
 
-		recordResource.addStatement(subject, predicate, object, order);
+		currentEntityResource.addStatement(subject, predicate, object, order);
 	}
 
+	/**
+	 * Builds a URI from the string id and returns the URI. If is is a not a valid URI a datamodel term URI is minted.
+	 * 
+	 * @param id
+	 * @return the found or newly created ID
+	 */
 	private String getURI(final String id) {
 
 		if (!uris.containsKey(id)) {

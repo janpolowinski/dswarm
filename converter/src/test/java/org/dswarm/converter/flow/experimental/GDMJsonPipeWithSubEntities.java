@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.dswarm.converter.GuicedTest;
-import org.dswarm.converter.mf.stream.GDMEncoderEntityAware;
+import org.dswarm.converter.mf.stream.GDMEncoder;
 import org.dswarm.converter.mf.stream.GDMModelReceiver;
 import org.dswarm.converter.mf.stream.reader.JsonNodeReader;
 import org.dswarm.converter.pipe.StreamJsonCollapser;
@@ -137,7 +137,7 @@ public class GDMJsonPipeWithSubEntities extends GuicedTest {
 		
 		Optional<DataModel> dataModel = Optional.absent();
 		
-		final GDMEncoderEntityAware converter = new GDMEncoderEntityAware(dataModel);
+		final GDMEncoder converter = new GDMEncoder(dataModel);
 		final GDMModelReceiver writer = new GDMModelReceiver();
 
 		jsonNodeReader
