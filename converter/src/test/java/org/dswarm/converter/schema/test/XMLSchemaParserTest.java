@@ -80,4 +80,27 @@ public class XMLSchemaParserTest extends GuicedTest {
 
 		System.out.println("'" + schemaJSONString + "'");
 	}
+	
+	/**
+	 * creates the pnx-schema (Primo) from the given xml schema file from scratch
+	 *
+	 * @throws IOException
+	 * @throws DMPPersistenceException
+	 */
+	//@Test
+	public void testSchemaParsingPNX() throws IOException, DMPPersistenceException {
+
+		final XMLSchemaParser xmlSchemaParser = GuicedTest.injector.getInstance(XMLSchemaParser.class);
+		final Optional<Schema> optionalSchema = xmlSchemaParser.parse("pnx.xsd", "record", "pnx schema");
+
+		Assert.assertTrue(optionalSchema.isPresent());
+
+		final Schema schema = optionalSchema.get();
+
+		final ObjectMapper mapper = GuicedTest.injector.getInstance(ObjectMapper.class);
+
+		final String schemaJSONString = mapper.writeValueAsString(schema);
+
+		System.out.println("'" + schemaJSONString + "'");
+	}
 }
