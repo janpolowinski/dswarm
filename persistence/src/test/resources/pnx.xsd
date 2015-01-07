@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-	<!--
-<xs:schema targetNamespace="http://www.exlibrisgroup.com/xsd/primo/primo_nm_bib" xmlns="http://www.exlibrisgroup.com/xsd/primo/primo_nm_bib" elementFormDefault="qualified" attributeFormDefault="unqualified">
--->
-	<!-- declare outside PrimoNMBib and only make a ref inside -->
-	<xs:element name="record" type="recordType"/>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.exlibrisgroup.com/xsd/primo/primo_nm_bib" xmlns="http://www.exlibrisgroup.com/xsd/primo/primo_nm_bib" elementFormDefault="qualified" attributeFormDefault="unqualified">
 
 	<xs:element name="PrimoNMBib">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="record" maxOccurs="unbounded"/>
+				<xs:element name="record" maxOccurs="unbounded" type="recordType"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
