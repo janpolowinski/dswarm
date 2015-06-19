@@ -1,0 +1,19 @@
+[ {
+  "http://data.slub-dresden.de/datamodels/2/records/f499ab99-21e3-4b42-ac43-3c35e30c1faf" : [ {
+    "http://data.slub-dresden.de/schemas/Schema-5664ba0e-ccb3-4b71-8823-13281490de30/language" : "Slawistik"
+  }, {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : "http://purl.org/ontology/bibo/Document"
+  } ]
+}, {
+  "http://data.slub-dresden.de/datamodels/2/records/315ac631-c321-4447-8d49-40cb4cec7c75" : [ {
+    "http://data.slub-dresden.de/schemas/Schema-5664ba0e-ccb3-4b71-8823-13281490de30/language" : "some default value"
+  }, {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : "http://purl.org/ontology/bibo/Document"
+  } ]
+}, {
+  "http://data.slub-dresden.de/datamodels/2/records/69112f3a-74d2-4734-9ca4-afaec41336cb" : [ {
+    "http://data.slub-dresden.de/schemas/Schema-5664ba0e-ccb3-4b71-8823-13281490de30/language" : "some default value"
+  }, {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : "http://purl.org/ontology/bibo/Document"
+  } ]
+} ]

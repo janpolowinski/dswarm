@@ -88,6 +88,18 @@ public class XMLTransformationFlowTest extends GuicedTest {
 
 		testXMLMorphWithTuples("dd-650.mabxml.morph.result.json", "dd-650.mabxml.morph.xml", "test-mabxml.tuples.json");
 	}
+	
+	@Test
+	public void testMabxmlFilterWithAdvancedRegexMorph() throws Exception {
+
+		testXMLMorphWithTuples("dd-1165.mabxml.morph.result.json", "dd-1165.mabxml.morph.xml", "dd-1165.test-mabxml.tuples.json");
+	}
+	
+	@Test
+	public void testMarcxmlFilterWithAdvancedRegexMorph() throws Exception {
+
+		testXMLMorphWithTuples("dd-1165.marcxml.morph.result.json", "dd-1165.marcxml.morph.xml", "dd-1165.test-marcxml.tuples.json");
+	}
 
 	@Test
 	public void testMabxmlFilterWithRegexTask() throws Exception {
